@@ -6,6 +6,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"log"
 	"fmt"
+	"os"
 )
 
 var schema = `
@@ -39,7 +40,19 @@ func SomeDatabaseFunction() {
 
 	//db, err := sql.Open("mysql", "user:password@tcp(127.0.0.1:3306)/hello")
 	//db, err := sql.Open("postgres", "dbname=dat_test user=dat password=!test host=localhost sslmode=disable")
-	db, err := sqlx.Connect("postgres", "postgres://kano:nazgulum@172.17.0.2:5432/streamtestdb?sslmode=disable")
+	//db, err := sqlx.Connect("postgres", "postgres://kano:nazgulum@172.17.0.2:5432/streamtestdb?sslmode=disable")
+
+	connInfo := fmt.Sprintf(
+		"user=%s dbname=%s password=%s host=%s port=%s sslmode=disable",
+		"postgres",
+		"postgres",
+		os.Getenv("DB_ENV_POSTGRES_PASSWORD"),
+		os.Getenv("HELLODOCKER_POSTGRES_1_PORT_5432_TCP_ADDR"),
+		os.Getenv("HELLODOCKER_POSTGRES_1_PORT_5432_TCP_PORT"),
+	)
+
+	db, err := sqlx.Connect("postgres", connInfo)
+
 
 	if err != nil {
 		log.Fatalln(err)

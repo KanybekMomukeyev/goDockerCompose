@@ -1,21 +1,27 @@
-#app:
-#  image: google/golang
-#  working_dir: /gopath/src/github.com/KanybekMomukeyev/goDockerCompose
-#  command: go run mainasdd.go
-#  volumes:
-#    - ./simple-golang-app:/go/src/simple-golang-app
+  store:
+      # data-only container
+      image: postgres:latest # reuse postgres container
+      volumes:
+          - /var/lib/postgresql/data
+      command: "true"
 
-api:
-  build: ./api
-  ports:
-    - 3000:3000
-  volumes:
-    - ./api:/go/src/github.com/KanybekMomukeyev/goDockerCompose/api
-  links:
-    - database
-  environment:
-    - DB_NAME=project
+  postgres:
+      image: postgres:latest
+      ports:
+          - "5432" # random available host port will be chosen, same as -P
+      volumes_from:
+          - store # connect postgres and the data-only container
+      environment:
+          - POSTGRES_PASSWORD=mypass
+          # you can also set the postgres username and database name
 
-database:
-  image: mongo:3.0
-  command: mongod --smallfiles --quiet --logpath=/dev/null
+  go:
+      build: ./api
+      links:
+          - postgres:db # [other container]:[alias in this container]
+          # this will create environment variables in the go container
+          # with ip and port info for the postgres container
+          # also creates entries in /etc/hosts with ip info
+      ports:
+          - "3000" # this is port i'm exposing in the container
+
