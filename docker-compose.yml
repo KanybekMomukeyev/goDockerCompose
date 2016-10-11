@@ -23,5 +23,5 @@
           # with ip and port info for the postgres container
           # also creates entries in /etc/hosts with ip info
       ports:
-          - "3000" # this is port i'm exposing in the container
+          - "8080" # this is port i'm exposing in the container
 

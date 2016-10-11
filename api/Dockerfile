@@ -20,7 +20,7 @@ RUN go get github.com/KanybekMomukeyev/goDockerCompose/api
 
 #ADD api/server.go /gopath/src/github.com/KanybekMomukeyev/goDockerCompose/api/server.go
 
-EXPOSE 3000
+EXPOSE 8080
 
 ENTRYPOINT /go/bin/api
 
