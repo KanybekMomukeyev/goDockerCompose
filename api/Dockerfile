@@ -22,4 +22,6 @@ ADD api/server.go /gopath/src/github.com/KanybekMomukeyev/goDockerCompose/api/se
 
 EXPOSE 3000
 
-CMD ["go", "run", "/gopath/src/github.com/KanybekMomukeyev/goDockerCompose/api/server.go"]
+ENTRYPOINT /go/bin/api
+
+#CMD ["go", "run", "/gopath/src/github.com/KanybekMomukeyev/goDockerCompose/api/server.go"]
