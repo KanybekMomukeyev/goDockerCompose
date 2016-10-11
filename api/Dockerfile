@@ -18,7 +18,7 @@ RUN go get github.com/jmoiron/sqlx
 
 RUN go get github.com/KanybekMomukeyev/goDockerCompose/api
 
-ADD api/server.go /gopath/src/github.com/KanybekMomukeyev/goDockerCompose/api/server.go
+#ADD api/server.go /gopath/src/github.com/KanybekMomukeyev/goDockerCompose/api/server.go
 
 EXPOSE 3000
 
