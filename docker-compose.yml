@@ -1,6 +1,21 @@
-app:
-  image: google/golang
-  working_dir: /go/src/simple-golang-app
-  command: go run main.go
+#app:
+#  image: google/golang
+#  working_dir: /gopath/src/github.com/KanybekMomukeyev/goDockerCompose
+#  command: go run mainasdd.go
+#  volumes:
+#    - ./simple-golang-app:/go/src/simple-golang-app
+
+api:
+  build: ./api
+  ports:
+    - 3000:3000
   volumes:
-    - ./simple-golang-app:/go/src/simple-golang-app
+    - ./api:/go/src/github.com/KanybekMomukeyev/goDockerCompose/api
+  links:
+    - database
+  environment:
+    - DB_NAME=project
+
+database:
+  image: mongo:3.0
+  command: mongod --smallfiles --quiet --logpath=/dev/null
