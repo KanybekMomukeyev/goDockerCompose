@@ -34,7 +34,7 @@ api:
   volumes:
     - ./api:/go/src/github.com/KanybekMomukeyev/goDockerCompose/api
   links:
-    - postgres
+    - postgres:db
 #  environment:
 #    - DB_NAME=project
 
