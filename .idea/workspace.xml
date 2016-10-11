@@ -43,8 +43,8 @@
       <file leaf-file-name="docker-compose.yml" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/docker-compose.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="152">
-              <caret line="8" column="19" selection-start-line="8" selection-start-column="19" selection-end-line="8" selection-end-column="19" />
+            <state relative-caret-position="95">
+              <caret line="5" column="51" selection-start-line="0" selection-start-column="0" selection-end-line="5" selection-end-column="51" />
               <folding />
             </state>
           </provider>
@@ -636,12 +636,12 @@
       <option name="presentableId" value="Default" />
       <updated>1476183863067</updated>
       <workItem from="1476183864747" duration="77000" />
-      <workItem from="1476184042378" duration="551000" />
+      <workItem from="1476184042378" duration="719000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="628000" />
+    <option name="totallyTimeSpent" value="796000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="4" y="23" width="1276" height="777" extended-state="6" />
@@ -711,8 +711,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/docker-compose.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="8" column="19" selection-start-line="8" selection-start-column="19" selection-end-line="8" selection-end-column="19" />
+        <state relative-caret-position="95">
+          <caret line="5" column="51" selection-start-line="0" selection-start-column="0" selection-end-line="5" selection-end-column="51" />
           <folding />
         </state>
       </provider>
