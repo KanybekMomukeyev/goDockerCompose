@@ -1,5 +1,12 @@
+#app:
+#  image: google/golang
+#  working_dir: /go/src/simple-golang-app
+#  command: go run main.go
+#  volumes:
+#    - ./simple-golang-app:/go/src/simple-golang-app
+
 app:
-  image: google/golang
+  image: golang:1.4
   working_dir: /go/src/simple-golang-app
   command: go run main.go
   volumes:
