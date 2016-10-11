@@ -38,19 +38,19 @@ api:
   environment:
     - DB_NAME=project
 
-    store:
-        # data-only container
-        image: postgres:latest # reuse postgres container
-        volumes:
-            - /var/lib/postgresql/data
-        command: "true"
+store:
+  # data-only container
+  image: postgres:latest # reuse postgres container
+  volumes:
+      - /var/lib/postgresql/data
+  command: "true"
 
-  postgres:
-      image: postgres:latest
-      ports:
-          - "5432" # random available host port will be chosen, same as -P
-      volumes_from:
-          - store # connect postgres and the data-only container
-      environment:
-          - POSTGRES_PASSWORD=mypass
-          # you can also set the postgres username and database name
+postgres:
+  image: postgres:latest
+  ports:
+      - "5432" # random available host port will be chosen, same as -P
+  volumes_from:
+      - store # connect postgres and the data-only container
+  environment:
+      - POSTGRES_PASSWORD=mypass
+      # you can also set the postgres username and database name
