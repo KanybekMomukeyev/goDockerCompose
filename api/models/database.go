@@ -51,15 +51,6 @@ func SomeDatabaseFunction() {
 		os.Getenv("GODOCKERCOMPOSE_POSTGRES_1_PORT_5432_TCP_PORT"),
 	)
 
-	//connInfo := fmt.Sprintf(
-	//	"user=%s dbname=%s password=%s host=%s port=%s sslmode=disable",
-	//	"kano",
-	//	"streamtestdb",
-	//	"nazgulum",//os.Getenv("DB_ENV_POSTGRES_PASSWORD"),
-	//	os.Getenv("GODOCKERCOMPOSE_POSTGRES_1_PORT_5432_TCP_ADDR"),
-	//	os.Getenv("GODOCKERCOMPOSE_POSTGRES_1_PORT_5432_TCP_PORT"),
-	//)
-
 	db, err := sqlx.Connect("postgres", connInfo)
 
 	if err != nil {
