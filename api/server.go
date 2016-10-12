@@ -45,14 +45,14 @@ func (c *mainController) Get() {
 func add(n1, n2 int) int {
 	//fmt.Print(SomeMethod1())
 	fmt.Print("add function called")
-	models.SomeDatabaseFunction()
+	//models.SomeDatabaseFunction()
 	return n1 + n2
 }
 
 func multiply(n1, n2 int) int {
 	//fmt.Print(SomeMethod2())
 	fmt.Print("multiply function called")
-	models.SomeDatabaseFunction()
+	//models.SomeDatabaseFunction()
 	return n1 * n2
 }
 
