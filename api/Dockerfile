@@ -18,14 +18,10 @@ RUN go get github.com/beego/bee
 RUN go get github.com/lib/pq
 RUN go get github.com/jmoiron/sqlx
 
-#RUN go get github.com/KanybekMomukeyev/goDockerCompose/api
-
-
-#RUN go install /go/src/github.com/KanybekMomukeyev/goDockerCompose/api
-
+RUN go install /go/src/github.com/KanybekMomukeyev/goDockerCompose/api
 
 EXPOSE 8080
 
-#ENTRYPOINT /go/bin/api
+ENTRYPOINT /go/bin/api
 
-CMD ["go", "run", "/go/src/github.com/KanybekMomukeyev/goDockerCompose/api/server.go"]
+#CMD ["go", "run", "/go/src/github.com/KanybekMomukeyev/goDockerCompose/api/server.go"]
