@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/astaxie/beego"
-	"github.com/KanybekMomukeyev/goDockerCompose/api/models"
+	//"github.com/KanybekMomukeyev/goDockerCompose/api/models"
 	"strconv"
 )
 
