@@ -9,13 +9,13 @@ ADD . /gopath/src/github.com/KanybekMomukeyev/goDockerCompose/
 ADD views /gopath/src/github.com/KanybekMomukeyev/goDockerCompose/api/views
 ADD conf /gopath/src/github.com/KanybekMomukeyev/goDockerCompose/api/conf
 ADD controllers /gopath/src/github.com/KanybekMomukeyev/goDockerCompose/api/controllers
+ADD models /gopath/src/github.com/KanybekMomukeyev/goDockerCompose/api/models
 
 # Install our dependencies
 RUN go get github.com/astaxie/beego
 RUN go get github.com/beego/bee
 RUN go get github.com/lib/pq
 RUN go get github.com/jmoiron/sqlx
-
 
 
 RUN go get github.com/KanybekMomukeyev/goDockerCompose/api
