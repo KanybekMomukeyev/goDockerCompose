@@ -38,10 +38,6 @@ func SomeDatabaseFunction() {
 	// this Pings the database trying to connect, panics on error
 	// use sqlx.Open() for sql.Open() semantics
 
-	//db, err := sql.Open("mysql", "user:password@tcp(127.0.0.1:3306)/hello")
-	//db, err := sql.Open("postgres", "dbname=dat_test user=dat password=!test host=localhost sslmode=disable")
-	//db, err := sqlx.Connect("postgres", "postgres://kano:nazgulum@172.17.0.2:5432/streamtestdb?sslmode=disable")
-
 	connInfo := fmt.Sprintf(
 		"user=%s dbname=%s password=%s host=%s port=%s sslmode=disable",
 		"postgres",
