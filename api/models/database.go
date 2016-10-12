@@ -44,8 +44,8 @@ func SomeDatabaseFunction() {
 
 	connInfo := fmt.Sprintf(
 		"user=%s dbname=%s password=%s host=%s port=%s sslmode=disable",
-		"postgres",
-		"postgres",
+		"user_postgres",
+		"database_postgres",
 		os.Getenv("DB_ENV_POSTGRES_PASSWORD"),
 		os.Getenv("GODOCKERCOMPOSE_POSTGRES_1_PORT_5432_TCP_ADDR"),
 		os.Getenv("GODOCKERCOMPOSE_POSTGRES_1_PORT_5432_TCP_PORT"),
