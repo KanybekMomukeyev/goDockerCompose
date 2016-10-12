@@ -1,12 +1,13 @@
-
-store: #should start from beginning, it is rule for yaml
+store:
   # data-only container
+  #restart: always
   image: postgres:latest # reuse postgres container
   volumes:
       - /var/lib/postgresql/data
   command: "true"
 
-postgres: #should start from beginning, it is rule for yaml
+postgres:
+  #restart: always
   image: postgres:latest
   ports:
       - "5432" # random available host port will be chosen, same as -P
@@ -16,7 +17,8 @@ postgres: #should start from beginning, it is rule for yaml
       - POSTGRES_PASSWORD=mypass
       # you can also set the postgres username and database name
 
-go: #should start from beginning, it is rule for yaml
+go:
+  #restart: always
   build: ./api
   ports:
     - 8080:8080
@@ -27,18 +29,4 @@ go: #should start from beginning, it is rule for yaml
 #  volumes:
 #        - ./api:/go/src/github.com/KanybekMomukeyev/goDockerCompose/api
 
-#proxy:
-#    image: nginx:latest
-#    ports:
-#        - "80:80" # host:container
-#        - "443:443"
-#    volumes:
-#        - ./nginx.conf:/etc/nginx/nginx.conf:ro
-#        # connect host's ./nginx.conf with container's nginx.conf
-#        # :ro == read only perms in container
-#    links:
-#        - go:app # [other container]:[alias in this container]
-#          # creates environment variables in proxy container
-#          # with ip and port info for go container
-#          # also creates entries in /etc/hosts with ip info
 
