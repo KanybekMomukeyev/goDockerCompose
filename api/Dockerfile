@@ -1,5 +1,5 @@
-#FROM golang:latest
-FROM resin/raspberrypi3-golang
+FROM golang:latest
+#FROM resin/raspberrypi3-golang
 
 # Copy the local package files to the container’s workspace.
 WORKDIR /gopath/src/github.com/KanybekMomukeyev/goDockerCompose/api
