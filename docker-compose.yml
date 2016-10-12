@@ -1,13 +1,13 @@
 store:
   # data-only container
-  #restart: always
+  restart: always
   image: postgres:latest # reuse postgres container
   volumes:
       - /var/lib/postgresql/data
   command: "true"
 
 postgres:
-  #restart: always
+  restart: always
   image: postgres:latest
   ports:
       - "5432" # random available host port will be chosen, same as -P
@@ -18,7 +18,7 @@ postgres:
       # you can also set the postgres username and database name
 
 go:
-  #restart: always
+  restart: always
   build: ./api
   ports:
     - 8080:8080
