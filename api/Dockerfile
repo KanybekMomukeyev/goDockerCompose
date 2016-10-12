@@ -18,7 +18,7 @@ RUN go get github.com/beego/bee
 RUN go get github.com/lib/pq
 RUN go get github.com/jmoiron/sqlx
 
-RUN go install /go/src/github.com/KanybekMomukeyev/goDockerCompose/api
+RUN go install github.com/KanybekMomukeyev/goDockerCompose/api
 
 EXPOSE 8080
 
