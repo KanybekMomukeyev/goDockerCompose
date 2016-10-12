@@ -47,6 +47,8 @@ func SomeDatabaseFunction() {
 		os.Getenv("GODOCKERCOMPOSE_POSTGRES_1_PORT_5432_TCP_PORT"),
 	)
 
+	fmt.Println(connInfo)
+
 	db, err := sqlx.Connect("postgres", connInfo)
 
 	if err != nil {
