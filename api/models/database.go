@@ -42,23 +42,22 @@ func SomeDatabaseFunction() {
 	//db, err := sql.Open("postgres", "dbname=dat_test user=dat password=!test host=localhost sslmode=disable")
 	//db, err := sqlx.Connect("postgres", "postgres://kano:nazgulum@172.17.0.2:5432/streamtestdb?sslmode=disable")
 
-	//connInfo := fmt.Sprintf(
-	//	"user=%s dbname=%s password=%s host=%s port=%s sslmode=disable",
-	//	"postgres",
-	//	"postgres",
-	//	os.Getenv("DB_ENV_POSTGRES_PASSWORD"),
-	//	os.Getenv("HELLODOCKER_POSTGRES_1_PORT_5432_TCP_ADDR"),
-	//	os.Getenv("HELLODOCKER_POSTGRES_1_PORT_5432_TCP_PORT"),
-	//)
-
 	connInfo := fmt.Sprintf(
-		"user=kanybek dbname=databasename password=nazgulum host=%s port=%s sslmode=disable",
-		os.Getenv("HELLODOCKER_POSTGRES_1_PORT_5432_TCP_ADDR"),
-		os.Getenv("HELLODOCKER_POSTGRES_1_PORT_5432_TCP_PORT"),
+		"user=%s dbname=%s password=%s host=%s port=%s sslmode=disable",
+		"postgres",
+		"postgres",
+		os.Getenv("DB_ENV_POSTGRES_PASSWORD"),
+		os.Getenv("GODOCKERCOMPOSE_POSTGRES_1_PORT_5432_TCP_ADDR"),
+		os.Getenv("GODOCKERCOMPOSE_POSTGRES_1_PORT_5432_TCP_PORT"),
 	)
 
-	db, err := sqlx.Connect("postgres", connInfo)
+	//connInfo := fmt.Sprintf(
+	//	"user=kanybek dbname=databasename password=nazgulum host=%s port=%s sslmode=disable",
+	//	os.Getenv("GODOCKERCOMPOSE_POSTGRES_1_PORT_5432_TCP_ADDR"),
+	//	os.Getenv("GODOCKERCOMPOSE_POSTGRES_1_PORT_5432_TCP_PORT"),
+	//)
 
+	db, err := sqlx.Connect("postgres", connInfo)
 
 	if err != nil {
 		log.Fatalln(err)

@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dcbd48d1-1be6-4e9c-b200-ded03459556f" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/api/models/database.go" afterPath="$PROJECT_DIR$/api/models/database.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/api/server.go" afterPath="$PROJECT_DIR$/api/server.go" />
     </list>
     <ignored path="goDockerCompose.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -59,11 +57,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="database.go" pinned="false" current-in-tab="false">
+      <file leaf-file-name="database.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/api/models/database.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1336">
-              <caret line="54" column="101" selection-start-line="54" selection-start-column="101" selection-end-line="54" selection-end-column="101" />
+            <state relative-caret-position="317">
+              <caret line="60" column="8" selection-start-line="60" selection-start-column="8" selection-end-line="60" selection-end-column="8" />
               <folding>
                 <element signature="e#16#112#0" expanded="true" />
               </folding>
@@ -74,19 +72,9 @@
       <file leaf-file-name="docker-compose.yml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/docker-compose.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="688">
+            <state relative-caret-position="1292">
               <caret line="68" column="60" selection-start-line="55" selection-start-column="1" selection-end-line="68" selection-end-column="60" />
-              <folding>
-                <marker date="1476248781000" expanded="true" signature="1711:2018" ph="proxy: &lt;4 keys&gt;" />
-                <marker date="1476248781000" expanded="true" signature="1730:1742" ph="nginx:late..." />
-                <marker date="1476248781000" expanded="true" signature="1748:1811" ph="ports: &lt;2 items&gt;" />
-                <marker date="1476248781000" expanded="true" signature="1766:1773" ph="80:80" />
-                <marker date="1476248781000" expanded="true" signature="1802:1811" ph="443:443" />
-                <marker date="1476248781000" expanded="true" signature="1817:1874" ph="volumes: &lt;1 item&gt;" />
-                <marker date="1476248781000" expanded="true" signature="1837:1874" ph="./nginx.co..." />
-                <marker date="1476248781000" expanded="true" signature="1994:2018" ph="links: &lt;1 item&gt;" />
-                <marker date="1476248781000" expanded="true" signature="2012:2018" ph="go:app" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -121,10 +109,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="server.go" pinned="false" current-in-tab="true">
+      <file leaf-file-name="server.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/api/server.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="184">
+            <state relative-caret-position="241">
               <caret line="47" column="8" selection-start-line="47" selection-start-column="8" selection-end-line="47" selection-end-column="8" />
               <folding>
                 <element signature="e#14#128#0" expanded="true" />
@@ -171,8 +159,8 @@
         <option value="$PROJECT_DIR$/api/Dockerfile" />
         <option value="$PROJECT_DIR$/nginx.conf" />
         <option value="$PROJECT_DIR$/docker-compose.yml" />
-        <option value="$PROJECT_DIR$/api/models/database.go" />
         <option value="$PROJECT_DIR$/api/server.go" />
+        <option value="$PROJECT_DIR$/api/models/database.go" />
       </list>
     </option>
   </component>
@@ -775,12 +763,12 @@
       <updated>1476183863067</updated>
       <workItem from="1476183864747" duration="77000" />
       <workItem from="1476184042378" duration="10143000" />
-      <workItem from="1476245973127" duration="1446000" />
+      <workItem from="1476245973127" duration="1934000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="11666000" />
+    <option name="totallyTimeSpent" value="12154000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="4" y="23" width="1276" height="777" extended-state="6" />
@@ -877,17 +865,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1197">
           <caret line="63" column="20" selection-start-line="63" selection-start-column="20" selection-end-line="63" selection-end-column="20" />
-          <folding>
-            <marker date="1476248781000" expanded="true" signature="1711:2018" ph="proxy: &lt;4 keys&gt;" />
-            <marker date="1476248781000" expanded="true" signature="1730:1742" ph="nginx:late..." />
-            <marker date="1476248781000" expanded="true" signature="1748:1811" ph="ports: &lt;2 items&gt;" />
-            <marker date="1476248781000" expanded="true" signature="1766:1773" ph="80:80" />
-            <marker date="1476248781000" expanded="true" signature="1802:1811" ph="443:443" />
-            <marker date="1476248781000" expanded="true" signature="1817:1874" ph="volumes: &lt;1 item&gt;" />
-            <marker date="1476248781000" expanded="true" signature="1837:1874" ph="./nginx.co..." />
-            <marker date="1476248781000" expanded="true" signature="1994:2018" ph="links: &lt;1 item&gt;" />
-            <marker date="1476248781000" expanded="true" signature="2012:2018" ph="go:app" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -992,40 +970,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/api/server.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="241">
+          <caret line="47" column="8" selection-start-line="47" selection-start-column="8" selection-end-line="47" selection-end-column="8" />
+          <folding>
+            <element signature="e#14#128#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/docker-compose.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="688">
+        <state relative-caret-position="1292">
           <caret line="68" column="60" selection-start-line="55" selection-start-column="1" selection-end-line="68" selection-end-column="60" />
-          <folding>
-            <marker date="1476248781000" expanded="true" signature="1711:2018" ph="proxy: &lt;4 keys&gt;" />
-            <marker date="1476248781000" expanded="true" signature="1730:1742" ph="nginx:late..." />
-            <marker date="1476248781000" expanded="true" signature="1748:1811" ph="ports: &lt;2 items&gt;" />
-            <marker date="1476248781000" expanded="true" signature="1766:1773" ph="80:80" />
-            <marker date="1476248781000" expanded="true" signature="1802:1811" ph="443:443" />
-            <marker date="1476248781000" expanded="true" signature="1817:1874" ph="volumes: &lt;1 item&gt;" />
-            <marker date="1476248781000" expanded="true" signature="1837:1874" ph="./nginx.co..." />
-            <marker date="1476248781000" expanded="true" signature="1994:2018" ph="links: &lt;1 item&gt;" />
-            <marker date="1476248781000" expanded="true" signature="2012:2018" ph="go:app" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/api/models/database.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1336">
-          <caret line="54" column="101" selection-start-line="54" selection-start-column="101" selection-end-line="54" selection-end-column="101" />
+        <state relative-caret-position="317">
+          <caret line="60" column="8" selection-start-line="60" selection-start-column="8" selection-end-line="60" selection-end-column="8" />
           <folding>
             <element signature="e#16#112#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/api/server.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="47" column="8" selection-start-line="47" selection-start-column="8" selection-end-line="47" selection-end-column="8" />
-          <folding>
-            <element signature="e#14#128#0" expanded="true" />
           </folding>
         </state>
       </provider>
