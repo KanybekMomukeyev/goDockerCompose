@@ -11,8 +11,9 @@ minio:
   ports:
     - "9000:9000"
   volumes:
-    - ./test/.minio/data:/export
-    - ./test/.minio/config:/root/.minio
+    - /mnt/export/minio1:/export
+#    - ./test/.minio/data:/export
+#    - ./test/.minio/config:/root/.minio
   environment:
     - "MINIO_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE"
     - "MINIO_SECRET_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
