@@ -7,7 +7,7 @@ store:
   command: "true"
 
 minio1:
-    image: minio/minio
+    image: minio/minio:edge
     restart: always
     ports:
       - "9000:9000"
@@ -16,7 +16,7 @@ minio1:
     environment:
       MINIO_ACCESS_KEY: minio
       MINIO_SECRET_KEY: minio123
-    command: server minio:/export
+    command: server minio1:/export
 
 postgres:
   restart: always
