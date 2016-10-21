@@ -2,8 +2,10 @@ store:
   # data-only container
   restart: always
   image: postgres:latest # reuse postgres container
+#  volumes:
+#      - /var/lib/postgresql/data
   volumes:
-      - /var/lib/postgresql/data
+      - /kanoexport
   command: "true"
 
 minio1:
