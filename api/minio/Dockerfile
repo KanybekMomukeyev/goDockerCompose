@@ -7,7 +7,7 @@ COPY . /go/src/app
 
 RUN \
 	#apk add --no-cache git && \
-	apt-get --no-cache git && \
+	apt-get install git-core && \
 	go-wrapper download && \
 	go-wrapper install -ldflags "$(go run buildscripts/gen-ldflags.go)" && \
 	mkdir -p /export/docker && \
