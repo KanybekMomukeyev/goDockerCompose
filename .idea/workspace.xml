@@ -63,8 +63,8 @@
       <file leaf-file-name="workspace.xml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="21356">
-              <caret line="1124" column="10" selection-start-line="1124" selection-start-column="10" selection-end-line="1124" selection-end-column="10" />
+            <state relative-caret-position="21337">
+              <caret line="1123" column="10" selection-start-line="1123" selection-start-column="10" selection-end-line="1123" selection-end-column="10" />
               <folding />
             </state>
           </provider>
@@ -73,8 +73,8 @@
       <file leaf-file-name="docker-compose.yml" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/docker-compose.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="247">
-              <caret line="29" column="13" selection-start-line="29" selection-start-column="13" selection-end-line="29" selection-end-column="13" />
+            <state relative-caret-position="589">
+              <caret line="31" column="0" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -733,12 +733,12 @@
       <workItem from="1476347057800" duration="472000" />
       <workItem from="1476692085788" duration="5000" />
       <workItem from="1476767968462" duration="84000" />
-      <workItem from="1477022364809" duration="5298000" />
+      <workItem from="1477022364809" duration="5483000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="23183000" />
+    <option name="totallyTimeSpent" value="23368000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="4" y="23" width="1276" height="777" extended-state="6" />
@@ -1104,8 +1104,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="21356">
-          <caret line="1124" column="10" selection-start-line="1124" selection-start-column="10" selection-end-line="1124" selection-end-column="10" />
+        <state relative-caret-position="21337">
+          <caret line="1123" column="10" selection-start-line="1123" selection-start-column="10" selection-end-line="1123" selection-end-column="10" />
           <folding />
         </state>
       </provider>
@@ -1182,8 +1182,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/docker-compose.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="29" column="13" selection-start-line="29" selection-start-column="13" selection-end-line="29" selection-end-column="13" />
+        <state relative-caret-position="589">
+          <caret line="31" column="0" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
           <folding />
         </state>
       </provider>
