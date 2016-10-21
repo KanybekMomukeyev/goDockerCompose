@@ -16,7 +16,7 @@ minio1:
     environment:
       MINIO_ACCESS_KEY: minio
       MINIO_SECRET_KEY: minio123
-    command: server minio1:/export
+    command: server minio:/export
 
 postgres:
   restart: always
