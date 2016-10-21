@@ -27,7 +27,7 @@ s3minio:
     environment:
       - "MINIO_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE"
       - "MINIO_SECRET_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
-
+    command: minio server /export
 #postgres:
 #  restart: always
 #  image: postgres:latest
