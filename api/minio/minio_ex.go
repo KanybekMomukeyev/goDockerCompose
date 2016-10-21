@@ -16,25 +16,25 @@ func main() {
 
 	// Initialize minio client object.
 	minioClient, err := minio.New("138.68.84.55:9000",
-		"DAOEYI09ZFV8DND2ZCYI",
-		"F9Cvtczm51jOmGxrvQLsS9n7FgLav7F7Mrd4HxKE", ssl)
+		"AKIAIOSFODNN7EXAMPLE",
+		"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY", ssl)
 
 	if err != nil {
 		log.Fatalln(err)
 	}
 
 	// Creates bucket with name mybucket.
-	err = minioClient.MakeBucket("mybucketttt", "us-east-1")
+	err = minioClient.MakeBucket("mybucket2", "us-east-1")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	fmt.Println("Successfully created mybucket.")
 
-	// Upload an object 'myobject.txt' with contents from '/home/joe/myfilename.txt'
-	n, err := minioClient.FPutObject("mybucket",
+	// Upload an object 'myobject.txt' with contents from '/home/joe/myLocalFilename.txt'
+	n, err := minioClient.FPutObject("mybucket2",
 		"myobject.txt",
-		"/home/joe/myfilename.txt",
+		"api/minio/myLocalFilename.txt",
 		"application/text")
 	if err != nil {
 		fmt.Println(err)
