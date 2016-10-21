@@ -4,8 +4,10 @@ FROM resin/raspberrypi3-golang
 WORKDIR /go/src/app
 
 COPY . /go/src/app
+
 RUN \
-	apk add --no-cache git && \
+	#apk add --no-cache git && \
+	apt-get --no-cache git && \
 	go-wrapper download && \
 	go-wrapper install -ldflags "$(go run buildscripts/gen-ldflags.go)" && \
 	mkdir -p /export/docker && \
