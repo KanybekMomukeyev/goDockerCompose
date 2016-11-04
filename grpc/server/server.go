@@ -38,7 +38,9 @@ func (s *server) CreateCustomer(ctx context.Context, in *pb.CustomerRequest) (*p
 // GetCustomers returns all customers by given filter
 func (s *server) GetCustomers(filter *pb.CustomerFilter, stream pb.Customer_GetCustomersServer) error {
 
-	customers, _ := model.AllCustomers(db)
+	//customers, _ := model.AllCustomers(db)
+	customers, _ := model.AllCustomersAuto(db)
+
 	for _, customer := range customers {
 		fmt.Printf("%#v\n %#v\n %#v\n", customer, customer, customer)
 	}

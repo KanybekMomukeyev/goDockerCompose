@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS customer (
 `
 
 type Customer struct {
-	FirstName    string
+	FirstName    string `db:"first_name"`
 	Email  string
 	Phone string
 }
@@ -53,3 +53,10 @@ func AllCustomers(db *sqlx.DB) ([]*Customer, error) {
 	return customers, nil
 }
 
+func AllCustomersAuto(db *sqlx.DB) ([]*Customer, error) {
+
+	customers := []*Customer{}
+	db.Select(&customers, "SELECT * FROM customer ORDER BY first_name ASC")
+
+	return customers, nil
+}
