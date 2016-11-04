@@ -99,6 +99,6 @@ func main() {
 	// Create a new customer
 	createCustomer(client, customer)
 	// Filter with an empty Keyword
-	filter := &pb.CustomerFilter{Keyword: ""}
+	filter := &pb.CustomerFilter{Keyword: "Ir"}
 	getCustomers(client, filter)
 }
