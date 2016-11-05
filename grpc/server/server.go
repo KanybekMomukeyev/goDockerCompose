@@ -28,10 +28,11 @@ type server struct {
 // CreateCustomer creates a new Customer
 func (s *server) CreateCustomer(ctx context.Context, in *pb.CustomerRequest) (*pb.CustomerResponse, error) {
 	s.savedCustomers = append(s.savedCustomers, in)
-	storeError := model.StoreCustomer(db, in)
+	unique_key, storeError := model.StoreCustomer2(db, in)
 	if storeError != nil {
 		return nil, storeError
 	}
+	fmt.Printf("unique_key ==> %#v\n", unique_key)
 	return &pb.CustomerResponse{Id: in.Id, Success: true}, nil
 }
 
@@ -42,7 +43,7 @@ func (s *server) GetCustomers(filter *pb.CustomerFilter, stream pb.Customer_GetC
 	customers, _ := model.AllCustomersAuto(db)
 
 	for _, customer := range customers {
-		fmt.Printf("%#v\n %#v\n %#v\n", customer, customer, customer)
+		fmt.Printf("%#v\n", customer)
 	}
 
 	for _, customer := range s.savedCustomers {

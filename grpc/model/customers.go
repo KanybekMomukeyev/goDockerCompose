@@ -3,10 +3,16 @@ package model
 import (
 	"github.com/jmoiron/sqlx"
 	pb "github.com/KanybekMomukeyev/goDockerCompose/grpc/proto"
+	"fmt"
 )
+
+var schemaCustomerDelete = `
+DROP TABLE customer;
+`
 
 var schemaCustomer = `
 CREATE TABLE IF NOT EXISTS customer (
+    cid serial PRIMARY KEY NOT NULL,
     first_name text,
     email text,
     phone text
@@ -20,13 +26,48 @@ type Customer struct {
 }
 
 func CreateTableIfNotExsists(db *sqlx.DB) {
+	//db.MustExec(schemaCustomerDelete)
 	db.MustExec(schemaCustomer)
 }
 
-func StoreCustomer(db *sqlx.DB, customer *pb.CustomerRequest) error {
+func StoreCustomer(db *sqlx.DB, customer *pb.CustomerRequest) (int64, error) {
 	tx := db.MustBegin()
-	tx.MustExec("INSERT INTO customer (first_name, email, phone) VALUES ($1, $2, $3)", customer.Name, customer.Phone, customer.Email)
-	return tx.Commit()
+	result := tx.MustExec("INSERT INTO customer (first_name, email, phone) VALUES ($1, $2, $3) RETURNING cid", customer.Name, customer.Phone, customer.Email)
+
+	commitError := tx.Commit()
+	if commitError != nil {
+		return 0, commitError
+	}
+
+	lastId, commitError:= result.LastInsertId()
+
+	if commitError != nil {
+		return 0, commitError
+	}
+
+	return lastId, nil
+}
+
+func StoreCustomer2(db *sqlx.DB, customer *pb.CustomerRequest) (int64, error)  {
+
+	tx := db.MustBegin()
+
+	var lastInsertId int64
+	err := tx.QueryRow("INSERT INTO customer (first_name, phone, email) VALUES($1, $2, $3) returning cid;", customer.Name, customer.Phone, customer.Email).Scan(&lastInsertId)
+	checkErr(err)
+
+	commitError := tx.Commit()
+	checkErr(commitError)
+
+	fmt.Println("last inserted id =", lastInsertId)
+
+	return lastInsertId, nil
+}
+
+func checkErr(err error) {
+	if err != nil {
+		panic(err)
+	}
 }
 
 func AllCustomers(db *sqlx.DB) ([]*Customer, error) {
