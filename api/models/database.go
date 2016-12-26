@@ -45,7 +45,7 @@ func SomeDatabaseFunction() {
 	//}
 	//TODO: dsfdsf
 
-	db, err := sqlx.Connect("postgres", "dbname=databasename user=kanybek password=nazgulum host=138.197.44.189:5432 sslmode=disable")
+	db, err := sqlx.Connect("postgres", "dbname=databasename user=kanybek password=nazgulum host=138.197.44.189 sslmode=disable")
 	fmt.Println(os.Getenv("DB_ENV_POSTGRES_USER"))
 
 	//connInfo := fmt.Sprintf(
