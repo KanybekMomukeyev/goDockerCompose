@@ -44,7 +44,7 @@ func (c *mainController) Get() {
 
 func add(n1, n2 int) int {
 	//fmt.Print(SomeMethod1())
-	fmt.Print("add function called")
+	fmt.Println("add function called")
 	models.SomeDatabaseFunction()
 	return n1 + n2
 }
