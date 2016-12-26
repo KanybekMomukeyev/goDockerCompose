@@ -45,19 +45,23 @@ func SomeDatabaseFunction() {
 	//}
 	//TODO: dsfdsf
 
+	db, err := sqlx.Connect("postgres", "postgresql://kanybek:nazgulum@postgres/databasename")
+
+	//db, err := sqlx.Connect("postgres", "dbname=databasename user=kanybek password=nazgulum sslmode=disable")
+
 	//db, err := sqlx.Connect("postgres", "dbname=databasename user=kanybek password=nazgulum sslmode=disable")
 	//fmt.Println(os.Getenv("DB_ENV_POSTGRES_USER"))
 
-	connInfo := fmt.Sprintf(
-		"user=%s dbname=%s password=%s host=localhost port=5432 sslmode=disable",
-		os.Getenv("DB_ENV_POSTGRES_USER"),
-		os.Getenv("DB_ENV_POSTGRES_DATABASENAME"),
-		os.Getenv("DB_ENV_POSTGRES_PASSWORD"),
-	)
-
-	fmt.Println(connInfo)
-
-	db, err := sqlx.Connect("postgres", connInfo)
+	//connInfo := fmt.Sprintf(
+	//	"user=%s dbname=%s password=%s host=localhost port=5432 sslmode=disable",
+	//	os.Getenv("DB_ENV_POSTGRES_USER"),
+	//	os.Getenv("DB_ENV_POSTGRES_DATABASENAME"),
+	//	os.Getenv("DB_ENV_POSTGRES_PASSWORD"),
+	//)
+	//
+	//fmt.Println(connInfo)
+	//
+	//db, err := sqlx.Connect("postgres", connInfo)
 
 	if err != nil {
 		log.Fatalln(err)
