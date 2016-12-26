@@ -49,7 +49,7 @@ func SomeDatabaseFunction() {
 	//fmt.Println(os.Getenv("DB_ENV_POSTGRES_USER"))
 
 	connInfo := fmt.Sprintf(
-		"user=%s dbname=%s password=%s host=172.17.0.1 sslmode=disable",
+		"user=%s dbname=%s password=%s host=172.17.0.4 sslmode=disable",
 		os.Getenv("DB_ENV_POSTGRES_USER"),
 		os.Getenv("DB_ENV_POSTGRES_DATABASENAME"),
 		os.Getenv("DB_ENV_POSTGRES_PASSWORD"),
