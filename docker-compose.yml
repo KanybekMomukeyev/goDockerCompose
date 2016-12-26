@@ -25,9 +25,9 @@ postgres:
   volumes_from:
       - store # connect postgres and the data-only container
   environment:
-      - POSTGRES_PASSWORD=mypass
-      - POSTGRES_USER=postgres
-      - POSTGRES_DATABASENAME=postgres
+      - POSTGRES_PASSWORD=nazgulum
+      - POSTGRES_USER=kanybek
+      - POSTGRES_DATABASENAME=databasename
       # you can also set the postgres username and database name
 
 go:
