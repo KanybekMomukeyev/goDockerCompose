@@ -11,7 +11,7 @@ import (
 	pb "github.com/KanybekMomukeyev/goDockerCompose/grpc/proto"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/KanybekMomukeyev/goDockerCompose/grpc/model"
+	//"github.com/KanybekMomukeyev/goDockerCompose/grpc/model"
 
 	"fmt"
 )
@@ -28,23 +28,24 @@ type server struct {
 // CreateCustomer creates a new Customer
 func (s *server) CreateCustomer(ctx context.Context, customerReq *pb.CustomerRequest) (*pb.CustomerResponse, error) {
 	s.savedCustomers = append(s.savedCustomers, customerReq)
-	unique_key, storeError := model.StoreCustomer2(db, customerReq)
-	if storeError != nil {
-		return nil, storeError
-	}
+	unique_key := 2000
+	//unique_key, storeError := model.StoreCustomer2(db, customerReq)
+	//if storeError != nil {
+	//	return nil, storeError
+	//}
 	fmt.Printf("unique_key ==> %#v\n", unique_key)
-	return &pb.CustomerResponse{Id: unique_key, Success: true}, nil
+	return &pb.CustomerResponse{Id: customerReq.Id, Success: true}, nil
 }
 
 // GetCustomers returns all customers by given filter
 func (s *server) GetCustomers(filter *pb.CustomerFilter, stream pb.Customer_GetCustomersServer) error {
 
 	//customers, _ := model.AllCustomers(db)
-	customers, _ := model.AllCustomersAuto(db)
-
-	for _, customer := range customers {
-		fmt.Printf("%#v\n", customer)
-	}
+	//customers, _ := model.AllCustomersAuto(db)
+	//
+	//for _, customer := range customers {
+	//	fmt.Printf("%#v\n", customer)
+	//}
 
 	for _, customer := range s.savedCustomers {
 		if filter.Keyword != "" {
@@ -63,13 +64,12 @@ var db *sqlx.DB
 
 func main() {
 
-	var databaseError error
-	db, databaseError = model.NewDB("datasource")
-	if databaseError != nil {
-		log.Fatalf("failed to listen: %v", databaseError)
-	}
-	model.CreateTableIfNotExsists(db)
-
+	//var databaseError error
+	//db, databaseError = model.NewDB("datasource")
+	//if databaseError != nil {
+	//	log.Fatalf("failed to listen: %v", databaseError)
+	//}
+	//model.CreateTableIfNotExsists(db)
 
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
