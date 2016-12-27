@@ -17,7 +17,8 @@ RUN go get github.com/beego/bee
 RUN go get github.com/lib/pq
 RUN go get github.com/jmoiron/sqlx
 RUN go get golang.org/x/net/context
-RUN go get -u github.com/golang/protobuf/{proto,protoc-gen-go}
+RUN go get github.com/golang/protobuf/proto
+RUN go get github.com/golang/protobuf/protoc-gen-go
 RUN go get google.golang.org/grpc
 
 RUN go install github.com/KanybekMomukeyev/goDockerCompose/grpc
