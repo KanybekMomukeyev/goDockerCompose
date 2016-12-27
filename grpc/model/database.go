@@ -4,12 +4,26 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/jmoiron/sqlx"
 	"log"
+	"fmt"
+	"os"
 )
 
 
 func NewDB(dataSourceName string) (*sqlx.DB, error) {
 
-	db, err := sqlx.Connect("postgres", "dbname=blog_test user=kanybek password=nazgulum host=localhost sslmode=disable")
+	//db, err := sqlx.Connect("postgres", "dbname=blog_test user=kanybek password=nazgulum host=localhost sslmode=disable")
+
+	connInfo := fmt.Sprintf(
+		"user=%s dbname=%s password=%s host=%s port=%s sslmode=disable",
+		os.Getenv("DB_ENV_POSTGRES_USER"),
+		os.Getenv("DB_ENV_POSTGRES_DATABASENAME"),
+		os.Getenv("DB_ENV_POSTGRES_PASSWORD"),
+		os.Getenv("GODOCKERCOMPOSE_POSTGRES_1_PORT_5432_TCP_ADDR"),
+		os.Getenv("GODOCKERCOMPOSE_POSTGRES_1_PORT_5432_TCP_PORT"),
+	)
+
+	fmt.Println(connInfo)
+	db, err := sqlx.Connect("postgres", connInfo)
 
 	if err != nil {
 		log.Fatalln(err)

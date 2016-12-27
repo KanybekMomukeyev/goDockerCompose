@@ -48,11 +48,11 @@ func StoreCustomer(db *sqlx.DB, customer *pb.CustomerRequest) (int64, error) {
 	return lastId, nil
 }
 
-func StoreCustomer2(db *sqlx.DB, customer *pb.CustomerRequest) (int64, error)  {
+func StoreCustomer2(db *sqlx.DB, customer *pb.CustomerRequest) (int32, error)  {
 
 	tx := db.MustBegin()
 
-	var lastInsertId int64
+	var lastInsertId int32
 	err := tx.QueryRow("INSERT INTO customer (first_name, phone, email) VALUES($1, $2, $3) returning cid;", customer.Name, customer.Phone, customer.Email).Scan(&lastInsertId)
 	checkErr(err)
 
