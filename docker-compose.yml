@@ -44,7 +44,7 @@ go:
   restart: always
   build: ./grpc
   ports:
-    - 8080:8080
+    - 50051:50051
   links:
     - postgres:db
 

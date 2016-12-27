@@ -17,8 +17,7 @@ import (
 )
 
 const (
-	//port = ":50051"
-	port = ":8080"
+	port = ":50051"
 )
 
 // server is used to implement customer.CustomerServer.
