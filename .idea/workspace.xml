@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dcbd48d1-1be6-4e9c-b200-ded03459556f" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/grpc/Dockerfile" afterPath="$PROJECT_DIR$/grpc/Dockerfile" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/grpc/mainserver.go" afterPath="$PROJECT_DIR$/grpc/mainserver.go" />
     </list>
     <ignored path="goDockerCompose.iws" />
@@ -124,8 +125,8 @@
       <file leaf-file-name="Dockerfile" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/grpc/Dockerfile">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="317">
-              <caret line="20" column="51" selection-start-line="20" selection-start-column="51" selection-end-line="20" selection-end-column="51" />
+            <state relative-caret-position="499">
+              <caret line="27" column="23" selection-start-line="27" selection-start-column="23" selection-end-line="27" selection-end-column="23" />
               <folding />
             </state>
           </provider>
@@ -134,10 +135,11 @@
       <file leaf-file-name="mainserver.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/grpc/mainserver.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-899">
-              <caret line="16" column="1" selection-start-line="16" selection-start-column="1" selection-end-line="16" selection-end-column="1" />
+            <state relative-caret-position="583">
+              <caret line="70" column="41" selection-start-line="65" selection-start-column="8" selection-end-line="70" selection-end-column="41" />
               <folding>
-                <element signature="e#14#262#0" expanded="true" />
+                <element signature="e#14#260#0" expanded="true" />
+                <marker date="1482841786000" expanded="true" signature="1447:1634" ph="/.../" />
               </folding>
             </state>
           </provider>
@@ -187,10 +189,10 @@
         <option value="$PROJECT_DIR$/grpc/model/database.go" />
         <option value="$PROJECT_DIR$/grpc/proto/customer.pb.go" />
         <option value="$PROJECT_DIR$/grpc/server/server.go" />
-        <option value="$PROJECT_DIR$/grpc/Dockerfile" />
         <option value="$PROJECT_DIR$/docker-compose.yml" />
-        <option value="$PROJECT_DIR$/grpc/mainserver.go" />
         <option value="$PROJECT_DIR$/grpc/client/client.go" />
+        <option value="$PROJECT_DIR$/grpc/Dockerfile" />
+        <option value="$PROJECT_DIR$/grpc/mainserver.go" />
       </list>
     </option>
   </component>
@@ -876,12 +878,12 @@
       <workItem from="1479173444835" duration="244000" />
       <workItem from="1479292347976" duration="292000" />
       <workItem from="1479874698317" duration="137000" />
-      <workItem from="1482726289065" duration="13037000" />
+      <workItem from="1482726289065" duration="13394000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="71103000" />
+    <option name="totallyTimeSpent" value="71460000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1286,14 +1288,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/grpc/Dockerfile">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="317">
-          <caret line="20" column="51" selection-start-line="20" selection-start-column="51" selection-end-line="20" selection-end-column="51" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/grpc/server/server.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-133">
@@ -1320,12 +1314,21 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/grpc/Dockerfile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="499">
+          <caret line="27" column="23" selection-start-line="27" selection-start-column="23" selection-end-line="27" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/grpc/mainserver.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-899">
-          <caret line="16" column="1" selection-start-line="16" selection-start-column="1" selection-end-line="16" selection-end-column="1" />
+        <state relative-caret-position="583">
+          <caret line="70" column="41" selection-start-line="65" selection-start-column="8" selection-end-line="70" selection-end-column="41" />
           <folding>
-            <element signature="e#14#262#0" expanded="true" />
+            <element signature="e#14#260#0" expanded="true" />
+            <marker date="1482841786000" expanded="true" signature="1447:1634" ph="/.../" />
           </folding>
         </state>
       </provider>

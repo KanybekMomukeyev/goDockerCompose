@@ -25,6 +25,6 @@ RUN go install github.com/KanybekMomukeyev/goDockerCompose/grpc
 
 EXPOSE 8080
 
-ENTRYPOINT /go/bin/api
+ENTRYPOINT /go/bin/grpc
 
 #CMD ["go", "run", "/go/src/github.com/KanybekMomukeyev/goDockerCompose/api/server.go"]
