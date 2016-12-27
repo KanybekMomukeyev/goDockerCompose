@@ -17,6 +17,8 @@ const (
 
 // createCustomer calls the RPC method CreateCustomer of CustomerServer
 func createCustomer(client pb.CustomerClient, customer *pb.CustomerRequest) {
+
+
 	resp, err := client.CreateCustomer(context.Background(), customer)
 	if err != nil {
 		log.Fatalf("Could not create Customer: %v", err)

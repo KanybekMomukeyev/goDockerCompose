@@ -49,6 +49,34 @@ func (m *CustomerRequest) String() string            { return proto1.CompactText
 func (*CustomerRequest) ProtoMessage()               {}
 func (*CustomerRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
 
+func (m *CustomerRequest) GetId() int32 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *CustomerRequest) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *CustomerRequest) GetEmail() string {
+	if m != nil {
+		return m.Email
+	}
+	return ""
+}
+
+func (m *CustomerRequest) GetPhone() string {
+	if m != nil {
+		return m.Phone
+	}
+	return ""
+}
+
 func (m *CustomerRequest) GetAddresses() []*CustomerRequest_Address {
 	if m != nil {
 		return m.Addresses
@@ -69,6 +97,41 @@ func (m *CustomerRequest_Address) String() string            { return proto1.Com
 func (*CustomerRequest_Address) ProtoMessage()               {}
 func (*CustomerRequest_Address) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0, 0} }
 
+func (m *CustomerRequest_Address) GetStreet() string {
+	if m != nil {
+		return m.Street
+	}
+	return ""
+}
+
+func (m *CustomerRequest_Address) GetCity() string {
+	if m != nil {
+		return m.City
+	}
+	return ""
+}
+
+func (m *CustomerRequest_Address) GetState() string {
+	if m != nil {
+		return m.State
+	}
+	return ""
+}
+
+func (m *CustomerRequest_Address) GetZip() string {
+	if m != nil {
+		return m.Zip
+	}
+	return ""
+}
+
+func (m *CustomerRequest_Address) GetIsShippingAddress() bool {
+	if m != nil {
+		return m.IsShippingAddress
+	}
+	return false
+}
+
 type CustomerResponse struct {
 	Id      int32 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
 	Success bool  `protobuf:"varint,2,opt,name=success" json:"success,omitempty"`
@@ -79,6 +142,20 @@ func (m *CustomerResponse) String() string            { return proto1.CompactTex
 func (*CustomerResponse) ProtoMessage()               {}
 func (*CustomerResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
 
+func (m *CustomerResponse) GetId() int32 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *CustomerResponse) GetSuccess() bool {
+	if m != nil {
+		return m.Success
+	}
+	return false
+}
+
 type CustomerFilter struct {
 	Keyword string `protobuf:"bytes,1,opt,name=keyword" json:"keyword,omitempty"`
 }
@@ -87,6 +164,13 @@ func (m *CustomerFilter) Reset()                    { *m = CustomerFilter{} }
 func (m *CustomerFilter) String() string            { return proto1.CompactTextString(m) }
 func (*CustomerFilter) ProtoMessage()               {}
 func (*CustomerFilter) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
+
+func (m *CustomerFilter) GetKeyword() string {
+	if m != nil {
+		return m.Keyword
+	}
+	return ""
+}
 
 func init() {
 	proto1.RegisterType((*CustomerRequest)(nil), "proto.CustomerRequest")
@@ -101,7 +185,7 @@ var _ grpc.ClientConn
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion3
+const _ = grpc.SupportPackageIsVersion4
 
 // Client API for Customer service
 
@@ -229,7 +313,7 @@ var _Customer_serviceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
-	Metadata: fileDescriptor0,
+	Metadata: "customer.proto",
 }
 
 func init() { proto1.RegisterFile("customer.proto", fileDescriptor0) }
