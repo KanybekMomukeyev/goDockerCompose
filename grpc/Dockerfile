@@ -15,7 +15,7 @@ ADD mainserver.go /go/src/github.com/KanybekMomukeyev/goDockerCompose/grpc/mains
 RUN go get github.com/astaxie/beego
 RUN go get github.com/beego/bee
 RUN go get github.com/lib/pq
-RUN go get github.com/jmo iron/sqlx
+RUN go get github.com/jmoiron/sqlx
 RUN go get golang.org/x/net/context
 RUN go get google.golang.org/grpc
 
