@@ -29,23 +29,23 @@ postgres:
       - POSTGRES_USER=kanybek
       - POSTGRES_DATABASENAME=databasename
       # you can also set the postgres username and database name
-go:
-  restart: always
-  build: ./api
-  ports:
-    - 8080:8080
-  links:
-    - postgres:db
-#  environment:
-#    - DB_NAME=project
-#  volumes:
-#        - ./api:/go/src/github.com/KanybekMomukeyev/goDockerCompose/api
 #go:
 #  restart: always
-#  build: ./grpc
+#  build: ./api
 #  ports:
-#    - 50051:50051
+#    - 8080:8080
 #  links:
 #    - postgres:db
+##  environment:
+##    - DB_NAME=project
+##  volumes:
+##        - ./api:/go/src/github.com/KanybekMomukeyev/goDockerCompose/api
+go:
+  restart: always
+  build: ./grpc
+  ports:
+    - 50051:50051
+  links:
+    - postgres:db
 
 
