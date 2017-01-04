@@ -30,7 +30,7 @@ func CreateTableIfNotExsists(db *sqlx.DB) {
 	db.MustExec(schemaCustomer)
 }
 
-func StoreCustomer(db *sqlx.DB, customer *pb.CustomerRequest) (int64, error) {
+func StoreCustomer(db *sqlx.DB, customer *pb.CustomerRequest) (uint64, error) {
 	tx := db.MustBegin()
 	result := tx.MustExec("INSERT INTO customer (first_name, email, phone) VALUES ($1, $2, $3) RETURNING cid", customer.Name, customer.Phone, customer.Email)
 
@@ -45,14 +45,14 @@ func StoreCustomer(db *sqlx.DB, customer *pb.CustomerRequest) (int64, error) {
 		return 0, commitError
 	}
 
-	return lastId, nil
+	return uint64(lastId), nil
 }
 
-func StoreCustomer2(db *sqlx.DB, customer *pb.CustomerRequest) (int32, error)  {
+func StoreCustomer2(db *sqlx.DB, customer *pb.CustomerRequest) (uint64, error)  {
 
 	tx := db.MustBegin()
 
-	var lastInsertId int32
+	var lastInsertId uint64
 	err := tx.QueryRow("INSERT INTO customer (first_name, phone, email) VALUES($1, $2, $3) returning cid;", customer.Name, customer.Phone, customer.Email).Scan(&lastInsertId)
 	checkErr(err)
 

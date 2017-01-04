@@ -16,8 +16,7 @@ const (
 )
 
 // createCustomer calls the RPC method CreateCustomer of CustomerServer
-func createCustomer(client pb.CustomerClient, customer *pb.CustomerRequest) {
-
+func createCustomer(client pb.CustomerServiceClient, customer *pb.CustomerRequest) {
 
 	resp, err := client.CreateCustomer(context.Background(), customer)
 	if err != nil {
@@ -29,7 +28,7 @@ func createCustomer(client pb.CustomerClient, customer *pb.CustomerRequest) {
 }
 
 // getCustomers calls the RPC method GetCustomers of CustomerServer
-func getCustomers(client pb.CustomerClient, filter *pb.CustomerFilter) {
+func getCustomers(client pb.CustomerServiceClient, filter *pb.CustomerFilter) {
 	// calling the streaming API
 	stream, err := client.GetCustomers(context.Background(), filter)
 	if err != nil {
@@ -55,8 +54,7 @@ func main() {
 	}
 	defer conn.Close()
 	// Creates a new CustomerClient
-	client := pb.NewCustomerClient(conn)
-
+	client := pb.NewCustomerServiceClient(conn)
 	customer := &pb.CustomerRequest{
 		Id:    101,
 		Name:  "Shiju Varghese",

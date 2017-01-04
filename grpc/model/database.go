@@ -11,9 +11,6 @@ import (
 
 func NewDB(dataSourceName string) (*sqlx.DB, error) {
 
-	//db, err := sqlx.Connect("postgres", "dbname=blog_test user=kanybek password=nazgulum host=localhost sslmode=disable")
-	// user=kanybek dbname=databasename password=nazgulum host=172.17.0.4 port=5432 sslmode=disable
-
 	connInfo := fmt.Sprintf(
 		"user=%s dbname=%s password=%s host=%s port=%s sslmode=disable",
 		os.Getenv("DB_ENV_POSTGRES_USER"),

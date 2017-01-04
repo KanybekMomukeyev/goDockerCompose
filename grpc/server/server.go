@@ -37,7 +37,7 @@ func (s *server) CreateCustomer(ctx context.Context, customerReq *pb.CustomerReq
 }
 
 // GetCustomers returns all customers by given filter
-func (s *server) GetCustomers(filter *pb.CustomerFilter, stream pb.Customer_GetCustomersServer) error {
+func (s *server) GetCustomers(filter *pb.CustomerFilter, stream pb.CustomerService_GetCustomersServer) error {
 
 	//customers, _ := model.AllCustomers(db)
 	customers, _ := model.AllCustomersAuto(db)
@@ -78,6 +78,6 @@ func main() {
 
 	// Creates a new gRPC server
 	s := grpc.NewServer()
-	pb.RegisterCustomerServer(s, &server{})
+	pb.RegisterCustomerServiceServer(s, &server{})
 	s.Serve(lis)
 }

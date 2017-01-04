@@ -3,7 +3,7 @@ package proto;
 
 
 // The Customer service definition.
-service Customer {
+service CustomerService {
     // Get all Customers with filter - A server-to-client streaming RPC.
     rpc GetCustomers(CustomerFilter) returns (stream CustomerRequest) {}
     // Create a new Customer - A simple RPC
@@ -12,7 +12,7 @@ service Customer {
 
 // Request message for creating a new customer
 message CustomerRequest {
-    int32 id = 1;  // Unique ID number for a Customer.
+    uint64 id = 1;  // Unique ID number for a Customer.
     string name = 2;
     string email = 3;
     string phone= 4;
@@ -29,7 +29,7 @@ message CustomerRequest {
 }
 
 message CustomerResponse {
-    int32 id = 1;
+    uint64 id = 1;
     bool success = 2;
 }
 message CustomerFilter {
