@@ -1,17 +1,16 @@
 syntax = "proto3";
 package proto;
 
-
 // The Customer service definition.
-service CustomerService {
-    // Get all Customers with filter - A server-to-client streaming RPC.
-    rpc GetCustomers(CustomerFilter) returns (stream CustomerRequest) {}
-    // Create a new Customer - A simple RPC
-    rpc CreateCustomer (CustomerRequest) returns (CustomerResponse) {}
+service RentautomationService {
+    // Get all Examples with filter - A server-to-client streaming RPC.
+    rpc GetExamples(ExampleFilter) returns (stream ExampleRequest) {}
+    // Create a new Example - A simple RPC
+    rpc CreateExample (ExampleRequest) returns (ExampleResponse) {}
 }
 
 // Request message for creating a new customer
-message CustomerRequest {
+message ExampleRequest {
     uint64 id = 1;  // Unique ID number for a Customer.
     string name = 2;
     string email = 3;
@@ -28,10 +27,119 @@ message CustomerRequest {
     repeated Address addresses = 5;
 }
 
-message CustomerResponse {
+message ExampleResponse {
     uint64 id = 1;
     bool success = 2;
 }
-message CustomerFilter {
+
+message ExampleFilter {
     string keyword = 1;
+}
+
+// static objects
+message StaffRequest {
+    uint64 staffId = 1;
+    uint64 roleId = 2;
+    string staffImagePath = 3;
+    string firstName = 4;
+    string secondName = 5;
+    string email = 6;
+    string password = 7;
+    string phoneNumber = 8;
+    string address = 9;
+}
+
+message RoleRequest {
+    uint64 roleId = 1;
+    string roleName = 2;
+}
+
+message ProductRequest {
+    uint64 productId = 1;
+    string productImagePath = 2;
+    string productName = 3;
+    uint64 supplierId = 4;
+    uint64 categoryId = 5;
+    string barcode = 6;
+    string quantityPerUnit = 7;
+    double saleUnitPrice = 8;
+    double incomeUnitPrice = 9;
+    double unitsInStock = 10;
+}
+
+message CategoryRequest {
+    uint64 categoryId = 1;
+    string categoryName = 2;
+}
+
+message CustomerRequest {
+    uint64 customerId = 1;
+    string customerImagePath = 2;
+    string firstName = 3;
+    string secondName = 4;
+    string phoneNumber = 5;
+    string address = 6;
+}
+
+message SupplierRequest {
+    uint64 supplierId = 1;
+    string supplierImagePath = 2;
+    string companyName = 3;
+    string contactFname = 4;
+    string phoneNumber = 5;
+    string address = 6;
+}
+
+message AccountRequest {
+    uint64 accountId = 1;
+    uint64 customerId = 2;
+    uint64 supplierId = 3;
+    double balance = 4;
+}
+
+// static objects
+message OrderRequest {
+    uint64 orderId = 1;
+    uint32 orderDocument = 2;
+    uint32 moneyMovementType = 3;
+    string billingNo = 4;
+    uint64 staffId = 5;
+    uint64 customerId = 6;
+    uint64 supplierId = 7;
+    uint64 orderDate = 8;
+    uint64 paymentId = 9;
+    string errorMsg = 10;
+    string comment = 11;
+
+    bool isDeleted = 12;
+    bool isPaid = 13;
+    bool isEdited = 14;
+}
+
+message PaymentRequest {
+    uint64 paymentId = 1;
+    double totalOrderPrice = 2;
+    double discount = 3;
+    double totalPriceWithDiscount = 4;
+}
+
+message OrderDetailRequest {
+    uint64 orderDetailId = 1;
+    uint64 orderId = 2;
+    uint64 productId = 3;
+    string billingNo = 4;
+    double price = 5;
+    double orderQuantity = 6;
+    int32 discount = 7;
+}
+
+message TransactionRequest {
+    uint64 transactionId = 1;
+    uint64 transactionDate = 2;
+    uint32 transactionType = 3;
+    double moneyAmount = 4;
+    uint64 orderId = 5;
+    uint64 customerId = 6;
+    uint64 supplierId = 7;
+    uint64 staffId = 8;
 }

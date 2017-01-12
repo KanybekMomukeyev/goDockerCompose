@@ -22,22 +22,23 @@ const (
 
 // server is used to implement customer.CustomerServer.
 type server struct {
-	savedCustomers []*pb.CustomerRequest
+	savedCustomers []*pb.ExampleRequest
 }
 
 // CreateCustomer creates a new Customer
-func (s *server) CreateCustomer(ctx context.Context, customerReq *pb.CustomerRequest) (*pb.CustomerResponse, error) {
+func (s *server) CreateExample(ctx context.Context, customerReq *pb.ExampleRequest) (*pb.ExampleResponse, error) {
 	s.savedCustomers = append(s.savedCustomers, customerReq)
 	unique_key, storeError := model.StoreCustomer2(db, customerReq)
 	if storeError != nil {
 		return nil, storeError
 	}
 	fmt.Printf("unique_key ==> %#v\n", unique_key)
-	return &pb.CustomerResponse{Id: unique_key, Success: true}, nil
+	return &pb.ExampleResponse{Id: unique_key, Success: true}, nil
 }
 
 // GetCustomers returns all customers by given filter
-func (s *server) GetCustomers(filter *pb.CustomerFilter, stream pb.CustomerService_GetCustomersServer) error {
+
+func (s *server) GetExamples(filter *pb.ExampleFilter, stream pb.RentautomationService_GetExamplesServer) error {
 
 	//customers, _ := model.AllCustomers(db)
 	customers, _ := model.AllCustomersAuto(db)
@@ -47,6 +48,7 @@ func (s *server) GetCustomers(filter *pb.CustomerFilter, stream pb.CustomerServi
 	}
 
 	for _, customer := range s.savedCustomers {
+
 		if filter.Keyword != "" {
 			if !strings.Contains(customer.Name, filter.Keyword) {
 				continue
@@ -77,6 +79,6 @@ func main() {
 
 	// Creates a new gRPC server
 	s := grpc.NewServer()
-	pb.RegisterCustomerServiceServer(s, &server{})
+	pb.RegisterRentautomationServiceServer(s, &server{})
 	s.Serve(lis)
 }

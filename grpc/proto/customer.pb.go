@@ -9,9 +9,20 @@ It is generated from these files:
 	customer.proto
 
 It has these top-level messages:
+	ExampleRequest
+	ExampleResponse
+	ExampleFilter
+	StaffRequest
+	RoleRequest
+	ProductRequest
+	CategoryRequest
 	CustomerRequest
-	CustomerResponse
-	CustomerFilter
+	SupplierRequest
+	AccountRequest
+	OrderRequest
+	PaymentRequest
+	OrderDetailRequest
+	TransactionRequest
 */
 package proto
 
@@ -36,55 +47,55 @@ var _ = math.Inf
 const _ = proto1.ProtoPackageIsVersion2 // please upgrade the proto package
 
 // Request message for creating a new customer
-type CustomerRequest struct {
-	Id        uint64                     `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
-	Name      string                     `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Email     string                     `protobuf:"bytes,3,opt,name=email" json:"email,omitempty"`
-	Phone     string                     `protobuf:"bytes,4,opt,name=phone" json:"phone,omitempty"`
-	Addresses []*CustomerRequest_Address `protobuf:"bytes,5,rep,name=addresses" json:"addresses,omitempty"`
+type ExampleRequest struct {
+	Id        uint64                    `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
+	Name      string                    `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Email     string                    `protobuf:"bytes,3,opt,name=email" json:"email,omitempty"`
+	Phone     string                    `protobuf:"bytes,4,opt,name=phone" json:"phone,omitempty"`
+	Addresses []*ExampleRequest_Address `protobuf:"bytes,5,rep,name=addresses" json:"addresses,omitempty"`
 }
 
-func (m *CustomerRequest) Reset()                    { *m = CustomerRequest{} }
-func (m *CustomerRequest) String() string            { return proto1.CompactTextString(m) }
-func (*CustomerRequest) ProtoMessage()               {}
-func (*CustomerRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
+func (m *ExampleRequest) Reset()                    { *m = ExampleRequest{} }
+func (m *ExampleRequest) String() string            { return proto1.CompactTextString(m) }
+func (*ExampleRequest) ProtoMessage()               {}
+func (*ExampleRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
 
-func (m *CustomerRequest) GetId() uint64 {
+func (m *ExampleRequest) GetId() uint64 {
 	if m != nil {
 		return m.Id
 	}
 	return 0
 }
 
-func (m *CustomerRequest) GetName() string {
+func (m *ExampleRequest) GetName() string {
 	if m != nil {
 		return m.Name
 	}
 	return ""
 }
 
-func (m *CustomerRequest) GetEmail() string {
+func (m *ExampleRequest) GetEmail() string {
 	if m != nil {
 		return m.Email
 	}
 	return ""
 }
 
-func (m *CustomerRequest) GetPhone() string {
+func (m *ExampleRequest) GetPhone() string {
 	if m != nil {
 		return m.Phone
 	}
 	return ""
 }
 
-func (m *CustomerRequest) GetAddresses() []*CustomerRequest_Address {
+func (m *ExampleRequest) GetAddresses() []*ExampleRequest_Address {
 	if m != nil {
 		return m.Addresses
 	}
 	return nil
 }
 
-type CustomerRequest_Address struct {
+type ExampleRequest_Address struct {
 	Street            string `protobuf:"bytes,1,opt,name=street" json:"street,omitempty"`
 	City              string `protobuf:"bytes,2,opt,name=city" json:"city,omitempty"`
 	State             string `protobuf:"bytes,3,opt,name=state" json:"state,omitempty"`
@@ -92,91 +103,768 @@ type CustomerRequest_Address struct {
 	IsShippingAddress bool   `protobuf:"varint,5,opt,name=isShippingAddress" json:"isShippingAddress,omitempty"`
 }
 
-func (m *CustomerRequest_Address) Reset()                    { *m = CustomerRequest_Address{} }
-func (m *CustomerRequest_Address) String() string            { return proto1.CompactTextString(m) }
-func (*CustomerRequest_Address) ProtoMessage()               {}
-func (*CustomerRequest_Address) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0, 0} }
+func (m *ExampleRequest_Address) Reset()                    { *m = ExampleRequest_Address{} }
+func (m *ExampleRequest_Address) String() string            { return proto1.CompactTextString(m) }
+func (*ExampleRequest_Address) ProtoMessage()               {}
+func (*ExampleRequest_Address) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0, 0} }
 
-func (m *CustomerRequest_Address) GetStreet() string {
+func (m *ExampleRequest_Address) GetStreet() string {
 	if m != nil {
 		return m.Street
 	}
 	return ""
 }
 
-func (m *CustomerRequest_Address) GetCity() string {
+func (m *ExampleRequest_Address) GetCity() string {
 	if m != nil {
 		return m.City
 	}
 	return ""
 }
 
-func (m *CustomerRequest_Address) GetState() string {
+func (m *ExampleRequest_Address) GetState() string {
 	if m != nil {
 		return m.State
 	}
 	return ""
 }
 
-func (m *CustomerRequest_Address) GetZip() string {
+func (m *ExampleRequest_Address) GetZip() string {
 	if m != nil {
 		return m.Zip
 	}
 	return ""
 }
 
-func (m *CustomerRequest_Address) GetIsShippingAddress() bool {
+func (m *ExampleRequest_Address) GetIsShippingAddress() bool {
 	if m != nil {
 		return m.IsShippingAddress
 	}
 	return false
 }
 
-type CustomerResponse struct {
+type ExampleResponse struct {
 	Id      uint64 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
 	Success bool   `protobuf:"varint,2,opt,name=success" json:"success,omitempty"`
 }
 
-func (m *CustomerResponse) Reset()                    { *m = CustomerResponse{} }
-func (m *CustomerResponse) String() string            { return proto1.CompactTextString(m) }
-func (*CustomerResponse) ProtoMessage()               {}
-func (*CustomerResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
+func (m *ExampleResponse) Reset()                    { *m = ExampleResponse{} }
+func (m *ExampleResponse) String() string            { return proto1.CompactTextString(m) }
+func (*ExampleResponse) ProtoMessage()               {}
+func (*ExampleResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
 
-func (m *CustomerResponse) GetId() uint64 {
+func (m *ExampleResponse) GetId() uint64 {
 	if m != nil {
 		return m.Id
 	}
 	return 0
 }
 
-func (m *CustomerResponse) GetSuccess() bool {
+func (m *ExampleResponse) GetSuccess() bool {
 	if m != nil {
 		return m.Success
 	}
 	return false
 }
 
-type CustomerFilter struct {
+type ExampleFilter struct {
 	Keyword string `protobuf:"bytes,1,opt,name=keyword" json:"keyword,omitempty"`
 }
 
-func (m *CustomerFilter) Reset()                    { *m = CustomerFilter{} }
-func (m *CustomerFilter) String() string            { return proto1.CompactTextString(m) }
-func (*CustomerFilter) ProtoMessage()               {}
-func (*CustomerFilter) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
+func (m *ExampleFilter) Reset()                    { *m = ExampleFilter{} }
+func (m *ExampleFilter) String() string            { return proto1.CompactTextString(m) }
+func (*ExampleFilter) ProtoMessage()               {}
+func (*ExampleFilter) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
 
-func (m *CustomerFilter) GetKeyword() string {
+func (m *ExampleFilter) GetKeyword() string {
 	if m != nil {
 		return m.Keyword
 	}
 	return ""
 }
 
+// static objects
+type StaffRequest struct {
+	StaffId        uint64 `protobuf:"varint,1,opt,name=staffId" json:"staffId,omitempty"`
+	RoleId         uint64 `protobuf:"varint,2,opt,name=roleId" json:"roleId,omitempty"`
+	StaffImagePath string `protobuf:"bytes,3,opt,name=staffImagePath" json:"staffImagePath,omitempty"`
+	FirstName      string `protobuf:"bytes,4,opt,name=firstName" json:"firstName,omitempty"`
+	SecondName     string `protobuf:"bytes,5,opt,name=secondName" json:"secondName,omitempty"`
+	Email          string `protobuf:"bytes,6,opt,name=email" json:"email,omitempty"`
+	Password       string `protobuf:"bytes,7,opt,name=password" json:"password,omitempty"`
+	PhoneNumber    string `protobuf:"bytes,8,opt,name=phoneNumber" json:"phoneNumber,omitempty"`
+	Address        string `protobuf:"bytes,9,opt,name=address" json:"address,omitempty"`
+}
+
+func (m *StaffRequest) Reset()                    { *m = StaffRequest{} }
+func (m *StaffRequest) String() string            { return proto1.CompactTextString(m) }
+func (*StaffRequest) ProtoMessage()               {}
+func (*StaffRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
+
+func (m *StaffRequest) GetStaffId() uint64 {
+	if m != nil {
+		return m.StaffId
+	}
+	return 0
+}
+
+func (m *StaffRequest) GetRoleId() uint64 {
+	if m != nil {
+		return m.RoleId
+	}
+	return 0
+}
+
+func (m *StaffRequest) GetStaffImagePath() string {
+	if m != nil {
+		return m.StaffImagePath
+	}
+	return ""
+}
+
+func (m *StaffRequest) GetFirstName() string {
+	if m != nil {
+		return m.FirstName
+	}
+	return ""
+}
+
+func (m *StaffRequest) GetSecondName() string {
+	if m != nil {
+		return m.SecondName
+	}
+	return ""
+}
+
+func (m *StaffRequest) GetEmail() string {
+	if m != nil {
+		return m.Email
+	}
+	return ""
+}
+
+func (m *StaffRequest) GetPassword() string {
+	if m != nil {
+		return m.Password
+	}
+	return ""
+}
+
+func (m *StaffRequest) GetPhoneNumber() string {
+	if m != nil {
+		return m.PhoneNumber
+	}
+	return ""
+}
+
+func (m *StaffRequest) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
+type RoleRequest struct {
+	RoleId   uint64 `protobuf:"varint,1,opt,name=roleId" json:"roleId,omitempty"`
+	RoleName string `protobuf:"bytes,2,opt,name=roleName" json:"roleName,omitempty"`
+}
+
+func (m *RoleRequest) Reset()                    { *m = RoleRequest{} }
+func (m *RoleRequest) String() string            { return proto1.CompactTextString(m) }
+func (*RoleRequest) ProtoMessage()               {}
+func (*RoleRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
+
+func (m *RoleRequest) GetRoleId() uint64 {
+	if m != nil {
+		return m.RoleId
+	}
+	return 0
+}
+
+func (m *RoleRequest) GetRoleName() string {
+	if m != nil {
+		return m.RoleName
+	}
+	return ""
+}
+
+type ProductRequest struct {
+	ProductId        uint64  `protobuf:"varint,1,opt,name=productId" json:"productId,omitempty"`
+	ProductImagePath string  `protobuf:"bytes,2,opt,name=productImagePath" json:"productImagePath,omitempty"`
+	ProductName      string  `protobuf:"bytes,3,opt,name=productName" json:"productName,omitempty"`
+	SupplierId       uint64  `protobuf:"varint,4,opt,name=supplierId" json:"supplierId,omitempty"`
+	CategoryId       uint64  `protobuf:"varint,5,opt,name=categoryId" json:"categoryId,omitempty"`
+	Barcode          string  `protobuf:"bytes,6,opt,name=barcode" json:"barcode,omitempty"`
+	QuantityPerUnit  string  `protobuf:"bytes,7,opt,name=quantityPerUnit" json:"quantityPerUnit,omitempty"`
+	SaleUnitPrice    float64 `protobuf:"fixed64,8,opt,name=saleUnitPrice" json:"saleUnitPrice,omitempty"`
+	IncomeUnitPrice  float64 `protobuf:"fixed64,9,opt,name=incomeUnitPrice" json:"incomeUnitPrice,omitempty"`
+	UnitsInStock     float64 `protobuf:"fixed64,10,opt,name=unitsInStock" json:"unitsInStock,omitempty"`
+}
+
+func (m *ProductRequest) Reset()                    { *m = ProductRequest{} }
+func (m *ProductRequest) String() string            { return proto1.CompactTextString(m) }
+func (*ProductRequest) ProtoMessage()               {}
+func (*ProductRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
+
+func (m *ProductRequest) GetProductId() uint64 {
+	if m != nil {
+		return m.ProductId
+	}
+	return 0
+}
+
+func (m *ProductRequest) GetProductImagePath() string {
+	if m != nil {
+		return m.ProductImagePath
+	}
+	return ""
+}
+
+func (m *ProductRequest) GetProductName() string {
+	if m != nil {
+		return m.ProductName
+	}
+	return ""
+}
+
+func (m *ProductRequest) GetSupplierId() uint64 {
+	if m != nil {
+		return m.SupplierId
+	}
+	return 0
+}
+
+func (m *ProductRequest) GetCategoryId() uint64 {
+	if m != nil {
+		return m.CategoryId
+	}
+	return 0
+}
+
+func (m *ProductRequest) GetBarcode() string {
+	if m != nil {
+		return m.Barcode
+	}
+	return ""
+}
+
+func (m *ProductRequest) GetQuantityPerUnit() string {
+	if m != nil {
+		return m.QuantityPerUnit
+	}
+	return ""
+}
+
+func (m *ProductRequest) GetSaleUnitPrice() float64 {
+	if m != nil {
+		return m.SaleUnitPrice
+	}
+	return 0
+}
+
+func (m *ProductRequest) GetIncomeUnitPrice() float64 {
+	if m != nil {
+		return m.IncomeUnitPrice
+	}
+	return 0
+}
+
+func (m *ProductRequest) GetUnitsInStock() float64 {
+	if m != nil {
+		return m.UnitsInStock
+	}
+	return 0
+}
+
+type CategoryRequest struct {
+	CategoryId   uint64 `protobuf:"varint,1,opt,name=categoryId" json:"categoryId,omitempty"`
+	CategoryName string `protobuf:"bytes,2,opt,name=categoryName" json:"categoryName,omitempty"`
+}
+
+func (m *CategoryRequest) Reset()                    { *m = CategoryRequest{} }
+func (m *CategoryRequest) String() string            { return proto1.CompactTextString(m) }
+func (*CategoryRequest) ProtoMessage()               {}
+func (*CategoryRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{6} }
+
+func (m *CategoryRequest) GetCategoryId() uint64 {
+	if m != nil {
+		return m.CategoryId
+	}
+	return 0
+}
+
+func (m *CategoryRequest) GetCategoryName() string {
+	if m != nil {
+		return m.CategoryName
+	}
+	return ""
+}
+
+type CustomerRequest struct {
+	CustomerId        uint64 `protobuf:"varint,1,opt,name=customerId" json:"customerId,omitempty"`
+	CustomerImagePath string `protobuf:"bytes,2,opt,name=customerImagePath" json:"customerImagePath,omitempty"`
+	FirstName         string `protobuf:"bytes,3,opt,name=firstName" json:"firstName,omitempty"`
+	SecondName        string `protobuf:"bytes,4,opt,name=secondName" json:"secondName,omitempty"`
+	PhoneNumber       string `protobuf:"bytes,5,opt,name=phoneNumber" json:"phoneNumber,omitempty"`
+	Address           string `protobuf:"bytes,6,opt,name=address" json:"address,omitempty"`
+}
+
+func (m *CustomerRequest) Reset()                    { *m = CustomerRequest{} }
+func (m *CustomerRequest) String() string            { return proto1.CompactTextString(m) }
+func (*CustomerRequest) ProtoMessage()               {}
+func (*CustomerRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{7} }
+
+func (m *CustomerRequest) GetCustomerId() uint64 {
+	if m != nil {
+		return m.CustomerId
+	}
+	return 0
+}
+
+func (m *CustomerRequest) GetCustomerImagePath() string {
+	if m != nil {
+		return m.CustomerImagePath
+	}
+	return ""
+}
+
+func (m *CustomerRequest) GetFirstName() string {
+	if m != nil {
+		return m.FirstName
+	}
+	return ""
+}
+
+func (m *CustomerRequest) GetSecondName() string {
+	if m != nil {
+		return m.SecondName
+	}
+	return ""
+}
+
+func (m *CustomerRequest) GetPhoneNumber() string {
+	if m != nil {
+		return m.PhoneNumber
+	}
+	return ""
+}
+
+func (m *CustomerRequest) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
+type SupplierRequest struct {
+	SupplierId        uint64 `protobuf:"varint,1,opt,name=supplierId" json:"supplierId,omitempty"`
+	SupplierImagePath string `protobuf:"bytes,2,opt,name=supplierImagePath" json:"supplierImagePath,omitempty"`
+	CompanyName       string `protobuf:"bytes,3,opt,name=companyName" json:"companyName,omitempty"`
+	ContactFname      string `protobuf:"bytes,4,opt,name=contactFname" json:"contactFname,omitempty"`
+	PhoneNumber       string `protobuf:"bytes,5,opt,name=phoneNumber" json:"phoneNumber,omitempty"`
+	Address           string `protobuf:"bytes,6,opt,name=address" json:"address,omitempty"`
+}
+
+func (m *SupplierRequest) Reset()                    { *m = SupplierRequest{} }
+func (m *SupplierRequest) String() string            { return proto1.CompactTextString(m) }
+func (*SupplierRequest) ProtoMessage()               {}
+func (*SupplierRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{8} }
+
+func (m *SupplierRequest) GetSupplierId() uint64 {
+	if m != nil {
+		return m.SupplierId
+	}
+	return 0
+}
+
+func (m *SupplierRequest) GetSupplierImagePath() string {
+	if m != nil {
+		return m.SupplierImagePath
+	}
+	return ""
+}
+
+func (m *SupplierRequest) GetCompanyName() string {
+	if m != nil {
+		return m.CompanyName
+	}
+	return ""
+}
+
+func (m *SupplierRequest) GetContactFname() string {
+	if m != nil {
+		return m.ContactFname
+	}
+	return ""
+}
+
+func (m *SupplierRequest) GetPhoneNumber() string {
+	if m != nil {
+		return m.PhoneNumber
+	}
+	return ""
+}
+
+func (m *SupplierRequest) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
+type AccountRequest struct {
+	AccountId  uint64  `protobuf:"varint,1,opt,name=accountId" json:"accountId,omitempty"`
+	CustomerId uint64  `protobuf:"varint,2,opt,name=customerId" json:"customerId,omitempty"`
+	SupplierId uint64  `protobuf:"varint,3,opt,name=supplierId" json:"supplierId,omitempty"`
+	Balance    float64 `protobuf:"fixed64,4,opt,name=balance" json:"balance,omitempty"`
+}
+
+func (m *AccountRequest) Reset()                    { *m = AccountRequest{} }
+func (m *AccountRequest) String() string            { return proto1.CompactTextString(m) }
+func (*AccountRequest) ProtoMessage()               {}
+func (*AccountRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{9} }
+
+func (m *AccountRequest) GetAccountId() uint64 {
+	if m != nil {
+		return m.AccountId
+	}
+	return 0
+}
+
+func (m *AccountRequest) GetCustomerId() uint64 {
+	if m != nil {
+		return m.CustomerId
+	}
+	return 0
+}
+
+func (m *AccountRequest) GetSupplierId() uint64 {
+	if m != nil {
+		return m.SupplierId
+	}
+	return 0
+}
+
+func (m *AccountRequest) GetBalance() float64 {
+	if m != nil {
+		return m.Balance
+	}
+	return 0
+}
+
+// static objects
+type OrderRequest struct {
+	OrderId           uint64 `protobuf:"varint,1,opt,name=orderId" json:"orderId,omitempty"`
+	OrderDocument     uint32 `protobuf:"varint,2,opt,name=orderDocument" json:"orderDocument,omitempty"`
+	MoneyMovementType uint32 `protobuf:"varint,3,opt,name=moneyMovementType" json:"moneyMovementType,omitempty"`
+	BillingNo         string `protobuf:"bytes,4,opt,name=billingNo" json:"billingNo,omitempty"`
+	StaffId           uint64 `protobuf:"varint,5,opt,name=staffId" json:"staffId,omitempty"`
+	CustomerId        uint64 `protobuf:"varint,6,opt,name=customerId" json:"customerId,omitempty"`
+	SupplierId        uint64 `protobuf:"varint,7,opt,name=supplierId" json:"supplierId,omitempty"`
+	OrderDate         uint64 `protobuf:"varint,8,opt,name=orderDate" json:"orderDate,omitempty"`
+	PaymentId         uint64 `protobuf:"varint,9,opt,name=paymentId" json:"paymentId,omitempty"`
+	ErrorMsg          string `protobuf:"bytes,10,opt,name=errorMsg" json:"errorMsg,omitempty"`
+	Comment           string `protobuf:"bytes,11,opt,name=comment" json:"comment,omitempty"`
+	IsDeleted         bool   `protobuf:"varint,12,opt,name=isDeleted" json:"isDeleted,omitempty"`
+	IsPaid            bool   `protobuf:"varint,13,opt,name=isPaid" json:"isPaid,omitempty"`
+	IsEdited          bool   `protobuf:"varint,14,opt,name=isEdited" json:"isEdited,omitempty"`
+}
+
+func (m *OrderRequest) Reset()                    { *m = OrderRequest{} }
+func (m *OrderRequest) String() string            { return proto1.CompactTextString(m) }
+func (*OrderRequest) ProtoMessage()               {}
+func (*OrderRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{10} }
+
+func (m *OrderRequest) GetOrderId() uint64 {
+	if m != nil {
+		return m.OrderId
+	}
+	return 0
+}
+
+func (m *OrderRequest) GetOrderDocument() uint32 {
+	if m != nil {
+		return m.OrderDocument
+	}
+	return 0
+}
+
+func (m *OrderRequest) GetMoneyMovementType() uint32 {
+	if m != nil {
+		return m.MoneyMovementType
+	}
+	return 0
+}
+
+func (m *OrderRequest) GetBillingNo() string {
+	if m != nil {
+		return m.BillingNo
+	}
+	return ""
+}
+
+func (m *OrderRequest) GetStaffId() uint64 {
+	if m != nil {
+		return m.StaffId
+	}
+	return 0
+}
+
+func (m *OrderRequest) GetCustomerId() uint64 {
+	if m != nil {
+		return m.CustomerId
+	}
+	return 0
+}
+
+func (m *OrderRequest) GetSupplierId() uint64 {
+	if m != nil {
+		return m.SupplierId
+	}
+	return 0
+}
+
+func (m *OrderRequest) GetOrderDate() uint64 {
+	if m != nil {
+		return m.OrderDate
+	}
+	return 0
+}
+
+func (m *OrderRequest) GetPaymentId() uint64 {
+	if m != nil {
+		return m.PaymentId
+	}
+	return 0
+}
+
+func (m *OrderRequest) GetErrorMsg() string {
+	if m != nil {
+		return m.ErrorMsg
+	}
+	return ""
+}
+
+func (m *OrderRequest) GetComment() string {
+	if m != nil {
+		return m.Comment
+	}
+	return ""
+}
+
+func (m *OrderRequest) GetIsDeleted() bool {
+	if m != nil {
+		return m.IsDeleted
+	}
+	return false
+}
+
+func (m *OrderRequest) GetIsPaid() bool {
+	if m != nil {
+		return m.IsPaid
+	}
+	return false
+}
+
+func (m *OrderRequest) GetIsEdited() bool {
+	if m != nil {
+		return m.IsEdited
+	}
+	return false
+}
+
+type PaymentRequest struct {
+	PaymentId              uint64  `protobuf:"varint,1,opt,name=paymentId" json:"paymentId,omitempty"`
+	TotalOrderPrice        float64 `protobuf:"fixed64,2,opt,name=totalOrderPrice" json:"totalOrderPrice,omitempty"`
+	Discount               float64 `protobuf:"fixed64,3,opt,name=discount" json:"discount,omitempty"`
+	TotalPriceWithDiscount float64 `protobuf:"fixed64,4,opt,name=totalPriceWithDiscount" json:"totalPriceWithDiscount,omitempty"`
+}
+
+func (m *PaymentRequest) Reset()                    { *m = PaymentRequest{} }
+func (m *PaymentRequest) String() string            { return proto1.CompactTextString(m) }
+func (*PaymentRequest) ProtoMessage()               {}
+func (*PaymentRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{11} }
+
+func (m *PaymentRequest) GetPaymentId() uint64 {
+	if m != nil {
+		return m.PaymentId
+	}
+	return 0
+}
+
+func (m *PaymentRequest) GetTotalOrderPrice() float64 {
+	if m != nil {
+		return m.TotalOrderPrice
+	}
+	return 0
+}
+
+func (m *PaymentRequest) GetDiscount() float64 {
+	if m != nil {
+		return m.Discount
+	}
+	return 0
+}
+
+func (m *PaymentRequest) GetTotalPriceWithDiscount() float64 {
+	if m != nil {
+		return m.TotalPriceWithDiscount
+	}
+	return 0
+}
+
+type OrderDetailRequest struct {
+	OrderDetailId uint64  `protobuf:"varint,1,opt,name=orderDetailId" json:"orderDetailId,omitempty"`
+	OrderId       uint64  `protobuf:"varint,2,opt,name=orderId" json:"orderId,omitempty"`
+	ProductId     uint64  `protobuf:"varint,3,opt,name=productId" json:"productId,omitempty"`
+	BillingNo     string  `protobuf:"bytes,4,opt,name=billingNo" json:"billingNo,omitempty"`
+	Price         float64 `protobuf:"fixed64,5,opt,name=price" json:"price,omitempty"`
+	OrderQuantity float64 `protobuf:"fixed64,6,opt,name=orderQuantity" json:"orderQuantity,omitempty"`
+	Discount      int32   `protobuf:"varint,7,opt,name=discount" json:"discount,omitempty"`
+}
+
+func (m *OrderDetailRequest) Reset()                    { *m = OrderDetailRequest{} }
+func (m *OrderDetailRequest) String() string            { return proto1.CompactTextString(m) }
+func (*OrderDetailRequest) ProtoMessage()               {}
+func (*OrderDetailRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{12} }
+
+func (m *OrderDetailRequest) GetOrderDetailId() uint64 {
+	if m != nil {
+		return m.OrderDetailId
+	}
+	return 0
+}
+
+func (m *OrderDetailRequest) GetOrderId() uint64 {
+	if m != nil {
+		return m.OrderId
+	}
+	return 0
+}
+
+func (m *OrderDetailRequest) GetProductId() uint64 {
+	if m != nil {
+		return m.ProductId
+	}
+	return 0
+}
+
+func (m *OrderDetailRequest) GetBillingNo() string {
+	if m != nil {
+		return m.BillingNo
+	}
+	return ""
+}
+
+func (m *OrderDetailRequest) GetPrice() float64 {
+	if m != nil {
+		return m.Price
+	}
+	return 0
+}
+
+func (m *OrderDetailRequest) GetOrderQuantity() float64 {
+	if m != nil {
+		return m.OrderQuantity
+	}
+	return 0
+}
+
+func (m *OrderDetailRequest) GetDiscount() int32 {
+	if m != nil {
+		return m.Discount
+	}
+	return 0
+}
+
+type TransactionRequest struct {
+	TransactionId   uint64  `protobuf:"varint,1,opt,name=transactionId" json:"transactionId,omitempty"`
+	TransactionDate uint64  `protobuf:"varint,2,opt,name=transactionDate" json:"transactionDate,omitempty"`
+	TransactionType uint32  `protobuf:"varint,3,opt,name=transactionType" json:"transactionType,omitempty"`
+	MoneyAmount     float64 `protobuf:"fixed64,4,opt,name=moneyAmount" json:"moneyAmount,omitempty"`
+	OrderId         uint64  `protobuf:"varint,5,opt,name=orderId" json:"orderId,omitempty"`
+	CustomerId      uint64  `protobuf:"varint,6,opt,name=customerId" json:"customerId,omitempty"`
+	SupplierId      uint64  `protobuf:"varint,7,opt,name=supplierId" json:"supplierId,omitempty"`
+	StaffId         uint64  `protobuf:"varint,8,opt,name=staffId" json:"staffId,omitempty"`
+}
+
+func (m *TransactionRequest) Reset()                    { *m = TransactionRequest{} }
+func (m *TransactionRequest) String() string            { return proto1.CompactTextString(m) }
+func (*TransactionRequest) ProtoMessage()               {}
+func (*TransactionRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{13} }
+
+func (m *TransactionRequest) GetTransactionId() uint64 {
+	if m != nil {
+		return m.TransactionId
+	}
+	return 0
+}
+
+func (m *TransactionRequest) GetTransactionDate() uint64 {
+	if m != nil {
+		return m.TransactionDate
+	}
+	return 0
+}
+
+func (m *TransactionRequest) GetTransactionType() uint32 {
+	if m != nil {
+		return m.TransactionType
+	}
+	return 0
+}
+
+func (m *TransactionRequest) GetMoneyAmount() float64 {
+	if m != nil {
+		return m.MoneyAmount
+	}
+	return 0
+}
+
+func (m *TransactionRequest) GetOrderId() uint64 {
+	if m != nil {
+		return m.OrderId
+	}
+	return 0
+}
+
+func (m *TransactionRequest) GetCustomerId() uint64 {
+	if m != nil {
+		return m.CustomerId
+	}
+	return 0
+}
+
+func (m *TransactionRequest) GetSupplierId() uint64 {
+	if m != nil {
+		return m.SupplierId
+	}
+	return 0
+}
+
+func (m *TransactionRequest) GetStaffId() uint64 {
+	if m != nil {
+		return m.StaffId
+	}
+	return 0
+}
+
 func init() {
+	proto1.RegisterType((*ExampleRequest)(nil), "proto.ExampleRequest")
+	proto1.RegisterType((*ExampleRequest_Address)(nil), "proto.ExampleRequest.Address")
+	proto1.RegisterType((*ExampleResponse)(nil), "proto.ExampleResponse")
+	proto1.RegisterType((*ExampleFilter)(nil), "proto.ExampleFilter")
+	proto1.RegisterType((*StaffRequest)(nil), "proto.StaffRequest")
+	proto1.RegisterType((*RoleRequest)(nil), "proto.RoleRequest")
+	proto1.RegisterType((*ProductRequest)(nil), "proto.ProductRequest")
+	proto1.RegisterType((*CategoryRequest)(nil), "proto.CategoryRequest")
 	proto1.RegisterType((*CustomerRequest)(nil), "proto.CustomerRequest")
-	proto1.RegisterType((*CustomerRequest_Address)(nil), "proto.CustomerRequest.Address")
-	proto1.RegisterType((*CustomerResponse)(nil), "proto.CustomerResponse")
-	proto1.RegisterType((*CustomerFilter)(nil), "proto.CustomerFilter")
+	proto1.RegisterType((*SupplierRequest)(nil), "proto.SupplierRequest")
+	proto1.RegisterType((*AccountRequest)(nil), "proto.AccountRequest")
+	proto1.RegisterType((*OrderRequest)(nil), "proto.OrderRequest")
+	proto1.RegisterType((*PaymentRequest)(nil), "proto.PaymentRequest")
+	proto1.RegisterType((*OrderDetailRequest)(nil), "proto.OrderDetailRequest")
+	proto1.RegisterType((*TransactionRequest)(nil), "proto.TransactionRequest")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -187,29 +875,29 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for CustomerService service
+// Client API for RentautomationService service
 
-type CustomerServiceClient interface {
-	// Get all Customers with filter - A server-to-client streaming RPC.
-	GetCustomers(ctx context.Context, in *CustomerFilter, opts ...grpc.CallOption) (CustomerService_GetCustomersClient, error)
-	// Create a new Customer - A simple RPC
-	CreateCustomer(ctx context.Context, in *CustomerRequest, opts ...grpc.CallOption) (*CustomerResponse, error)
+type RentautomationServiceClient interface {
+	// Get all Examples with filter - A server-to-client streaming RPC.
+	GetExamples(ctx context.Context, in *ExampleFilter, opts ...grpc.CallOption) (RentautomationService_GetExamplesClient, error)
+	// Create a new Example - A simple RPC
+	CreateExample(ctx context.Context, in *ExampleRequest, opts ...grpc.CallOption) (*ExampleResponse, error)
 }
 
-type customerServiceClient struct {
+type rentautomationServiceClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewCustomerServiceClient(cc *grpc.ClientConn) CustomerServiceClient {
-	return &customerServiceClient{cc}
+func NewRentautomationServiceClient(cc *grpc.ClientConn) RentautomationServiceClient {
+	return &rentautomationServiceClient{cc}
 }
 
-func (c *customerServiceClient) GetCustomers(ctx context.Context, in *CustomerFilter, opts ...grpc.CallOption) (CustomerService_GetCustomersClient, error) {
-	stream, err := grpc.NewClientStream(ctx, &_CustomerService_serviceDesc.Streams[0], c.cc, "/proto.CustomerService/GetCustomers", opts...)
+func (c *rentautomationServiceClient) GetExamples(ctx context.Context, in *ExampleFilter, opts ...grpc.CallOption) (RentautomationService_GetExamplesClient, error) {
+	stream, err := grpc.NewClientStream(ctx, &_RentautomationService_serviceDesc.Streams[0], c.cc, "/proto.RentautomationService/GetExamples", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &customerServiceGetCustomersClient{stream}
+	x := &rentautomationServiceGetExamplesClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -219,97 +907,97 @@ func (c *customerServiceClient) GetCustomers(ctx context.Context, in *CustomerFi
 	return x, nil
 }
 
-type CustomerService_GetCustomersClient interface {
-	Recv() (*CustomerRequest, error)
+type RentautomationService_GetExamplesClient interface {
+	Recv() (*ExampleRequest, error)
 	grpc.ClientStream
 }
 
-type customerServiceGetCustomersClient struct {
+type rentautomationServiceGetExamplesClient struct {
 	grpc.ClientStream
 }
 
-func (x *customerServiceGetCustomersClient) Recv() (*CustomerRequest, error) {
-	m := new(CustomerRequest)
+func (x *rentautomationServiceGetExamplesClient) Recv() (*ExampleRequest, error) {
+	m := new(ExampleRequest)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-func (c *customerServiceClient) CreateCustomer(ctx context.Context, in *CustomerRequest, opts ...grpc.CallOption) (*CustomerResponse, error) {
-	out := new(CustomerResponse)
-	err := grpc.Invoke(ctx, "/proto.CustomerService/CreateCustomer", in, out, c.cc, opts...)
+func (c *rentautomationServiceClient) CreateExample(ctx context.Context, in *ExampleRequest, opts ...grpc.CallOption) (*ExampleResponse, error) {
+	out := new(ExampleResponse)
+	err := grpc.Invoke(ctx, "/proto.RentautomationService/CreateExample", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for CustomerService service
+// Server API for RentautomationService service
 
-type CustomerServiceServer interface {
-	// Get all Customers with filter - A server-to-client streaming RPC.
-	GetCustomers(*CustomerFilter, CustomerService_GetCustomersServer) error
-	// Create a new Customer - A simple RPC
-	CreateCustomer(context.Context, *CustomerRequest) (*CustomerResponse, error)
+type RentautomationServiceServer interface {
+	// Get all Examples with filter - A server-to-client streaming RPC.
+	GetExamples(*ExampleFilter, RentautomationService_GetExamplesServer) error
+	// Create a new Example - A simple RPC
+	CreateExample(context.Context, *ExampleRequest) (*ExampleResponse, error)
 }
 
-func RegisterCustomerServiceServer(s *grpc.Server, srv CustomerServiceServer) {
-	s.RegisterService(&_CustomerService_serviceDesc, srv)
+func RegisterRentautomationServiceServer(s *grpc.Server, srv RentautomationServiceServer) {
+	s.RegisterService(&_RentautomationService_serviceDesc, srv)
 }
 
-func _CustomerService_GetCustomers_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(CustomerFilter)
+func _RentautomationService_GetExamples_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(ExampleFilter)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(CustomerServiceServer).GetCustomers(m, &customerServiceGetCustomersServer{stream})
+	return srv.(RentautomationServiceServer).GetExamples(m, &rentautomationServiceGetExamplesServer{stream})
 }
 
-type CustomerService_GetCustomersServer interface {
-	Send(*CustomerRequest) error
+type RentautomationService_GetExamplesServer interface {
+	Send(*ExampleRequest) error
 	grpc.ServerStream
 }
 
-type customerServiceGetCustomersServer struct {
+type rentautomationServiceGetExamplesServer struct {
 	grpc.ServerStream
 }
 
-func (x *customerServiceGetCustomersServer) Send(m *CustomerRequest) error {
+func (x *rentautomationServiceGetExamplesServer) Send(m *ExampleRequest) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _CustomerService_CreateCustomer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CustomerRequest)
+func _RentautomationService_CreateExample_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExampleRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CustomerServiceServer).CreateCustomer(ctx, in)
+		return srv.(RentautomationServiceServer).CreateExample(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.CustomerService/CreateCustomer",
+		FullMethod: "/proto.RentautomationService/CreateExample",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CustomerServiceServer).CreateCustomer(ctx, req.(*CustomerRequest))
+		return srv.(RentautomationServiceServer).CreateExample(ctx, req.(*ExampleRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _CustomerService_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "proto.CustomerService",
-	HandlerType: (*CustomerServiceServer)(nil),
+var _RentautomationService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "proto.RentautomationService",
+	HandlerType: (*RentautomationServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateCustomer",
-			Handler:    _CustomerService_CreateCustomer_Handler,
+			MethodName: "CreateExample",
+			Handler:    _RentautomationService_CreateExample_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "GetCustomers",
-			Handler:       _CustomerService_GetCustomers_Handler,
+			StreamName:    "GetExamples",
+			Handler:       _RentautomationService_GetExamples_Handler,
 			ServerStreams: true,
 		},
 	},
@@ -319,26 +1007,76 @@ var _CustomerService_serviceDesc = grpc.ServiceDesc{
 func init() { proto1.RegisterFile("customer.proto", fileDescriptor0) }
 
 var fileDescriptor0 = []byte{
-	// 331 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0x74, 0x91, 0xc1, 0x4e, 0xc2, 0x40,
-	0x10, 0x86, 0xd9, 0x42, 0x41, 0x46, 0x53, 0x71, 0xa2, 0xb8, 0xe1, 0x60, 0x9a, 0x9e, 0x1a, 0x63,
-	0x88, 0xc1, 0x2b, 0x17, 0x42, 0xa2, 0xf7, 0xf2, 0x04, 0xb5, 0x9d, 0xc8, 0x46, 0x68, 0xeb, 0xee,
-	0xa2, 0xc1, 0x57, 0xf0, 0x09, 0x7c, 0x08, 0xdf, 0xd1, 0xec, 0xb6, 0x1b, 0x12, 0xaa, 0xa7, 0xce,
-	0xff, 0xff, 0xb3, 0xb3, 0xdf, 0x4e, 0x21, 0xc8, 0x76, 0x4a, 0x97, 0x5b, 0x92, 0xd3, 0x4a, 0x96,
-	0xba, 0x44, 0xdf, 0x7e, 0xa2, 0x1f, 0x0f, 0xce, 0x97, 0x4d, 0x92, 0xd0, 0xdb, 0x8e, 0x94, 0xc6,
-	0x00, 0x3c, 0x91, 0x73, 0x16, 0xb2, 0xb8, 0x97, 0x78, 0x22, 0x47, 0x84, 0x5e, 0x91, 0x6e, 0x89,
-	0x7b, 0x21, 0x8b, 0x87, 0x89, 0xad, 0xf1, 0x12, 0x7c, 0xda, 0xa6, 0x62, 0xc3, 0xbb, 0xd6, 0xac,
-	0x85, 0x71, 0xab, 0x75, 0x59, 0x10, 0xef, 0xd5, 0xae, 0x15, 0x38, 0x87, 0x61, 0x9a, 0xe7, 0x92,
-	0x94, 0x22, 0xc5, 0xfd, 0xb0, 0x1b, 0x9f, 0xce, 0x6e, 0x6a, 0x8a, 0xe9, 0xd1, 0xd5, 0xd3, 0x45,
-	0xdd, 0x97, 0x1c, 0x0e, 0x4c, 0xbe, 0x18, 0x0c, 0x1a, 0x1b, 0xc7, 0xd0, 0x57, 0x5a, 0x12, 0x69,
-	0x4b, 0x37, 0x4c, 0x1a, 0x65, 0x08, 0x33, 0xa1, 0xf7, 0x8e, 0xd0, 0xd4, 0x86, 0x45, 0xe9, 0x54,
-	0x93, 0x23, 0xb4, 0x02, 0x47, 0xd0, 0xfd, 0x14, 0x55, 0xc3, 0x67, 0x4a, 0xbc, 0x83, 0x0b, 0xa1,
-	0x56, 0x6b, 0x51, 0x55, 0xa2, 0x78, 0x69, 0x2e, 0xe2, 0x7e, 0xc8, 0xe2, 0x93, 0xa4, 0x1d, 0x44,
-	0x73, 0x18, 0x1d, 0x98, 0x55, 0x55, 0x16, 0x8a, 0x5a, 0xfb, 0xe2, 0x30, 0x50, 0xbb, 0x2c, 0x33,
-	0x73, 0x3c, 0x3b, 0xc7, 0xc9, 0xe8, 0x16, 0x02, 0x77, 0xfa, 0x51, 0x6c, 0x34, 0x49, 0xd3, 0xfb,
-	0x4a, 0xfb, 0x8f, 0x52, 0xe6, 0xcd, 0x93, 0x9c, 0x9c, 0x7d, 0xb3, 0xc3, 0x9f, 0x59, 0x91, 0x7c,
-	0x17, 0x19, 0xe1, 0x02, 0xce, 0x9e, 0x48, 0x3b, 0x57, 0xe1, 0xd5, 0xd1, 0x1a, 0xeb, 0xa1, 0x93,
-	0xf1, 0xdf, 0xdb, 0x8d, 0x3a, 0xf7, 0x0c, 0x97, 0x10, 0x2c, 0x25, 0xa5, 0x9a, 0x5c, 0x88, 0xff,
-	0x74, 0x4f, 0xae, 0x5b, 0x7e, 0xfd, 0xde, 0xa8, 0xf3, 0xdc, 0xb7, 0xc9, 0xc3, 0x6f, 0x00, 0x00,
-	0x00, 0xff, 0xff, 0xda, 0xc3, 0x92, 0x4e, 0x55, 0x02, 0x00, 0x00,
+	// 1133 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xa4, 0x56, 0xcf, 0x6e, 0xdc, 0xb6,
+	0x13, 0x8e, 0xf6, 0x8f, 0xbd, 0x3b, 0xf6, 0xee, 0x26, 0x44, 0x62, 0x08, 0x86, 0x7f, 0x3f, 0x18,
+	0x42, 0x51, 0x6c, 0x8b, 0xc0, 0x28, 0x52, 0xa0, 0x97, 0x00, 0x45, 0x0d, 0x3b, 0x29, 0xf6, 0x10,
+	0x77, 0x2b, 0x27, 0xe8, 0x99, 0x96, 0x68, 0x9b, 0x88, 0x24, 0x2a, 0x22, 0x37, 0xed, 0xf6, 0x09,
+	0x0a, 0xf4, 0xda, 0x4b, 0xef, 0xbd, 0xb5, 0x0f, 0xd0, 0x57, 0xe9, 0xb1, 0xb7, 0x3e, 0x40, 0x1f,
+	0xa0, 0xe0, 0x90, 0x92, 0x48, 0x29, 0x75, 0x0f, 0x39, 0xad, 0xbe, 0x6f, 0x66, 0xc9, 0x99, 0x6f,
+	0xfe, 0x48, 0x30, 0x4f, 0x36, 0x52, 0x89, 0x9c, 0x55, 0x27, 0x65, 0x25, 0x94, 0x20, 0x63, 0xfc,
+	0x89, 0x7e, 0x1d, 0xc0, 0xfc, 0xd9, 0x77, 0x34, 0x2f, 0x33, 0x16, 0xb3, 0x37, 0x1b, 0x26, 0x15,
+	0x99, 0xc3, 0x80, 0xa7, 0x61, 0x70, 0x1c, 0x2c, 0x47, 0xf1, 0x80, 0xa7, 0x84, 0xc0, 0xa8, 0xa0,
+	0x39, 0x0b, 0x07, 0xc7, 0xc1, 0x72, 0x1a, 0xe3, 0x33, 0x79, 0x08, 0x63, 0x96, 0x53, 0x9e, 0x85,
+	0x43, 0x24, 0x0d, 0xd0, 0x6c, 0x79, 0x2b, 0x0a, 0x16, 0x8e, 0x0c, 0x8b, 0x80, 0x3c, 0x85, 0x29,
+	0x4d, 0xd3, 0x8a, 0x49, 0xc9, 0x64, 0x38, 0x3e, 0x1e, 0x2e, 0xf7, 0x9e, 0xfc, 0xcf, 0x04, 0x71,
+	0xe2, 0xdf, 0x7c, 0x72, 0x6a, 0xdc, 0xe2, 0xd6, 0xff, 0xf0, 0xc7, 0x00, 0x76, 0x2d, 0x4d, 0x0e,
+	0x60, 0x47, 0xaa, 0x8a, 0x31, 0x85, 0xc1, 0x4d, 0x63, 0x8b, 0x74, 0x80, 0x09, 0x57, 0xdb, 0x3a,
+	0x40, 0xfd, 0xac, 0x43, 0x91, 0x8a, 0x2a, 0x56, 0x07, 0x88, 0x80, 0xdc, 0x87, 0xe1, 0xf7, 0xbc,
+	0xb4, 0xe1, 0xe9, 0x47, 0xf2, 0x18, 0x1e, 0x70, 0x79, 0x79, 0xcb, 0xcb, 0x92, 0x17, 0x37, 0xf6,
+	0xa2, 0x70, 0x7c, 0x1c, 0x2c, 0x27, 0x71, 0xdf, 0x10, 0x3d, 0x85, 0x45, 0x13, 0xb2, 0x2c, 0x45,
+	0x21, 0x59, 0x4f, 0xad, 0x10, 0x76, 0xe5, 0x26, 0x49, 0xf4, 0x31, 0x03, 0x3c, 0xa6, 0x86, 0xd1,
+	0x47, 0x30, 0xb3, 0x7f, 0x7e, 0xce, 0x33, 0xc5, 0x2a, 0xed, 0xfa, 0x9a, 0x6d, 0xbf, 0x15, 0x55,
+	0x6a, 0x13, 0xaa, 0x61, 0xf4, 0xd3, 0x00, 0xf6, 0x2f, 0x15, 0xbd, 0xbe, 0xae, 0x6b, 0xa2, 0x4f,
+	0xd5, 0x78, 0x55, 0x5f, 0x55, 0x43, 0x2d, 0x4a, 0x25, 0x32, 0xb6, 0x4a, 0xf1, 0xba, 0x51, 0x6c,
+	0x11, 0xf9, 0x10, 0xe6, 0xc6, 0x25, 0xa7, 0x37, 0x6c, 0x4d, 0xd5, 0xad, 0x55, 0xa2, 0xc3, 0x92,
+	0x23, 0x98, 0x5e, 0xf3, 0x4a, 0xaa, 0x0b, 0x5d, 0x62, 0x23, 0x4c, 0x4b, 0x90, 0xff, 0x03, 0x48,
+	0x96, 0x88, 0x22, 0x45, 0xf3, 0x18, 0xcd, 0x0e, 0xd3, 0xf6, 0xc1, 0x8e, 0xdb, 0x07, 0x87, 0x30,
+	0x29, 0xa9, 0x94, 0x98, 0xd9, 0x2e, 0x1a, 0x1a, 0x4c, 0x8e, 0x61, 0x0f, 0xdb, 0xe2, 0x62, 0x93,
+	0x5f, 0xb1, 0x2a, 0x9c, 0xa0, 0xd9, 0xa5, 0x74, 0xae, 0xb6, 0xfe, 0xe1, 0xd4, 0xc8, 0x62, 0x61,
+	0x74, 0x0a, 0x7b, 0xb1, 0x68, 0x1b, 0xb5, 0x4d, 0x3d, 0xf0, 0x52, 0x3f, 0x84, 0x89, 0x7e, 0xba,
+	0x68, 0x9b, 0xb6, 0xc1, 0xd1, 0xdf, 0x03, 0x98, 0xaf, 0x2b, 0x91, 0x6e, 0x12, 0x55, 0x1f, 0x73,
+	0x04, 0xd3, 0xd2, 0x30, 0xcd, 0x49, 0x2d, 0x41, 0x3e, 0x86, 0xfb, 0x35, 0x68, 0x94, 0x34, 0x87,
+	0xf6, 0x78, 0xcc, 0xcd, 0x70, 0x78, 0xf7, 0xd0, 0xe6, 0xd6, 0x52, 0xa8, 0xe7, 0xa6, 0x2c, 0x33,
+	0xce, 0xaa, 0x55, 0x8a, 0x72, 0x8f, 0x62, 0x87, 0xd1, 0xf6, 0x84, 0x2a, 0x76, 0x23, 0xaa, 0xed,
+	0x2a, 0x45, 0xbd, 0x47, 0xb1, 0xc3, 0x68, 0x6d, 0xae, 0x68, 0x95, 0x88, 0x94, 0x59, 0xc5, 0x6b,
+	0x48, 0x96, 0xb0, 0x78, 0xb3, 0xa1, 0x85, 0xe2, 0x6a, 0xbb, 0x66, 0xd5, 0xab, 0x82, 0x2b, 0x2b,
+	0x7d, 0x97, 0x26, 0x1f, 0xc0, 0x4c, 0xd2, 0x8c, 0xe9, 0xe7, 0x75, 0xc5, 0x13, 0x86, 0x35, 0x08,
+	0x62, 0x9f, 0xd4, 0xe7, 0xf1, 0x22, 0x11, 0xb9, 0xe3, 0x37, 0x45, 0xbf, 0x2e, 0x4d, 0x22, 0xd8,
+	0xdf, 0x14, 0x5c, 0xc9, 0x55, 0x71, 0xa9, 0x44, 0xf2, 0x3a, 0x04, 0x74, 0xf3, 0xb8, 0xe8, 0x15,
+	0x2c, 0xce, 0x6c, 0x16, 0xb5, 0xec, 0x7e, 0xaa, 0x41, 0x2f, 0xd5, 0x08, 0xf6, 0x6b, 0xe4, 0x54,
+	0xd2, 0xe3, 0xa2, 0x3f, 0x02, 0x58, 0x9c, 0xd9, 0xbd, 0xe6, 0x9e, 0x6b, 0x29, 0xe7, 0xdc, 0x86,
+	0xd1, 0x13, 0xdf, 0xa0, 0x4e, 0x45, 0xfb, 0x06, 0x7f, 0x3c, 0x86, 0x77, 0x8f, 0xc7, 0xa8, 0x37,
+	0x1e, 0x9d, 0x66, 0x1f, 0xdf, 0xd9, 0xec, 0x3b, 0x7e, 0xb3, 0xff, 0x19, 0xc0, 0xe2, 0xd2, 0x76,
+	0x86, 0x93, 0x9b, 0xd3, 0x3e, 0x41, 0xaf, 0x7d, 0x1e, 0xc3, 0x83, 0x06, 0x75, 0x73, 0xeb, 0x19,
+	0x74, 0x74, 0x89, 0xc8, 0x4b, 0x5a, 0x6c, 0xdd, 0x76, 0x75, 0x28, 0xac, 0x81, 0x28, 0x14, 0x4d,
+	0xd4, 0xf3, 0xa2, 0xcd, 0xd0, 0xe3, 0xde, 0x2b, 0xc7, 0x1f, 0x02, 0x98, 0x9f, 0x26, 0x89, 0xd8,
+	0x14, 0xee, 0x34, 0x52, 0xc3, 0xb4, 0xd3, 0xd8, 0x10, 0x9d, 0xe2, 0x0e, 0x7a, 0xc5, 0xf5, 0x05,
+	0x1a, 0xf6, 0x04, 0xc2, 0xf9, 0xc9, 0x68, 0x91, 0x98, 0x5c, 0x82, 0xb8, 0x86, 0xd1, 0xef, 0x43,
+	0xd8, 0xff, 0xaa, 0x4a, 0x5b, 0xad, 0x43, 0xd8, 0x15, 0x1a, 0xb7, 0x2b, 0xd7, 0x42, 0x3d, 0x40,
+	0xf8, 0x78, 0x2e, 0x92, 0x4d, 0xce, 0x0a, 0x85, 0x71, 0xcc, 0x62, 0x9f, 0xd4, 0xb5, 0xc8, 0x45,
+	0xc1, 0xb6, 0x2f, 0xc4, 0x5b, 0xa6, 0x89, 0x97, 0xdb, 0xd2, 0x68, 0x3c, 0x8b, 0xfb, 0x06, 0x9d,
+	0xf6, 0x15, 0xcf, 0x32, 0x5e, 0xdc, 0x5c, 0x88, 0x7a, 0x0d, 0x37, 0x84, 0xbb, 0xfe, 0xc7, 0xfe,
+	0xfa, 0xf7, 0x05, 0xd9, 0xf9, 0x0f, 0x41, 0x76, 0x7b, 0x82, 0x1c, 0xc1, 0xd4, 0x84, 0xad, 0xdf,
+	0x95, 0x13, 0x23, 0x77, 0x43, 0xe0, 0x6a, 0xa4, 0x5b, 0x1d, 0xe4, 0x2a, 0xc5, 0xf1, 0xd7, 0xab,
+	0xb1, 0x26, 0xf4, 0x9e, 0x65, 0x55, 0x25, 0xaa, 0x17, 0xf2, 0x06, 0x87, 0x7e, 0x1a, 0x37, 0x58,
+	0x47, 0x9c, 0x88, 0x1c, 0xd5, 0xd9, 0x33, 0x35, 0xb7, 0x50, 0x9f, 0xc9, 0xe5, 0x39, 0xcb, 0x98,
+	0x62, 0x69, 0xb8, 0x8f, 0xaf, 0xc8, 0x96, 0xd0, 0x3b, 0x9d, 0xcb, 0x35, 0xe5, 0x69, 0x38, 0x43,
+	0x93, 0x45, 0xfa, 0x2e, 0x2e, 0x9f, 0xa5, 0x5c, 0xff, 0x69, 0x8e, 0x96, 0x06, 0x47, 0xbf, 0x05,
+	0x30, 0x5f, 0x9b, 0xa8, 0xdc, 0x9d, 0xde, 0x04, 0x1e, 0x74, 0x03, 0x5f, 0xc2, 0x42, 0x09, 0x45,
+	0x33, 0xac, 0xb7, 0xd9, 0x6d, 0x03, 0xb3, 0xdb, 0x3a, 0xb4, 0xbe, 0x36, 0xe5, 0x12, 0xbb, 0x0f,
+	0x6b, 0x17, 0xc4, 0x0d, 0x26, 0x9f, 0xc1, 0x01, 0xba, 0xa3, 0xe7, 0x37, 0x5c, 0xdd, 0x9e, 0xd7,
+	0x9e, 0xa6, 0xb5, 0xfe, 0xc5, 0x1a, 0xfd, 0x15, 0x00, 0xc1, 0x2b, 0xce, 0x99, 0xa2, 0x3c, 0xab,
+	0x43, 0x6e, 0xba, 0x0a, 0xd9, 0x26, 0x6c, 0x9f, 0x74, 0xbb, 0x72, 0xe0, 0x77, 0xa5, 0xf7, 0x1a,
+	0x1b, 0x76, 0x5f, 0x63, 0x77, 0xf7, 0x97, 0xfe, 0x70, 0x43, 0x19, 0xc6, 0x18, 0xb9, 0x01, 0x4d,
+	0x44, 0x5f, 0xdb, 0x17, 0x08, 0xb6, 0x57, 0x10, 0xfb, 0xa4, 0x27, 0x91, 0xee, 0xaf, 0x71, 0x2b,
+	0x51, 0xf4, 0xcb, 0x00, 0xc8, 0xcb, 0x8a, 0x16, 0x92, 0x26, 0x8a, 0x8b, 0xc2, 0x49, 0x55, 0xb5,
+	0x6c, 0x9b, 0xaa, 0x47, 0x62, 0x95, 0x5a, 0x02, 0x1b, 0xd4, 0xa4, 0xdc, 0xa5, 0x3b, 0x9e, 0xce,
+	0xa0, 0x75, 0x69, 0xbd, 0xac, 0x70, 0xf6, 0x4e, 0x73, 0xa7, 0x50, 0x2e, 0xe5, 0x0a, 0x3c, 0xf6,
+	0x05, 0x7e, 0xdf, 0x51, 0x73, 0x86, 0x78, 0xe2, 0x0d, 0xf1, 0x93, 0x9f, 0x03, 0x78, 0x14, 0xb3,
+	0x42, 0xd1, 0x8d, 0x12, 0x39, 0xd5, 0xc1, 0x5e, 0xb2, 0xea, 0xad, 0x2e, 0xc1, 0xe7, 0xb0, 0xf7,
+	0x25, 0x53, 0xf6, 0xb3, 0x51, 0x92, 0x87, 0xfe, 0x77, 0xb3, 0xf9, 0x8e, 0x3c, 0x7c, 0xf4, 0xce,
+	0xaf, 0xe9, 0xe8, 0xde, 0x27, 0x01, 0xf9, 0x02, 0x66, 0x67, 0x15, 0xa3, 0x8a, 0x59, 0x1b, 0x79,
+	0xb7, 0xef, 0xe1, 0x41, 0x97, 0x36, 0x5f, 0xb7, 0xd1, 0xbd, 0xab, 0x1d, 0x34, 0x7c, 0xfa, 0x4f,
+	0x00, 0x00, 0x00, 0xff, 0xff, 0x52, 0x28, 0x3f, 0xfc, 0x40, 0x0c, 0x00, 0x00,
 }

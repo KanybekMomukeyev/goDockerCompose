@@ -11,14 +11,14 @@ import (
 )
 
 const (
-	address = "138.197.44.189:50051"
-	//address = "localhost:50051"
+	//address = "138.197.44.189:50051"
+	address = "localhost:50051"
 )
 
 // createCustomer calls the RPC method CreateCustomer of CustomerServer
-func createCustomer(client pb.CustomerServiceClient, customer *pb.CustomerRequest) {
+func createCustomer(client pb.RentautomationServiceClient, customer *pb.ExampleRequest) {
 
-	resp, err := client.CreateCustomer(context.Background(), customer)
+	resp, err := client.CreateExample(context.Background(), customer)
 	if err != nil {
 		log.Fatalf("Could not create Customer: %v", err)
 	}
@@ -28,9 +28,9 @@ func createCustomer(client pb.CustomerServiceClient, customer *pb.CustomerReques
 }
 
 // getCustomers calls the RPC method GetCustomers of CustomerServer
-func getCustomers(client pb.CustomerServiceClient, filter *pb.CustomerFilter) {
+func getCustomers(client pb.RentautomationServiceClient, filter *pb.ExampleFilter) {
 	// calling the streaming API
-	stream, err := client.GetCustomers(context.Background(), filter)
+	stream, err := client.GetExamples(context.Background(), filter)
 	if err != nil {
 		log.Fatalf("Error on get customers: %v", err)
 	}
@@ -54,21 +54,22 @@ func main() {
 	}
 	defer conn.Close()
 	// Creates a new CustomerClient
-	client := pb.NewCustomerServiceClient(conn)
-	customer := &pb.CustomerRequest{
+	client := pb.NewRentautomationServiceClient(conn)
+
+	customer := &pb.ExampleRequest{
 		Id:    101,
 		Name:  "Shiju Varghese",
 		Email: "shiju@xyz.com",
 		Phone: "732-757-2923",
-		Addresses: []*pb.CustomerRequest_Address{
-			&pb.CustomerRequest_Address{
+		Addresses: []*pb.ExampleRequest_Address{
+			&pb.ExampleRequest_Address{
 				Street:            "1 Mission Street",
 				City:              "San Francisco",
 				State:             "CA",
 				Zip:               "94105",
 				IsShippingAddress: false,
 			},
-			&pb.CustomerRequest_Address{
+			&pb.ExampleRequest_Address{
 				Street:            "Greenfield",
 				City:              "Kochi",
 				State:             "KL",
@@ -81,13 +82,13 @@ func main() {
 	// Create a new customer
 	createCustomer(client, customer)
 
-	customer = &pb.CustomerRequest{
+	customer = &pb.ExampleRequest{
 		Id:    102,
 		Name:  "Irene Rose",
 		Email: "irene@xyz.com",
 		Phone: "732-757-2924",
-		Addresses: []*pb.CustomerRequest_Address{
-			&pb.CustomerRequest_Address{
+		Addresses: []*pb.ExampleRequest_Address{
+			&pb.ExampleRequest_Address{
 				Street:            "1 Mission Street",
 				City:              "San Francisco",
 				State:             "CA",
@@ -100,6 +101,6 @@ func main() {
 	// Create a new customer
 	createCustomer(client, customer)
 	// Filter with an empty Keyword
-	filter := &pb.CustomerFilter{Keyword: "Ir"}
+	filter := &pb.ExampleFilter{Keyword: "Ir"}
 	getCustomers(client, filter)
 }

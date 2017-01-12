@@ -7,8 +7,12 @@ import (
 )
 
 var schemaCustomerDelete = `
-DROP TABLE customer;
+DROP TABLE IF EXISTS customer;
 `
+
+//try self.database.executeUpdate("CREATE TABLE IF NOT EXISTS \(self.staffTableName)
+//(staff_id INTEGER PRIMARY KEY, role_id INTEGER, staff_image_path TEXT, first_name TEXT,
+//second_name TEXT, email TEXT, password TEXT, phone_number TEXT, address TEXT)", values: nil)
 
 var schemaCustomer = `
 CREATE TABLE IF NOT EXISTS customer (
@@ -17,6 +21,19 @@ CREATE TABLE IF NOT EXISTS customer (
     email text,
     phone text
 );
+
+CREATE TABLE IF NOT EXISTS person (
+    first_name text,
+    last_name text,
+    email text
+);
+
+CREATE TABLE IF NOT EXISTS place (
+    country text,
+    city text NULL,
+    telcode integer
+);
+
 `
 
 type Customer struct {
@@ -30,7 +47,7 @@ func CreateTableIfNotExsists(db *sqlx.DB) {
 	db.MustExec(schemaCustomer)
 }
 
-func StoreCustomer(db *sqlx.DB, customer *pb.CustomerRequest) (uint64, error) {
+func StoreCustomer(db *sqlx.DB, customer *pb.ExampleRequest) (uint64, error) {
 	tx := db.MustBegin()
 	result := tx.MustExec("INSERT INTO customer (first_name, email, phone) VALUES ($1, $2, $3) RETURNING cid", customer.Name, customer.Phone, customer.Email)
 
@@ -48,7 +65,7 @@ func StoreCustomer(db *sqlx.DB, customer *pb.CustomerRequest) (uint64, error) {
 	return uint64(lastId), nil
 }
 
-func StoreCustomer2(db *sqlx.DB, customer *pb.CustomerRequest) (uint64, error)  {
+func StoreCustomer2(db *sqlx.DB, customer *pb.ExampleRequest) (uint64, error)  {
 
 	tx := db.MustBegin()
 
