@@ -27,8 +27,18 @@ type server struct {
 }
 
 func (s *server) CreateStaff(ctx context.Context, staffReq *pb.StaffRequest) (*pb.StaffRequest, error) {
+
+	unique_key, storeError := model.StoreStaff(db, staffReq)
+	if storeError != nil {
+		return nil, storeError
+	}
+
+	fmt.Printf("unique_key of staff ==> %#v\n", unique_key)
+	staffReq.StaffId = unique_key
+
 	s.savedStaff = append(s.savedStaff, staffReq)
-	fmt.Printf("unique_key ==> %#v\n", staffReq.StaffId)
+
+	fmt.Printf("staffReq.StaffId ==> %#v\n", staffReq.StaffId)
 	return staffReq, nil
 }
 
@@ -46,7 +56,7 @@ func (s *server) GetStaff(filter *pb.StaffFilter, stream pb.RentautomationServic
 // CreateCustomer creates a new Customer
 func (s *server) CreateExample(ctx context.Context, customerReq *pb.ExampleRequest) (*pb.ExampleResponse, error) {
 	s.savedCustomers = append(s.savedCustomers, customerReq)
-	unique_key, storeError := model.StoreCustomer2(db, customerReq)
+	unique_key, storeError := model.StoreCustomer(db, customerReq)
 	if storeError != nil {
 		return nil, storeError
 	}
@@ -58,10 +68,10 @@ func (s *server) CreateExample(ctx context.Context, customerReq *pb.ExampleReque
 
 func (s *server) GetExamples(filter *pb.ExampleFilter, stream pb.RentautomationService_GetExamplesServer) error {
 
-	customers, _ := model.AllCustomers(db)
-	print("KANOOOOOO")
+	//customers, _ := model.AllCustomers(db)
+	//print("KANOOOOOO")
 
-	//customers, _ := model.AllCustomersAuto(db)
+	customers, _ := model.AllCustomersAuto(db)
 
 	for _, customer := range customers {
 		fmt.Printf("%#v\n", customer)
@@ -102,7 +112,7 @@ func main() {
 		log.Fatalf("failed to listen: %v", databaseError)
 	}
 	model.CreateTableIfNotExsists(db)
-
+	model.CreateStaffIfNotExsists(db)
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
