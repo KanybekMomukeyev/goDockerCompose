@@ -67,9 +67,9 @@ func (s *server) GetExamples(filter *pb.ExampleFilter, stream pb.RentautomationS
 		fmt.Printf("%#v\n", customer)
 
 		exampleRequest := &pb.ExampleRequest{
-			Id:    1000,
+			Id:    customer.CustomerId,
 			Name:  customer.FirstName,
-			Email: "irene@xyz.com",
+			Email: customer.Email,
 			Phone: customer.Phone,
 		}
 

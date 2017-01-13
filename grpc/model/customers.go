@@ -50,6 +50,7 @@ type Place struct {
 }
 
 type Customer struct {
+	CustomerId uint64
 	FirstName    string `db:"first_name"`
 	Email  string
 	Phone string
@@ -219,7 +220,7 @@ func AllCustomers(db *sqlx.DB) ([]*Customer, error) {
 	}
 
 
-	rows, err := db.Queryx("SELECT first_name, email, phone FROM customer")
+	rows, err := db.Queryx("SELECT cid, first_name, email, phone FROM customer")
 	if err != nil {
 		print("error")
 	}
@@ -227,7 +228,7 @@ func AllCustomers(db *sqlx.DB) ([]*Customer, error) {
 	customers := make([]*Customer, 0)
 	for rows.Next() {
 		bk := new(Customer)
-		err := rows.Scan(&bk.FirstName, &bk.Email, &bk.Phone)
+		err := rows.Scan(&bk.CustomerId, &bk.FirstName, &bk.Email, &bk.Phone)
 		if err != nil {
 			return nil, err
 		}
