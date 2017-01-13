@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"net"
-	"strings"
+	//"strings"
 
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -23,7 +23,25 @@ const (
 // server is used to implement customer.CustomerServer.
 type server struct {
 	savedCustomers []*pb.ExampleRequest
+	savedStaff []*pb.StaffRequest
 }
+
+func (s *server) CreateStaff(ctx context.Context, staffReq *pb.StaffRequest) (*pb.StaffRequest, error) {
+	s.savedStaff = append(s.savedStaff, staffReq)
+	fmt.Printf("unique_key ==> %#v\n", staffReq.StaffId)
+	return staffReq, nil
+}
+
+func (s *server) GetStaff(filter *pb.StaffFilter, stream pb.RentautomationService_GetStaffServer) error {
+
+	for _, staff := range s.savedStaff {
+		if err := stream.Send(staff ); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 
 // CreateCustomer creates a new Customer
 func (s *server) CreateExample(ctx context.Context, customerReq *pb.ExampleRequest) (*pb.ExampleResponse, error) {
@@ -40,24 +58,37 @@ func (s *server) CreateExample(ctx context.Context, customerReq *pb.ExampleReque
 
 func (s *server) GetExamples(filter *pb.ExampleFilter, stream pb.RentautomationService_GetExamplesServer) error {
 
-	//customers, _ := model.AllCustomers(db)
-	customers, _ := model.AllCustomersAuto(db)
+	customers, _ := model.AllCustomers(db)
+	print("KANOOOOOO")
+
+	//customers, _ := model.AllCustomersAuto(db)
 
 	for _, customer := range customers {
 		fmt.Printf("%#v\n", customer)
-	}
 
-	for _, customer := range s.savedCustomers {
-
-		if filter.Keyword != "" {
-			if !strings.Contains(customer.Name, filter.Keyword) {
-				continue
-			}
+		exampleRequest := &pb.ExampleRequest{
+			Id:    1000,
+			Name:  customer.FirstName,
+			Email: "irene@xyz.com",
+			Phone: customer.Phone,
 		}
-		if err := stream.Send(customer); err != nil {
+
+		if err := stream.Send(exampleRequest); err != nil {
 			return err
 		}
 	}
+
+	//for _, customer := range s.savedCustomers {
+	//
+	//	if filter.Keyword != "" {
+	//		if !strings.Contains(customer.Name, filter.Keyword) {
+	//			continue
+	//		}
+	//	}
+	//	if err := stream.Send(customer); err != nil {
+	//		return err
+	//	}
+	//}
 	return nil
 }
 

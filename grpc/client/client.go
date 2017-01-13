@@ -31,9 +31,11 @@ func createCustomer(client pb.RentautomationServiceClient, customer *pb.ExampleR
 func getCustomers(client pb.RentautomationServiceClient, filter *pb.ExampleFilter) {
 	// calling the streaming API
 	stream, err := client.GetExamples(context.Background(), filter)
+
 	if err != nil {
 		log.Fatalf("Error on get customers: %v", err)
 	}
+
 	for {
 		// Receiving the stream of data
 		customer, err := stream.Recv()
@@ -58,7 +60,7 @@ func main() {
 
 	customer := &pb.ExampleRequest{
 		Id:    101,
-		Name:  "Shiju Varghese",
+		Name:  "Kanybek Momukeev",
 		Email: "shiju@xyz.com",
 		Phone: "732-757-2923",
 		Addresses: []*pb.ExampleRequest_Address{

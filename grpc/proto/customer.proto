@@ -7,6 +7,9 @@ service RentautomationService {
     rpc GetExamples(ExampleFilter) returns (stream ExampleRequest) {}
     // Create a new Example - A simple RPC
     rpc CreateExample (ExampleRequest) returns (ExampleResponse) {}
+
+    rpc CreateStaff (StaffRequest) returns (StaffRequest) {}
+    rpc GetStaff(StaffFilter) returns (stream StaffRequest) {}
 }
 
 // Request message for creating a new customer
@@ -49,6 +52,10 @@ message StaffRequest {
     string address = 9;
 }
 
+message StaffFilter {
+    string staffKeyword = 1;
+}
+
 message RoleRequest {
     uint64 roleId = 1;
     string roleName = 2;
@@ -67,9 +74,17 @@ message ProductRequest {
     double unitsInStock = 10;
 }
 
+message ProductFilter {
+    string productKeyword = 1;
+}
+
 message CategoryRequest {
     uint64 categoryId = 1;
     string categoryName = 2;
+}
+
+message CategoryFilter {
+    string categoryKeyword = 1;
 }
 
 message CustomerRequest {
@@ -81,6 +96,10 @@ message CustomerRequest {
     string address = 6;
 }
 
+message CustomerFilter {
+    string customerKeyword = 1;
+}
+
 message SupplierRequest {
     uint64 supplierId = 1;
     string supplierImagePath = 2;
@@ -90,11 +109,19 @@ message SupplierRequest {
     string address = 6;
 }
 
+message SupplierFilter {
+    string supplierKeyword = 1;
+}
+
 message AccountRequest {
     uint64 accountId = 1;
     uint64 customerId = 2;
     uint64 supplierId = 3;
     double balance = 4;
+}
+
+message AccountFilter {
+    string accountKeyword = 1;
 }
 
 // static objects
@@ -116,11 +143,19 @@ message OrderRequest {
     bool isEdited = 14;
 }
 
+message OrderFilter {
+    string orderKeyword = 1;
+}
+
 message PaymentRequest {
     uint64 paymentId = 1;
     double totalOrderPrice = 2;
     double discount = 3;
     double totalPriceWithDiscount = 4;
+}
+
+message PaymentFilter {
+    string paymentKeyword = 1;
 }
 
 message OrderDetailRequest {
@@ -133,6 +168,10 @@ message OrderDetailRequest {
     int32 discount = 7;
 }
 
+message OrderDetailFilter {
+    string orderDetailKeyword = 1;
+}
+
 message TransactionRequest {
     uint64 transactionId = 1;
     uint64 transactionDate = 2;
@@ -142,4 +181,8 @@ message TransactionRequest {
     uint64 customerId = 6;
     uint64 supplierId = 7;
     uint64 staffId = 8;
+}
+
+message TransactionFilter {
+    string transactionKeyword = 1;
 }
