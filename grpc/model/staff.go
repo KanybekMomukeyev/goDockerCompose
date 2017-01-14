@@ -4,6 +4,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	pb "github.com/KanybekMomukeyev/goDockerCompose/grpc/proto"
 	"fmt"
+	"log"
 )
 
 var schemaRemoveStaff = `
@@ -28,7 +29,7 @@ var schemaCreateIndex = `CREATE INDEX IF NOT EXISTS role_id_idx ON staff (role_i
 
 type Staff struct {
 	staffId uint64 `db:"staff_id"`
-	roleId string `db:"role_id"`
+	roleId uint64 `db:"role_id"`
 	staffImagePath string `db:"staff_image_path"`
 	firstName string `db:"first_name"`
 	secondName string `db:"second_name"`
@@ -70,9 +71,60 @@ func StoreStaff(db *sqlx.DB, staff *pb.StaffRequest) (uint64, error)  {
 	return lastInsertId, nil
 }
 
-func AllStaffAuto(db *sqlx.DB) ([]*Staff, error) {
+func AllStaff(db *sqlx.DB) ([]*pb.StaffRequest, error) {
+
+	pingError := db.Ping()
+
+	if pingError != nil {
+		log.Fatalln(pingError)
+		return nil, pingError
+	}
+
+	rows, err := db.Queryx("SELECT staff_id, role_id, staff_image_path, first_name, second_name, email, password, phone_number, address FROM staff ORDER BY first_name ASC")
+	if err != nil {
+		print("error")
+	}
+
+	staff := make([]*pb.StaffRequest, 0)
+	for rows.Next() {
+		employee := new(pb.StaffRequest)
+		err := rows.Scan(&employee.StaffId, &employee.RoleId, &employee.StaffImagePath, &employee.FirstName, &employee.SecondName, &employee.Email, &employee.Password, &employee.PhoneNumber, &employee.Address)
+		if err != nil {
+			return nil, err
+		}
+		staff = append(staff, employee)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return staff, nil
+}
+
+func AllStaffAuto(db *sqlx.DB) ([]*pb.StaffRequest, error) {
 
 	staff := []*Staff{}
+	savedStaff := []*pb.StaffRequest{}
+
 	db.Select(&staff, "SELECT staff_id, role_id, staff_image_path, first_name, second_name, email, password, phone_number, address FROM staff ORDER BY first_name ASC")
-	return staff, nil
+
+	for _, employee := range staff {
+
+		staffRequest := &pb.StaffRequest {
+			StaffId:    employee.staffId,
+			RoleId:  employee.roleId,
+			StaffImagePath: employee.staffImagePath,
+			FirstName: employee.firstName,
+			SecondName: employee.secondName,
+			Email: employee.email,
+			Password: employee.password,
+			PhoneNumber: employee.phoneNumber,
+			Address: employee.address,
+		}
+
+		savedStaff = append(savedStaff, staffRequest)
+	}
+
+	return savedStaff, nil
 }

@@ -44,14 +44,16 @@ func (s *server) CreateStaff(ctx context.Context, staffReq *pb.StaffRequest) (*p
 
 func (s *server) GetStaff(filter *pb.StaffFilter, stream pb.RentautomationService_GetStaffServer) error {
 
-	for _, staff := range s.savedStaff {
-		if err := stream.Send(staff ); err != nil {
+	//staff, _ := model.AllStaffAuto(db)
+	staff, _ := model.AllStaff(db)
+
+	for _, staffRequest := range staff {
+		if err := stream.Send(staffRequest); err != nil {
 			return err
 		}
 	}
 	return nil
 }
-
 
 // CreateCustomer creates a new Customer
 func (s *server) CreateExample(ctx context.Context, customerReq *pb.ExampleRequest) (*pb.ExampleResponse, error) {
