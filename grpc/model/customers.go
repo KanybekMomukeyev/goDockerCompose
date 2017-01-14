@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS customer (
     phone text
 );
 `
-type Customer struct {
+type Customer2 struct {
 	CustomerId uint64 `db:"cid"`
 	FirstName    string `db:"first_name"`
 	Email  string
@@ -54,7 +54,7 @@ func CheckErr(err error) {
 	}
 }
 
-func AllCustomers(db *sqlx.DB) ([]*Customer, error) {
+func AllCustomers(db *sqlx.DB) ([]*Customer2, error) {
 
 	pingError := db.Ping()
 
@@ -69,9 +69,9 @@ func AllCustomers(db *sqlx.DB) ([]*Customer, error) {
 		print("error")
 	}
 
-	customers := make([]*Customer, 0)
+	customers := make([]*Customer2, 0)
 	for rows.Next() {
-		bk := new(Customer)
+		bk := new(Customer2)
 		err := rows.Scan(&bk.CustomerId, &bk.FirstName, &bk.Email, &bk.Phone)
 		if err != nil {
 			return nil, err
@@ -84,9 +84,9 @@ func AllCustomers(db *sqlx.DB) ([]*Customer, error) {
 	return customers, nil
 }
 
-func AllCustomersAuto(db *sqlx.DB) ([]*Customer, error) {
+func AllCustomersAuto(db *sqlx.DB) ([]*Customer2, error) {
 
-	customers := []*Customer{}
+	customers := []*Customer2{}
 	db.Select(&customers, "SELECT cid, first_name, email, phone FROM customer ORDER BY first_name ASC")
 
 	return customers, nil

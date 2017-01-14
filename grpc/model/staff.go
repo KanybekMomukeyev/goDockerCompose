@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS staff (
     staff_image_path VARCHAR (300),
     first_name VARCHAR (300),
     second_name VARCHAR (300),
-    email VARCHAR (300),
+    email VARCHAR (300) UNIQUE,
     password VARCHAR (300),
     phone_number VARCHAR (300),
     address VARCHAR (300)
@@ -40,6 +40,7 @@ type Staff struct {
 }
 
 func CreateStaffIfNotExsists(db *sqlx.DB) {
+	db.MustExec(schemaRemoveStaff)
 	db.MustExec(schemaCreateStaff)
 	db.MustExec(schemaCreateIndex)
 }
@@ -107,7 +108,11 @@ func AllStaffAuto(db *sqlx.DB) ([]*pb.StaffRequest, error) {
 	staff := []*Staff{}
 	savedStaff := []*pb.StaffRequest{}
 
-	db.Select(&staff, "SELECT staff_id, role_id, staff_image_path, first_name, second_name, email, password, phone_number, address FROM staff ORDER BY first_name ASC")
+	err := db.Select(&staff, "SELECT staff_id, role_id, staff_image_path, first_name, second_name, email, password, phone_number, address FROM staff ORDER BY first_name ASC")
+	if err != nil {
+		print("error")
+		panic(err)
+	}
 
 	for _, employee := range staff {
 
