@@ -33,12 +33,12 @@ func (s *server) CreateStaff(ctx context.Context, staffReq *pb.StaffRequest) (*p
 		return nil, storeError
 	}
 
-	fmt.Printf("unique_key of staff ==> %#v\n", unique_key)
+	fmt.Printf("unique_key of staff ==> %v\n", unique_key)
 	staffReq.StaffId = unique_key
 
 	s.savedStaff = append(s.savedStaff, staffReq)
 
-	fmt.Printf("staffReq.StaffId ==> %#v\n", staffReq.StaffId)
+	fmt.Printf("staffReq.StaffId ==> %v\n", staffReq.StaffId)
 	return staffReq, nil
 }
 
