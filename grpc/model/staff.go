@@ -18,12 +18,13 @@ CREATE TABLE IF NOT EXISTS staff (
     staff_image_path VARCHAR (300),
     first_name VARCHAR (300),
     second_name VARCHAR (300),
-    email VARCHAR (300) UNIQUE,
+    email VARCHAR (300),
     password VARCHAR (300),
     phone_number VARCHAR (300),
     address VARCHAR (300)
 );
 `
+//UNIQUE  set on email!!!!
 
 var schemaCreateIndex = `CREATE INDEX IF NOT EXISTS role_id_idx ON staff (role_id)`
 
@@ -33,14 +34,14 @@ type Staff struct {
 	staffImagePath string `db:"staff_image_path"`
 	firstName string `db:"first_name"`
 	secondName string `db:"second_name"`
-	email string
-	password string
+	email string `db:"email"`
+	password string `db:"password"`
 	phoneNumber string `db:"phone_number"`
-	address string
+	address string `db:"address"`
 }
 
 func CreateStaffIfNotExsists(db *sqlx.DB) {
-	db.MustExec(schemaRemoveStaff)
+	//db.MustExec(schemaRemoveStaff)
 	db.MustExec(schemaCreateStaff)
 	db.MustExec(schemaCreateIndex)
 }

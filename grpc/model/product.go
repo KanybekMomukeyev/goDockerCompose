@@ -1,5 +1,12 @@
 package model
 
+import (
+	"log"
+	"github.com/jmoiron/sqlx"
+	"fmt"
+	pb "github.com/KanybekMomukeyev/goDockerCompose/grpc/proto"
+)
+
 var schemaRemoveProduct = `
 DROP TABLE IF EXISTS products;
 `
@@ -34,4 +41,78 @@ type Product struct {
 	saleUnitPrice float32 `db:"sale_unit_price"`
 	incomeUnitPrice float32 `db:"income_unit_price"`
 	unitsInStock float32 `db:"units_in_stock"`
+}
+
+func CreateProductIfNotExsists(db *sqlx.DB) {
+	db.MustExec(schemaRemoveProduct)
+	db.MustExec(schemaCreateProduct)
+	db.MustExec(schemaCreateIndexForProduct1)
+	db.MustExec(schemaCreateIndexForProduct2)
+	db.MustExec(schemaCreateIndexForProduct3)
+}
+
+func StoreProduct(db *sqlx.DB, product *pb.ProductRequest) (uint64, error)  {
+
+	tx := db.MustBegin()
+	var lastInsertId uint64
+
+	err := tx.QueryRow("INSERT INTO products " +
+		"(product_image_path, product_name, supplier_id, category_id, barcode," +
+		" quantity_per_unit, sale_unit_price, income_unit_price, units_in_stock) " +
+		"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) returning product_id;",
+		product.ProductImagePath,
+		product.ProductName,
+		product.SupplierId,
+		product.CategoryId,
+		product.Barcode,
+		product.QuantityPerUnit,
+		product.SaleUnitPrice,
+		product.IncomeUnitPrice,
+		product.UnitsInStock).Scan(&lastInsertId)
+
+	CheckErr(err)
+
+	commitError := tx.Commit()
+	CheckErr(commitError)
+
+	fmt.Println("last inserted id =", lastInsertId)
+
+	return lastInsertId, nil
+}
+
+func AllProducts(db *sqlx.DB) ([]*pb.ProductRequest, error) {
+
+	pingError := db.Ping()
+
+	if pingError != nil {
+		log.Fatalln(pingError)
+		return nil, pingError
+	}
+
+	rows, err := db.Queryx("SELECT product_id, product_image_path, product_name, supplier_id, " +
+		"category_id, barcode, quantity_per_unit, sale_unit_price, " +
+		"income_unit_price, units_in_stock FROM products ORDER BY product_id DESC")
+
+	if err != nil {
+		print("error")
+	}
+
+	products := make([]*pb.ProductRequest, 0)
+	for rows.Next() {
+		product := new(pb.ProductRequest)
+		err := rows.Scan(&product.ProductId, &product.ProductImagePath, &product.ProductName,
+			&product.SupplierId, &product.CategoryId, &product.Barcode, &product.QuantityPerUnit,
+			&product.SaleUnitPrice, &product.IncomeUnitPrice, &product.UnitsInStock)
+
+		if err != nil {
+			return nil, err
+		}
+		products = append(products, product)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return products, nil
 }

@@ -3,13 +3,36 @@ package proto;
 
 // The Customer service definition.
 service RentautomationService {
-    // Get all Examples with filter - A server-to-client streaming RPC.
+
     rpc GetExamples(ExampleFilter) returns (stream ExampleRequest) {}
-    // Create a new Example - A simple RPC
-    rpc CreateExample (ExampleRequest) returns (ExampleResponse) {}
+    rpc CreateExample(ExampleRequest) returns (ExampleResponse) {}
+
+    rpc CreateAccount (AccountRequest) returns (AccountRequest) {}
+    rpc GetAccounts(AccountFilter) returns (stream AccountRequest) {}
+
+    rpc CreateCategory (CategoryRequest) returns (CategoryRequest) {}
+    rpc GetCategories(CategoryFilter) returns (stream CategoryRequest) {}
+
+    rpc CreateCustomer (CustomerRequest) returns (CustomerRequest) {}
+    rpc GetCustomers(CustomerFilter) returns (stream CustomerRequest) {}
+
+    rpc CreateOrder (OrderRequest) returns (OrderRequest) {}
+    rpc GetOrders(OrderFilter) returns (stream OrderRequest) {}
+
+    rpc CreateOrderDetail (OrderDetailRequest) returns (OrderDetailRequest) {}
+    rpc GetOrderDetails(OrderDetailFilter) returns (stream OrderDetailRequest) {}
+
+    rpc CreatePayment (PaymentRequest) returns (PaymentRequest) {}
+    rpc GetPayments(PaymentFilter) returns (stream PaymentRequest) {}
+
+    rpc CreateProduct (ProductRequest) returns (ProductRequest) {}
+    rpc GetProducts(ProductFilter) returns (stream ProductRequest) {}
 
     rpc CreateStaff (StaffRequest) returns (StaffRequest) {}
     rpc GetStaff(StaffFilter) returns (stream StaffRequest) {}
+
+    rpc CreateTransaction (TransactionRequest) returns (TransactionRequest) {}
+    rpc GetTransactions(TransactionFilter) returns (stream TransactionRequest) {}
 }
 
 // Request message for creating a new customer
@@ -138,9 +161,9 @@ message OrderRequest {
     string errorMsg = 10;
     string comment = 11;
 
-    bool isDeleted = 12;
-    bool isPaid = 13;
-    bool isEdited = 14;
+    uint32 isDeleted = 12;
+    uint32 isPaid = 13;
+    uint32 isEdited = 14;
 }
 
 message OrderFilter {
