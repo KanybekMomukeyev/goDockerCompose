@@ -42,7 +42,7 @@ func StoreCustomer(db *sqlx.DB, customer *pb.ExampleRequest) (uint64, error)  {
 	tx := db.MustBegin()
 
 	var lastInsertId uint64
-	err := tx.QueryRow("INSERT INTO customer (first_name, phone, email) VALUES($1, $2, $3) returning customer_id;", customer.Name, customer.Phone, customer.Email).Scan(&lastInsertId)
+	err := tx.QueryRow("INSERT INTO customers (first_name, second_name, phone_number) VALUES($1, $2, $3) returning customer_id;", customer.Name, customer.Phone, customer.Email).Scan(&lastInsertId)
 	CheckErr(err)
 
 	commitError := tx.Commit()

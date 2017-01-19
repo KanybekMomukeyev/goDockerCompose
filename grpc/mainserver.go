@@ -14,7 +14,6 @@ import (
 	"github.com/KanybekMomukeyev/goDockerCompose/grpc/model"
 
 	"fmt"
-	"strings"
 )
 
 const (
@@ -30,7 +29,9 @@ type server struct {
 // CreateCustomer creates a new Customer
 // ------------------------------------------------------------ //
 func (s *server) CreateExample(ctx context.Context, customerReq *pb.ExampleRequest) (*pb.ExampleResponse, error) {
+
 	s.savedCustomers = append(s.savedCustomers, customerReq)
+
 	unique_key, storeError := model.StoreCustomer(db, customerReq)
 	if storeError != nil {
 		return nil, storeError
@@ -44,11 +45,11 @@ func (s *server) GetExamples(filter *pb.ExampleFilter, stream pb.RentautomationS
 
 	for _, customer := range s.savedCustomers {
 
-		if filter.Keyword != "" {
-			if !strings.Contains(customer.Name, filter.Keyword) {
-				continue
-			}
-		}
+		//if filter.Keyword != "" {
+		//	if !strings.Contains(customer.Name, filter.Keyword) {
+		//		continue
+		//	}
+		//}
 		if err := stream.Send(customer); err != nil {
 			return err
 		}
