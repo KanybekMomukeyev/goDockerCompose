@@ -28,7 +28,7 @@ type Payment struct {
 }
 
 func CreatePaymentIfNotExsists(db *sqlx.DB) {
-	db.MustExec(schemaRemovePayment)
+	//db.MustExec(schemaRemovePayment)
 	db.MustExec(schemaCreatePayment)
 }
 

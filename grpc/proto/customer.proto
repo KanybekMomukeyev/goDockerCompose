@@ -33,6 +33,22 @@ service RentautomationService {
 
     rpc CreateTransaction (TransactionRequest) returns (TransactionRequest) {}
     rpc GetTransactions(TransactionFilter) returns (stream TransactionRequest) {}
+
+
+    // ------------------ New methods ------------------ //
+    rpc CreateProductWith (CreateProductRequest) returns (CreateProductRequest) {}
+    rpc UpdateProductWith (CreateProductRequest) returns (CreateProductRequest) {}
+
+    rpc CreateCustomerWith (CreateCustomerRequest) returns (CreateCustomerRequest) {}
+    rpc UpdateCustomerWith (CustomerRequest) returns (CustomerRequest) {}
+    rpc UpdateCustomerBalanceWith (CreateCustomerRequest) returns (CreateCustomerRequest) {}
+
+    rpc CreateSupplierWith (CreateSupplierRequest) returns (CreateSupplierRequest) {}
+    rpc UpdateSupplierWith (SupplierRequest) returns (SupplierRequest) {}
+    rpc UpdateSupplierBalanceWith (CreateSupplierRequest) returns (CreateSupplierRequest) {}
+
+    rpc CreateStaffWith (StaffRequest) returns (StaffRequest) {}
+    rpc UpdateStaffWith (StaffRequest) returns (StaffRequest) {}
 }
 
 // Request message for creating a new customer
@@ -60,6 +76,23 @@ message ExampleResponse {
 
 message ExampleFilter {
     string keyword = 1;
+}
+
+message CreateProductRequest {
+    ProductRequest product = 1;
+    OrderDetailRequest orderDetail = 2;
+}
+
+message CreateCustomerRequest {
+    CustomerRequest customer = 1;
+    TransactionRequest transaction = 2;
+    AccountRequest account = 3;
+}
+
+message CreateSupplierRequest {
+    SupplierRequest customer = 1;
+    TransactionRequest transaction = 2;
+    AccountRequest account = 3;
 }
 
 // static objects

@@ -38,7 +38,7 @@ type OrderDetail struct {
 }
 
 func CreateOrderDetailsIfNotExsists(db *sqlx.DB) {
-	db.MustExec(schemaRemoveOrderDetail)
+	//db.MustExec(schemaRemoveOrderDetail)
 	db.MustExec(schemaCreateOrderDetail)
 	db.MustExec(schemaCreateIndexForOrderDetail1)
 	db.MustExec(schemaCreateIndexForOrderDetail2)

@@ -44,11 +44,44 @@ type Product struct {
 }
 
 func CreateProductIfNotExsists(db *sqlx.DB) {
-	db.MustExec(schemaRemoveProduct)
+	//db.MustExec(schemaRemoveProduct)
 	db.MustExec(schemaCreateProduct)
 	db.MustExec(schemaCreateIndexForProduct1)
 	db.MustExec(schemaCreateIndexForProduct2)
 	db.MustExec(schemaCreateIndexForProduct3)
+}
+
+
+func UpdateProduct(db *sqlx.DB, product *pb.ProductRequest) (uint64, error)  {
+
+	tx := db.MustBegin()
+
+	stmt, err :=tx.Prepare("UPDATE products SET product_image_path=$1, product_name=$2, supplier_id=$3, " +
+		"category_id=$4, barcode=$5, quantity_per_unit=$6, sale_unit_price=$7, " +
+		"income_unit_price=$8, units_in_stock=$9 WHERE product_id=$10")
+	CheckErr(err)
+
+	res, err2 := stmt.Exec(product.ProductImagePath,
+		product.ProductName,
+		product.SupplierId,
+		product.CategoryId,
+		product.Barcode,
+		product.QuantityPerUnit,
+		product.SaleUnitPrice,
+		product.IncomeUnitPrice,
+		product.UnitsInStock,
+		product.ProductId)
+	CheckErr(err2)
+
+	affect, err := res.RowsAffected()
+	CheckErr(err)
+
+	fmt.Println(affect, "rows changed")
+
+	commitError := tx.Commit()
+	CheckErr(commitError)
+
+	return uint64(affect), nil
 }
 
 func StoreProduct(db *sqlx.DB, product *pb.ProductRequest) (uint64, error)  {
@@ -71,7 +104,7 @@ func StoreProduct(db *sqlx.DB, product *pb.ProductRequest) (uint64, error)  {
 		product.UnitsInStock).Scan(&lastInsertId)
 
 	CheckErr(err)
-
+	
 	commitError := tx.Commit()
 	CheckErr(commitError)
 

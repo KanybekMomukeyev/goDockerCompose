@@ -41,7 +41,7 @@ type Transaction struct {
 }
 
 func CreateTransactionIfNotExsists(db *sqlx.DB) {
-	db.MustExec(schemaRemoveTransaction)
+	//db.MustExec(schemaRemoveTransaction)
 	db.MustExec(schemaCreateTransaction)
 	db.MustExec(schemaCreateIndexForTransaction1)
 	db.MustExec(schemaCreateIndexForTransaction2)

@@ -57,7 +57,7 @@ func (s *server) GetExamples(filter *pb.ExampleFilter, stream pb.RentautomationS
 	return nil
 }
 
-// ------------------------------------------------------------ //
+// ---------------------------- ACCOUNT -------------------------------- //
 func (s *server) CreateAccount(ctx context.Context, accountReq *pb.AccountRequest) (*pb.AccountRequest, error) {
 
 	unique_key, storeError := model.StoreAccount(db, accountReq)
@@ -83,7 +83,7 @@ func (s *server) GetAccounts(filter *pb.AccountFilter, stream pb.RentautomationS
 	return nil
 }
 
-// ------------------------------------------------------------ //
+// -------------------------- CATEGORY ---------------------------------- //
 func (s *server) CreateCategory(ctx context.Context, categoryReq *pb.CategoryRequest) (*pb.CategoryRequest, error) {
 
 	unique_key, storeError := model.StoreCategory(db, categoryReq)
@@ -109,7 +109,7 @@ func (s *server) GetCategories(filter *pb.CategoryFilter, stream pb.Rentautomati
 	return nil
 }
 
-// ------------------------------------------------------------ //
+// ---------------------------- CUSTOMER -------------------------------- //
 func (s *server) CreateCustomer(ctx context.Context, customerReq *pb.CustomerRequest) (*pb.CustomerRequest, error) {
 
 	unique_key, storeError := model.StoreRealCustomer(db, customerReq)
@@ -135,7 +135,7 @@ func (s *server) GetCustomers(filter *pb.CustomerFilter, stream pb.Rentautomatio
 	return nil
 }
 
-// ------------------------------------------------------------ //
+// ---------------------------- ORDER -------------------------------- //
 func (s *server) CreateOrder(ctx context.Context, orderReq *pb.OrderRequest) (*pb.OrderRequest, error) {
 
 	unique_key, storeError := model.StoreOrder(db, orderReq)
@@ -162,7 +162,7 @@ func (s *server) GetOrders(filter *pb.OrderFilter, stream pb.RentautomationServi
 	return nil
 }
 
-// ------------------------------------------------------------ //
+// ------------------------- ORDER_DETAIL ----------------------------------- //
 func (s *server) CreateOrderDetail(ctx context.Context, orderDetailReq *pb.OrderDetailRequest) (*pb.OrderDetailRequest, error) {
 
 	unique_key, storeError := model.StoreOrderDetails(db, orderDetailReq)
@@ -188,7 +188,7 @@ func (s *server) GetOrderDetails(filter *pb.OrderDetailFilter, stream pb.Rentaut
 	return nil
 }
 
-// ------------------------------------------------------------ //
+// -------------------------- PAYMENT ---------------------------------- //
 func (s *server) CreatePayment(ctx context.Context, paymentReq *pb.PaymentRequest) (*pb.PaymentRequest, error) {
 
 	unique_key, storeError := model.StorePayment(db, paymentReq)
@@ -213,7 +213,7 @@ func (s *server) GetPayments(filter *pb.PaymentFilter, stream pb.RentautomationS
 	return nil
 }
 
-// ------------------------------------------------------------ //
+// --------------------------- PRODUCT --------------------------------- //
 func (s *server) CreateProduct(ctx context.Context, productReq *pb.ProductRequest) (*pb.ProductRequest, error) {
 
 	unique_key, storeError := model.StoreProduct(db, productReq)
@@ -238,7 +238,7 @@ func (s *server) GetProducts(filter *pb.ProductFilter, stream pb.RentautomationS
 	return nil
 }
 
-// ------------------------------------------------------------ //
+// ---------------------------- STAFF -------------------------------- //
 func (s *server) CreateStaff(ctx context.Context, staffReq *pb.StaffRequest) (*pb.StaffRequest, error) {
 
 	unique_key, storeError := model.StoreStaff(db, staffReq)
@@ -268,7 +268,7 @@ func (s *server) GetStaff(filter *pb.StaffFilter, stream pb.RentautomationServic
 	return nil
 }
 
-// ------------------------------------------------------------ //
+// ---------------------------- TRANSACTION -------------------------------- //
 func (s *server) CreateTransaction(ctx context.Context, transactionReq *pb.TransactionRequest) (*pb.TransactionRequest, error) {
 
 	unique_key, storeError := model.StoreTransaction(db, transactionReq)
@@ -292,6 +292,107 @@ func (s *server) GetTransactions(filter *pb.TransactionFilter, stream pb.Rentaut
 	}
 	return nil
 }
+
+
+
+// ---------------------------- ADDITTION -------------------------------- //
+func (s *server) CreateProductWith(ctx context.Context, createPrReq *pb.CreateProductRequest) (*pb.CreateProductRequest, error) {
+
+	unique_key, storeError := model.StoreProduct(db, createPrReq.Product)
+	if storeError != nil {
+		return nil, storeError
+	}
+	createPrReq.Product.ProductId = unique_key
+
+
+	unique_key2, storeError2 := model.StoreOrderDetails(db, createPrReq.OrderDetail)
+	if storeError2 != nil {
+		return nil, storeError2
+	}
+	createPrReq.OrderDetail.OrderDetailId = unique_key2
+
+	fmt.Printf("CreateProductWith of transaction ==> %v\n", &createPrReq )
+	return createPrReq, nil
+}
+
+func (s *server) UpdateProductWith(ctx context.Context, createPrReq *pb.CreateProductRequest) (*pb.CreateProductRequest, error) {
+
+	_, updateError := model.UpdateProduct(db, createPrReq.Product)
+	if updateError != nil {
+		return nil, updateError
+	}
+
+	unique_key2, storeError2 := model.StoreOrderDetails(db, createPrReq.OrderDetail)
+	if storeError2 != nil {
+		return nil, storeError2
+	}
+	createPrReq.OrderDetail.OrderDetailId = unique_key2
+
+
+	fmt.Printf("UpdateProductWith of transaction ==> %v\n", &createPrReq )
+	return createPrReq, nil
+}
+
+// ----------------------------  -------------------------------- //
+func (s *server) CreateCustomerWith(ctx context.Context, createCustReq *pb.CreateCustomerRequest) (*pb.CreateCustomerRequest, error) {
+	fmt.Printf("CreateCustomerWith of transaction ==> %v\n", &createCustReq )
+	return createCustReq, nil
+}
+
+func (s *server) UpdateCustomerWith(ctx context.Context, createCustReq *pb.CustomerRequest) (*pb.CustomerRequest, error) {
+	fmt.Printf("UpdateCustomerWith of transaction ==> %v\n", &createCustReq )
+	return createCustReq, nil
+}
+
+func (s *server) UpdateCustomerBalanceWith(ctx context.Context, createCustReq *pb.CreateCustomerRequest) (*pb.CreateCustomerRequest, error) {
+	fmt.Printf("UpdateCustomerBalanceWith of transaction ==> %v\n", &createCustReq)
+	return createCustReq, nil
+}
+
+// ----------------------------  -------------------------------- //
+func (s *server) CreateSupplierWith(ctx context.Context, createSuppReq *pb.CreateSupplierRequest) (*pb.CreateSupplierRequest, error) {
+	fmt.Printf("unique_key of transaction ==> %v\n", &createSuppReq )
+	return createSuppReq, nil
+}
+
+func (s *server) UpdateSupplierWith(ctx context.Context, createSuppReq *pb.SupplierRequest) (*pb.SupplierRequest, error) {
+	fmt.Printf("CreateSupplierWith of transaction ==> %v\n", &createSuppReq )
+	return createSuppReq, nil
+}
+
+func (s *server) UpdateSupplierBalanceWith(ctx context.Context, createSuppReq *pb.CreateSupplierRequest) (*pb.CreateSupplierRequest, error) {
+	fmt.Printf("UpdateSupplierBalanceWith of transaction ==> %v\n", &createSuppReq )
+	return createSuppReq, nil
+}
+
+// ----------------------------  -------------------------------- //
+func (s *server) CreateStaffWith(ctx context.Context, staffReq *pb.StaffRequest) (*pb.StaffRequest, error) {
+	fmt.Printf("CreateStaffWith of transaction ==> %v\n", &staffReq )
+	return staffReq, nil
+}
+
+func (s *server) UpdateStaffWith(ctx context.Context, staffReq *pb.StaffRequest) (*pb.StaffRequest, error) {
+	fmt.Printf("UpdateStaffWith of transaction ==> %v\n", &staffReq )
+	return staffReq, nil
+}
+
+//rpc CreateProductWith (CreateProductRequest) returns (CreateProductRequest) {}
+//rpc UpdateProductWith (CreateProductRequest) returns (CreateProductRequest) {}
+
+//rpc CreateCustomerWith (CreateCustomerRequest) returns (CreateCustomerRequest) {}
+//rpc UpdateCustomerWith (CustomerRequest) returns (CustomerRequest) {}
+//rpc UpdateCustomerBalanceWith (CreateCustomerRequest) returns (CreateCustomerRequest) {}
+//
+//rpc CreateSupplierWith (CreateSupplierRequest) returns (CreateSupplierRequest) {}
+//rpc UpdateSupplierWith (SupplierRequest) returns (SupplierRequest) {}
+//rpc UpdateSupplierBalanceWith (CreateSupplierRequest) returns (CreateSupplierRequest) {}
+//
+//rpc CreateStaffWith (StaffRequest) returns (StaffRequest) {}
+//rpc UpdateStaffWith (StaffRequest) returns (StaffRequest) {}
+
+
+
+
 
 var db *sqlx.DB
 
