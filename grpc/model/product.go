@@ -104,7 +104,7 @@ func StoreProduct(db *sqlx.DB, product *pb.ProductRequest) (uint64, error)  {
 		product.UnitsInStock).Scan(&lastInsertId)
 
 	CheckErr(err)
-	
+
 	commitError := tx.Commit()
 	CheckErr(commitError)
 
@@ -129,6 +129,8 @@ func AllProducts(db *sqlx.DB) ([]*pb.ProductRequest, error) {
 	if err != nil {
 		print("error")
 	}
+
+	//defer rows.Close()
 
 	products := make([]*pb.ProductRequest, 0)
 	for rows.Next() {
