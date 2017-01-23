@@ -13,10 +13,10 @@ DROP TABLE IF EXISTS orderdetails;
 
 var schemaCreateOrderDetail = `
 CREATE TABLE IF NOT EXISTS orderdetails (
-    	order_detail_id SERIAL PRIMARY KEY NOT NULL,
-    	order_id INTEGER,
+    	order_detail_id BIGSERIAL PRIMARY KEY NOT NULL,
+    	order_id BIGINT,
     	billing_no varchar (400),
-    	product_id INTEGER,
+    	product_id BIGINT,
     	price REAL,
 	order_quantity REAL,
 	discount INTEGER

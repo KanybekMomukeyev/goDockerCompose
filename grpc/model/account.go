@@ -13,9 +13,9 @@ DROP TABLE IF EXISTS accounts;
 
 var schemaCreateAccount = `
 CREATE TABLE IF NOT EXISTS accounts (
-    account_id SERIAL PRIMARY KEY NOT NULL,
-    customer_id INTEGER,
-    supplier_id INTEGER,
+    account_id BIGSERIAL PRIMARY KEY NOT NULL,
+    customer_id BIGINT,
+    supplier_id BIGINT,
     balance REAL
 );
 `

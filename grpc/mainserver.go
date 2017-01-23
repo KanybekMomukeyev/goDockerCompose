@@ -304,7 +304,7 @@ func (s *server) CreateProductWith(ctx context.Context, createPrReq *pb.CreatePr
 	}
 	createPrReq.Product.ProductId = unique_key
 
-
+	createPrReq.OrderDetail.ProductId = unique_key
 	unique_key2, storeError2 := model.StoreOrderDetails(db, createPrReq.OrderDetail)
 	if storeError2 != nil {
 		return nil, storeError2

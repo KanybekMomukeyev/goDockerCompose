@@ -13,7 +13,7 @@ DROP TABLE IF EXISTS staff;
 
 var schemaCreateStaff = `
 CREATE TABLE IF NOT EXISTS staff (
-    staff_id SERIAL PRIMARY KEY NOT NULL,
+    staff_id BIGSERIAL PRIMARY KEY NOT NULL,
     role_id INTEGER,
     staff_image_path VARCHAR (300),
     first_name VARCHAR (300),

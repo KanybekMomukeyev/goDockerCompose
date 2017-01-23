@@ -13,7 +13,7 @@ DROP TABLE IF EXISTS customers;
 
 var schemaCreateCustomer = `
 CREATE TABLE IF NOT EXISTS customers (
-    customer_id SERIAL PRIMARY KEY NOT NULL,
+    customer_id BIGSERIAL PRIMARY KEY NOT NULL,
     customer_image_path varchar (400),
     first_name varchar (400),
     second_name varchar (400),

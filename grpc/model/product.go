@@ -13,11 +13,11 @@ DROP TABLE IF EXISTS products;
 
 var schemaCreateProduct = `
 CREATE TABLE IF NOT EXISTS products (
-    product_id SERIAL PRIMARY KEY NOT NULL,
+    product_id BIGSERIAL PRIMARY KEY NOT NULL,
     product_image_path varchar (400),
     product_name varchar (400),
-    supplier_id INTEGER,
-    category_id INTEGER,
+    supplier_id BIGINT,
+    category_id BIGINT,
     barcode VARCHAR (300),
     quantity_per_unit VARCHAR (300),
     sale_unit_price REAL,

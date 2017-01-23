@@ -13,7 +13,7 @@ DROP TABLE IF EXISTS categories;
 
 var schemaCreateCategory = `
 CREATE TABLE IF NOT EXISTS categories (
-    category_id SERIAL PRIMARY KEY NOT NULL,
+    category_id BIGSERIAL PRIMARY KEY NOT NULL,
     category_name varchar (400)
 );
 `

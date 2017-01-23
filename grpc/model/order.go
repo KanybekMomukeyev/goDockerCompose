@@ -13,16 +13,16 @@ DROP TABLE IF EXISTS orders;
 
 var schemaCreateOrder = `
 CREATE TABLE IF NOT EXISTS orders (
-    order_id SERIAL PRIMARY KEY NOT NULL,
+    order_id BIGSERIAL PRIMARY KEY NOT NULL,
     order_document INTEGER,
     money_movement INTEGER,
     billing_no varchar (400),
 
-    staff_id INTEGER,
-    customer_id INTEGER,
-    supplier_id INTEGER,
-    order_date INTEGER,
-    payment_id INTEGER,
+    staff_id BIGINT,
+    customer_id BIGINT,
+    supplier_id BIGINT,
+    order_date BIGINT,
+    payment_id BIGINT,
 
     error_msg varchar (400),
     comment varchar (400),
