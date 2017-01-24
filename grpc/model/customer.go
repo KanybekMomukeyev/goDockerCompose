@@ -127,6 +127,34 @@ func StoreRealCustomer(db *sqlx.DB, customerRequest *pb.CustomerRequest) (uint64
 	return lastInsertId, nil
 }
 
+func UpdateRealCustomer(db *sqlx.DB, customerReq *pb.CustomerRequest) (uint64, error)  {
+
+	tx := db.MustBegin()
+
+	stmt, err :=tx.Prepare("UPDATE customers SET customer_image_path=$1, first_name=$2, second_name=$3, " +
+		"phone_number=$4, address=$5 WHERE customer_id=$6")
+	CheckErr(err)
+
+	res, err2 := stmt.Exec(customerReq.CustomerImagePath,
+		customerReq.FirstName,
+		customerReq.SecondName,
+		customerReq.PhoneNumber,
+		customerReq.Address,
+		customerReq.CustomerId)
+	CheckErr(err2)
+
+	affect, err := res.RowsAffected()
+	CheckErr(err)
+
+	fmt.Println(affect, "rows changed")
+
+	commitError := tx.Commit()
+	CheckErr(commitError)
+
+	return uint64(affect), nil
+
+}
+
 func AllRealCustomers(db *sqlx.DB) ([]*pb.CustomerRequest, error) {
 
 	pingError := db.Ping()

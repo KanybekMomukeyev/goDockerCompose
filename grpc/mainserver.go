@@ -298,18 +298,19 @@ func (s *server) GetTransactions(filter *pb.TransactionFilter, stream pb.Rentaut
 // ---------------------------- ADDITTION -------------------------------- //
 func (s *server) CreateProductWith(ctx context.Context, createPrReq *pb.CreateProductRequest) (*pb.CreateProductRequest, error) {
 
-	unique_key, storeError := model.StoreProduct(db, createPrReq.Product)
+	productSerialKey, storeError := model.StoreProduct(db, createPrReq.Product)
 	if storeError != nil {
 		return nil, storeError
 	}
-	createPrReq.Product.ProductId = unique_key
 
-	createPrReq.OrderDetail.ProductId = unique_key
-	unique_key2, storeError2 := model.StoreOrderDetails(db, createPrReq.OrderDetail)
+	createPrReq.Product.ProductId = productSerialKey
+	createPrReq.OrderDetail.ProductId = productSerialKey
+
+	orderDetailSerialKey, storeError2 := model.StoreOrderDetails(db, createPrReq.OrderDetail)
 	if storeError2 != nil {
 		return nil, storeError2
 	}
-	createPrReq.OrderDetail.OrderDetailId = unique_key2
+	createPrReq.OrderDetail.OrderDetailId = orderDetailSerialKey
 
 	fmt.Printf("CreateProductWith of transaction ==> %v\n", &createPrReq )
 	return createPrReq, nil
@@ -322,12 +323,11 @@ func (s *server) UpdateProductWith(ctx context.Context, createPrReq *pb.CreatePr
 		return nil, updateError
 	}
 
-	unique_key2, storeError2 := model.StoreOrderDetails(db, createPrReq.OrderDetail)
+	orderDetailSerialKey, storeError2 := model.StoreOrderDetails(db, createPrReq.OrderDetail)
 	if storeError2 != nil {
 		return nil, storeError2
 	}
-	createPrReq.OrderDetail.OrderDetailId = unique_key2
-
+	createPrReq.OrderDetail.OrderDetailId = orderDetailSerialKey
 
 	fmt.Printf("UpdateProductWith of transaction ==> %v\n", &createPrReq )
 	return createPrReq, nil
@@ -335,12 +335,38 @@ func (s *server) UpdateProductWith(ctx context.Context, createPrReq *pb.CreatePr
 
 // ----------------------------  -------------------------------- //
 func (s *server) CreateCustomerWith(ctx context.Context, createCustReq *pb.CreateCustomerRequest) (*pb.CreateCustomerRequest, error) {
+
+	customerSerial, storeError := model.StoreRealCustomer(db, createCustReq.Customer)
+	if storeError != nil {
+		return nil, storeError
+	}
+	createCustReq.Customer.CustomerId = customerSerial
+	createCustReq.Transaction.CustomerId = customerSerial
+	createCustReq.Account.CustomerId = customerSerial
+
+	transactionSerial, storeError := model.StoreTransaction(db, createCustReq.Transaction)
+	if storeError != nil {
+		return nil, storeError
+	}
+	createCustReq.Transaction.TransactionId = transactionSerial
+
+	accountSerial, storeError := model.StoreAccount(db, createCustReq.Account)
+	if storeError != nil {
+		return nil, storeError
+	}
+	createCustReq.Account.AccountId= accountSerial
+
 	fmt.Printf("CreateCustomerWith of transaction ==> %v\n", &createCustReq )
 	return createCustReq, nil
 }
 
 func (s *server) UpdateCustomerWith(ctx context.Context, createCustReq *pb.CustomerRequest) (*pb.CustomerRequest, error) {
-	fmt.Printf("UpdateCustomerWith of transaction ==> %v\n", &createCustReq )
+
+	rowsAffected, updateError := model.UpdateRealCustomer(db, createCustReq)
+	if updateError != nil {
+		return nil, updateError
+	}
+	fmt.Printf("rowsAffected ==> %v\n", rowsAffected)
 	return createCustReq, nil
 }
 
@@ -376,19 +402,6 @@ func (s *server) UpdateStaffWith(ctx context.Context, staffReq *pb.StaffRequest)
 	return staffReq, nil
 }
 
-//rpc CreateProductWith (CreateProductRequest) returns (CreateProductRequest) {}
-//rpc UpdateProductWith (CreateProductRequest) returns (CreateProductRequest) {}
-
-//rpc CreateCustomerWith (CreateCustomerRequest) returns (CreateCustomerRequest) {}
-//rpc UpdateCustomerWith (CustomerRequest) returns (CustomerRequest) {}
-//rpc UpdateCustomerBalanceWith (CreateCustomerRequest) returns (CreateCustomerRequest) {}
-//
-//rpc CreateSupplierWith (CreateSupplierRequest) returns (CreateSupplierRequest) {}
-//rpc UpdateSupplierWith (SupplierRequest) returns (SupplierRequest) {}
-//rpc UpdateSupplierBalanceWith (CreateSupplierRequest) returns (CreateSupplierRequest) {}
-//
-//rpc CreateStaffWith (StaffRequest) returns (StaffRequest) {}
-//rpc UpdateStaffWith (StaffRequest) returns (StaffRequest) {}
 
 
 

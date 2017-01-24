@@ -13,14 +13,14 @@ DROP TABLE IF EXISTS transactions;
 
 var schemaCreateTransaction = `
 CREATE TABLE IF NOT EXISTS transactions (
-    	transaction_id SERIAL PRIMARY KEY NOT NULL,
-    	transaction_date INTEGER,
+    	transaction_id BIGSERIAL PRIMARY KEY NOT NULL,
+    	transaction_date BIGINT,
     	transaction_type INTEGER,
     	money_amount REAL,
-    	order_id INTEGER,
-    	customer_id INTEGER,
-    	supplier_id INTEGER,
-  	staff_id INTEGER
+    	order_id BIGINT,
+    	customer_id BIGINT,
+    	supplier_id BIGINT,
+  	staff_id BIGINT
 );
 `
 
