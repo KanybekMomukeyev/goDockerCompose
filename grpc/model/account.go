@@ -54,7 +54,7 @@ func StoreAccount(db *sqlx.DB, accountRequest *pb.AccountRequest) (uint64, error
 	commitError := tx.Commit()
 	CheckErr(commitError)
 
-	fmt.Println("last inserted id =", lastInsertId)
+	fmt.Println("last inserted account_id =", lastInsertId)
 
 	return lastInsertId, nil
 }

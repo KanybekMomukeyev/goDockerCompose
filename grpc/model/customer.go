@@ -48,7 +48,7 @@ func StoreCustomer(db *sqlx.DB, customer *pb.ExampleRequest) (uint64, error)  {
 	commitError := tx.Commit()
 	CheckErr(commitError)
 
-	fmt.Println("last inserted id =", lastInsertId)
+	fmt.Println("last inserted customer_id =", lastInsertId)
 
 	return lastInsertId, nil
 }
@@ -122,7 +122,7 @@ func StoreRealCustomer(db *sqlx.DB, customerRequest *pb.CustomerRequest) (uint64
 	commitError := tx.Commit()
 	CheckErr(commitError)
 
-	fmt.Println("last inserted id =", lastInsertId)
+	fmt.Println("last inserted customer_id =", lastInsertId)
 
 	return lastInsertId, nil
 }

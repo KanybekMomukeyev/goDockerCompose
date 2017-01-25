@@ -108,7 +108,7 @@ func StoreProduct(db *sqlx.DB, product *pb.ProductRequest) (uint64, error)  {
 	commitError := tx.Commit()
 	CheckErr(commitError)
 
-	fmt.Println("last inserted id =", lastInsertId)
+	fmt.Println("last inserted product_id =", lastInsertId)
 
 	return lastInsertId, nil
 }

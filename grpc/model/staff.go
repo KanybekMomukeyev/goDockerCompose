@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS staff (
     staff_image_path VARCHAR (300),
     first_name VARCHAR (300),
     second_name VARCHAR (300),
-    email VARCHAR (300),
+    email VARCHAR (300) UNIQUE,
     password VARCHAR (300),
     phone_number VARCHAR (300),
     address VARCHAR (300)
@@ -68,7 +68,7 @@ func StoreStaff(db *sqlx.DB, staff *pb.StaffRequest) (uint64, error)  {
 	commitError := tx.Commit()
 	CheckErr(commitError)
 
-	fmt.Println("last inserted id =", lastInsertId)
+	fmt.Println("last inserted staff_id =", lastInsertId)
 
 	return lastInsertId, nil
 }

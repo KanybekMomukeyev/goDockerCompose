@@ -390,6 +390,28 @@ func (s *server) UpdateCustomerBalanceWith(ctx context.Context, updateCustBalanc
 
 // ----------------------------  -------------------------------- //
 func (s *server) CreateSupplierWith(ctx context.Context, createSuppReq *pb.CreateSupplierRequest) (*pb.CreateSupplierRequest, error) {
+
+
+	supplierSerial, storeError := model.StoreSupplier(db, createSuppReq.Customer)
+	if storeError != nil {
+		return nil, storeError
+	}
+	createSuppReq.Customer.SupplierId = supplierSerial
+	createSuppReq.Transaction.SupplierId = supplierSerial
+	createSuppReq.Account.SupplierId = supplierSerial
+
+	transactionSerial, storeError := model.StoreTransaction(db, createSuppReq.Transaction)
+	if storeError != nil {
+		return nil, storeError
+	}
+	createSuppReq.Transaction.TransactionId = transactionSerial
+
+	accountSerial, storeError := model.StoreAccount(db, createSuppReq.Account)
+	if storeError != nil {
+		return nil, storeError
+	}
+	createSuppReq.Account.AccountId= accountSerial
+
 	fmt.Printf("unique_key of transaction ==> %v\n", &createSuppReq )
 	return createSuppReq, nil
 }
@@ -430,16 +452,17 @@ func main() {
 		log.Fatalf("failed to listen: %v", databaseError)
 	}
 
+	model.CreateStaffIfNotExsists(db)
 	model.CreateAccountIfNotExsists(db)
 	model.CreateCategoryIfNotExsists(db)
 	model.CreateCustomerIfNotExsists(db)
+	model.CreateSupplierIfNotExsists(db)
 
 	model.CreateOrderIfNotExsists(db)
 	model.CreateOrderDetailsIfNotExsists(db)
 	model.CreatePaymentIfNotExsists(db)
 
 	model.CreateProductIfNotExsists(db)
-	model.CreateStaffIfNotExsists(db)
 	model.CreateTransactionIfNotExsists(db)
 
 	lis, err := net.Listen("tcp", port)

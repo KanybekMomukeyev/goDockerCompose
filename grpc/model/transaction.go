@@ -69,7 +69,7 @@ func StoreTransaction(db *sqlx.DB, transaction *pb.TransactionRequest) (uint64, 
 	commitError := tx.Commit()
 	CheckErr(commitError)
 
-	fmt.Println("last inserted id =", lastInsertId)
+	fmt.Println("last inserted transaction_id =", lastInsertId)
 
 	return lastInsertId, nil
 }

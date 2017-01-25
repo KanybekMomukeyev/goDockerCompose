@@ -94,7 +94,7 @@ func StoreOrder(db *sqlx.DB, order *pb.OrderRequest) (uint64, error)  {
 	commitError := tx.Commit()
 	CheckErr(commitError)
 
-	fmt.Println("last inserted id =", lastInsertId)
+	fmt.Println("last inserted order_id =", lastInsertId)
 
 	return lastInsertId, nil
 }

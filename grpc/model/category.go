@@ -43,7 +43,7 @@ func StoreCategory(db *sqlx.DB, categoryRequest *pb.CategoryRequest) (uint64, er
 	commitError := tx.Commit()
 	CheckErr(commitError)
 
-	fmt.Println("last inserted id =", lastInsertId)
+	fmt.Println("last inserted category_id =", lastInsertId)
 
 	return lastInsertId, nil
 }

@@ -64,7 +64,7 @@ func StoreOrderDetails(db *sqlx.DB, orderDetail *pb.OrderDetailRequest) (uint64,
 	commitError := tx.Commit()
 	CheckErr(commitError)
 
-	fmt.Println("last inserted id =", lastInsertId)
+	fmt.Println("last inserted order_detail_id =", lastInsertId)
 
 	return lastInsertId, nil
 }

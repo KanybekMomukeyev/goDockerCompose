@@ -49,7 +49,7 @@ func StorePayment(db *sqlx.DB, payment *pb.PaymentRequest) (uint64, error)  {
 	commitError := tx.Commit()
 	CheckErr(commitError)
 
-	fmt.Println("last inserted id =", lastInsertId)
+	fmt.Println("last inserted payment_id =", lastInsertId)
 
 	return lastInsertId, nil
 }
