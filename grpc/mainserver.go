@@ -417,12 +417,30 @@ func (s *server) CreateSupplierWith(ctx context.Context, createSuppReq *pb.Creat
 }
 
 func (s *server) UpdateSupplierWith(ctx context.Context, createSuppReq *pb.SupplierRequest) (*pb.SupplierRequest, error) {
-	fmt.Printf("CreateSupplierWith of transaction ==> %v\n", &createSuppReq )
+
+	rowsAffected, updateError := model.UpdateSupplier(db, createSuppReq)
+	if updateError != nil {
+		return nil, updateError
+	}
+	fmt.Printf("rowsAffected UpdateSupplier==> %v\n", rowsAffected)
 	return createSuppReq, nil
 }
 
 func (s *server) UpdateSupplierBalanceWith(ctx context.Context, createSuppReq *pb.CreateSupplierRequest) (*pb.CreateSupplierRequest, error) {
-	fmt.Printf("UpdateSupplierBalanceWith of transaction ==> %v\n", &createSuppReq )
+
+	transactionSerial, storeError := model.StoreTransaction(db, createSuppReq.Transaction)
+	if storeError != nil {
+		return nil, storeError
+	}
+	createSuppReq.Transaction.TransactionId = transactionSerial
+
+	rowsAffected, storeError := model.UpdateSupplierBalance(db, createSuppReq.Account)
+	if storeError != nil {
+		return nil, storeError
+	}
+
+	fmt.Printf("rowsAffected %v\n", &rowsAffected)
+	fmt.Printf("UpdateSupplierBalanceWith of transaction ==> %v\n", &createSuppReq)
 	return createSuppReq, nil
 }
 

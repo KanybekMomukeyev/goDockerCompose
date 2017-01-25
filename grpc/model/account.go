@@ -82,6 +82,29 @@ func UpdateCustomerBalance(db *sqlx.DB, accountReq *pb.AccountRequest) (uint64, 
 	return uint64(affect), nil
 }
 
+func UpdateSupplierBalance(db *sqlx.DB, accountReq *pb.AccountRequest) (uint64, error)  {
+
+	tx := db.MustBegin()
+
+	stmt, err :=tx.Prepare("UPDATE accounts SET balance=$1 WHERE supplier_id=$2")
+	CheckErr(err)
+
+	res, err2 := stmt.Exec(accountReq.Balance,
+		accountReq.SupplierId)
+
+	CheckErr(err2)
+
+	affect, err := res.RowsAffected()
+	CheckErr(err)
+
+	fmt.Println(affect, "rows changed")
+
+	commitError := tx.Commit()
+	CheckErr(commitError)
+
+	return uint64(affect), nil
+}
+
 func AllAccounts(db *sqlx.DB) ([]*pb.AccountRequest, error) {
 
 	pingError := db.Ping()
