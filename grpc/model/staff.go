@@ -63,14 +63,64 @@ func StoreStaff(db *sqlx.DB, staff *pb.StaffRequest) (uint64, error)  {
 		staff.PhoneNumber,
 		staff.Address).Scan(&lastInsertId)
 
-	CheckErr(err)
+	//CheckErr(err)
+	if err != nil {
+		fmt.Println(err)
+		return 0, err
+	}
 
 	commitError := tx.Commit()
-	CheckErr(commitError)
-
+	//CheckErr(commitError)
+	if commitError != nil {
+		fmt.Println(commitError)
+		return 0, commitError
+	}
+	
 	fmt.Println("last inserted staff_id =", lastInsertId)
 
 	return lastInsertId, nil
+}
+
+func UpdateStaff(db *sqlx.DB, staff *pb.StaffRequest) (uint64, error)  {
+
+	tx := db.MustBegin()
+
+	stmt, err :=tx.Prepare("UPDATE staff SET role_id=$1, staff_image_path=$2, first_name=$3, second_name=$4, " +
+		"email=$5, password=$6, phone_number=$7, address=$8 WHERE staff_id=$9")
+	CheckErr(err)
+
+	res, err2 := stmt.Exec(staff.RoleId,
+		staff.StaffImagePath,
+		staff.FirstName,
+		staff.SecondName,
+		staff.Email,
+		staff.Password,
+		staff.PhoneNumber,
+		staff.Address,
+		staff.StaffId)
+
+	//CheckErr(err2)
+	if err2 != nil {
+		fmt.Println(err2)
+		return 0, err2
+	}
+
+	affect, err := res.RowsAffected()
+	if err != nil {
+		fmt.Println(err)
+		return 0, err
+	}
+
+	fmt.Println(affect, "rows changed")
+
+	commitError := tx.Commit()
+	//CheckErr(commitError)
+	if commitError != nil {
+		fmt.Println(commitError)
+		return 0, commitError
+	}
+
+	return uint64(affect), nil
 }
 
 func AllStaff(db *sqlx.DB) ([]*pb.StaffRequest, error) {

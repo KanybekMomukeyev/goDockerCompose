@@ -446,12 +446,24 @@ func (s *server) UpdateSupplierBalanceWith(ctx context.Context, createSuppReq *p
 
 // ----------------------------  -------------------------------- //
 func (s *server) CreateStaffWith(ctx context.Context, staffReq *pb.StaffRequest) (*pb.StaffRequest, error) {
+
+	staffSerialKey, storeError := model.StoreStaff(db, staffReq)
+	if storeError != nil {
+		return nil, storeError
+	}
+
+	staffReq.StaffId = staffSerialKey
 	fmt.Printf("CreateStaffWith of transaction ==> %v\n", &staffReq )
 	return staffReq, nil
 }
 
 func (s *server) UpdateStaffWith(ctx context.Context, staffReq *pb.StaffRequest) (*pb.StaffRequest, error) {
-	fmt.Printf("UpdateStaffWith of transaction ==> %v\n", &staffReq )
+
+	rowsAffected, updateError := model.UpdateStaff(db, staffReq)
+	if updateError != nil {
+		return nil, updateError
+	}
+	fmt.Printf("rowsAffected UpdateStaffWith==> %v\n", rowsAffected)
 	return staffReq, nil
 }
 
