@@ -152,7 +152,6 @@ func UpdateRealCustomer(db *sqlx.DB, customerReq *pb.CustomerRequest) (uint64, e
 	CheckErr(commitError)
 
 	return uint64(affect), nil
-
 }
 
 func AllRealCustomers(db *sqlx.DB) ([]*pb.CustomerRequest, error) {

@@ -370,9 +370,22 @@ func (s *server) UpdateCustomerWith(ctx context.Context, createCustReq *pb.Custo
 	return createCustReq, nil
 }
 
-func (s *server) UpdateCustomerBalanceWith(ctx context.Context, createCustReq *pb.CreateCustomerRequest) (*pb.CreateCustomerRequest, error) {
-	fmt.Printf("UpdateCustomerBalanceWith of transaction ==> %v\n", &createCustReq)
-	return createCustReq, nil
+func (s *server) UpdateCustomerBalanceWith(ctx context.Context, updateCustBalanceReq *pb.CreateCustomerRequest) (*pb.CreateCustomerRequest, error) {
+
+	transactionSerial, storeError := model.StoreTransaction(db, updateCustBalanceReq.Transaction)
+	if storeError != nil {
+		return nil, storeError
+	}
+	updateCustBalanceReq.Transaction.TransactionId = transactionSerial
+
+	rowsAffected, storeError := model.UpdateCustomerBalance(db, updateCustBalanceReq.Account)
+	if storeError != nil {
+		return nil, storeError
+	}
+
+	fmt.Printf("rowsAffected %v\n", &rowsAffected)
+	fmt.Printf("UpdateCustomerBalanceWith of transaction ==> %v\n", &updateCustBalanceReq)
+	return updateCustBalanceReq, nil
 }
 
 // ----------------------------  -------------------------------- //
