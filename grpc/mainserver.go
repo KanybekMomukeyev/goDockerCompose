@@ -531,8 +531,8 @@ func main() {
 		}
 		grpcServer = grpc.NewServer()
 	} else {
-		certFile := "ssl.crt"
-		keyFile := "ssl.key"
+		certFile := "certfiles/ssl.crt"
+		keyFile := "certfiles/ssl.key"
 		creds, err := credentials.NewServerTLSFromFile(certFile, keyFile)
 		lis, err = net.Listen("tcp", port)
 		if err != nil {
