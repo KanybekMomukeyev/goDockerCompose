@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc"
 
 	pb "github.com/KanybekMomukeyev/goDockerCompose/grpc/proto"
+	"google.golang.org/grpc/credentials"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/KanybekMomukeyev/goDockerCompose/grpc/model"
@@ -519,13 +520,38 @@ func main() {
 	model.CreateProductIfNotExsists(db)
 	model.CreateTransactionIfNotExsists(db)
 
-	lis, err := net.Listen("tcp", port)
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
 
-	// Creates a new gRPC server
-	s := grpc.NewServer()
-	pb.RegisterRentautomationServiceServer(s, &server{})
-	s.Serve(lis)
+	var err error
+	var lis net.Listener
+	var grpcServer *grpc.Server
+	if false {
+		lis, err = net.Listen("tcp", ":8080")
+		if err != nil {
+			log.Fatalf("failed to listen: %v", err)
+		}
+		grpcServer = grpc.NewServer()
+	} else {
+		certFile := "ssl.crt"
+		keyFile := "ssl.key"
+		creds, err := credentials.NewServerTLSFromFile(certFile, keyFile)
+		lis, err = net.Listen("tcp", port)
+		if err != nil {
+			log.Fatalf("failed to listen: %v", err)
+		}
+		grpcServer = grpc.NewServer(grpc.Creds(creds))
+	}
+	pb.RegisterRentautomationServiceServer(grpcServer, &server{})
+	grpcServer.Serve(lis)
+
+
+
+	//lis, err := net.Listen("tcp", port)
+	//if err != nil {
+	//	log.Fatalf("failed to listen: %v", err)
+	//}
+	//
+	//// Creates a new gRPC server
+	//s := grpc.NewServer()
+	//pb.RegisterRentautomationServiceServer(s, &server{})
+	//s.Serve(lis)
 }
