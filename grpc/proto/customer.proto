@@ -11,6 +11,7 @@ service RentautomationService {
     rpc GetAccounts(AccountFilter) returns (stream AccountRequest) {}
 
     rpc CreateCategory (CategoryRequest) returns (CategoryRequest) {}
+    rpc UpdateCategory (CategoryRequest) returns (CategoryRequest) {}
     rpc GetCategories(CategoryFilter) returns (stream CategoryRequest) {}
 
     rpc CreateCustomer (CustomerRequest) returns (CustomerRequest) {}
@@ -38,17 +39,24 @@ service RentautomationService {
     // ------------------ New methods ------------------ //
     rpc CreateProductWith (CreateProductRequest) returns (CreateProductRequest) {}
     rpc UpdateProductWith (CreateProductRequest) returns (CreateProductRequest) {}
+    rpc AllProductsWith (ProductFilter) returns (stream CreateProductRequest) {}
 
     rpc CreateCustomerWith (CreateCustomerRequest) returns (CreateCustomerRequest) {}
     rpc UpdateCustomerWith (CustomerRequest) returns (CustomerRequest) {}
     rpc UpdateCustomerBalanceWith (CreateCustomerRequest) returns (CreateCustomerRequest) {}
+    rpc AllCustomersWith (CustomerFilter) returns (stream CreateCustomerRequest) {}
 
     rpc CreateSupplierWith (CreateSupplierRequest) returns (CreateSupplierRequest) {}
     rpc UpdateSupplierWith (SupplierRequest) returns (SupplierRequest) {}
     rpc UpdateSupplierBalanceWith (CreateSupplierRequest) returns (CreateSupplierRequest) {}
+    rpc AllSuppliersWith (SupplierFilter) returns (stream CreateSupplierRequest) {}
 
     rpc CreateStaffWith (StaffRequest) returns (StaffRequest) {}
     rpc UpdateStaffWith (StaffRequest) returns (StaffRequest) {}
+    rpc AllStaffWith (StaffFilter) returns (stream StaffRequest) {}
+    rpc SignInWith (SignInRequest) returns (StaffRequest) {}
+
+    rpc CreateOrderWith (CreateOrderRequest) returns (CreateOrderRequest) {}
 }
 
 // Request message for creating a new customer
@@ -90,7 +98,7 @@ message CreateCustomerRequest {
 }
 
 message CreateSupplierRequest {
-    SupplierRequest customer = 1;
+    SupplierRequest supplier = 1;
     TransactionRequest transaction = 2;
     AccountRequest account = 3;
 }
@@ -222,6 +230,7 @@ message OrderDetailRequest {
     double price = 5;
     double orderQuantity = 6;
     int32 discount = 7;
+    uint64 orderDetailDate = 8;
 }
 
 message OrderDetailFilter {
@@ -241,4 +250,17 @@ message TransactionRequest {
 
 message TransactionFilter {
     string transactionKeyword = 1;
+}
+
+message SignInRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message CreateOrderRequest {
+    OrderRequest order = 1;
+    PaymentRequest payment = 2;
+    TransactionRequest transaction = 3;
+    AccountRequest account = 4;
+    repeated OrderDetailRequest orderDetails = 5;
 }

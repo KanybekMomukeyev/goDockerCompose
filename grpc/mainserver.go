@@ -98,6 +98,10 @@ func (s *server) CreateCategory(ctx context.Context, categoryReq *pb.CategoryReq
 	return categoryReq, nil
 }
 
+func (s *server) UpdateCategory(ctx context.Context, categoryReq *pb.CategoryRequest) (*pb.CategoryRequest, error) {
+	return nil, nil
+}
+
 func (s *server) GetCategories(filter *pb.CategoryFilter, stream pb.RentautomationService_GetCategoriesServer) error {
 
 	categories, _ := model.AllCategory(db)
@@ -333,6 +337,11 @@ func (s *server) UpdateProductWith(ctx context.Context, createPrReq *pb.CreatePr
 	return createPrReq, nil
 }
 
+func (s *server) AllProductsWith(filter *pb.ProductFilter, stream pb.RentautomationService_AllProductsWithServer) error {
+
+	return nil
+}
+
 // ----------------------------  -------------------------------- //
 func (s *server) CreateCustomerWith(ctx context.Context, createCustReq *pb.CreateCustomerRequest) (*pb.CreateCustomerRequest, error) {
 
@@ -388,15 +397,18 @@ func (s *server) UpdateCustomerBalanceWith(ctx context.Context, updateCustBalanc
 	return updateCustBalanceReq, nil
 }
 
+func (s *server) AllCustomersWith(filter *pb.CustomerFilter, stream pb.RentautomationService_AllCustomersWithServer) error {
+	return nil
+}
+
 // ----------------------------  -------------------------------- //
 func (s *server) CreateSupplierWith(ctx context.Context, createSuppReq *pb.CreateSupplierRequest) (*pb.CreateSupplierRequest, error) {
 
-
-	supplierSerial, storeError := model.StoreSupplier(db, createSuppReq.Customer)
+	supplierSerial, storeError := model.StoreSupplier(db, createSuppReq.Supplier)
 	if storeError != nil {
 		return nil, storeError
 	}
-	createSuppReq.Customer.SupplierId = supplierSerial
+	createSuppReq.Supplier.SupplierId = supplierSerial
 	createSuppReq.Transaction.SupplierId = supplierSerial
 	createSuppReq.Account.SupplierId = supplierSerial
 
@@ -444,6 +456,11 @@ func (s *server) UpdateSupplierBalanceWith(ctx context.Context, createSuppReq *p
 	return createSuppReq, nil
 }
 
+func (s *server) AllSuppliersWith(filter *pb.SupplierFilter, stream pb.RentautomationService_AllSuppliersWithServer) error {
+
+	return  nil
+}
+
 // ----------------------------  -------------------------------- //
 func (s *server) CreateStaffWith(ctx context.Context, staffReq *pb.StaffRequest) (*pb.StaffRequest, error) {
 
@@ -467,10 +484,17 @@ func (s *server) UpdateStaffWith(ctx context.Context, staffReq *pb.StaffRequest)
 	return staffReq, nil
 }
 
+func (s *server) AllStaffWith(filter *pb.StaffFilter, stream pb.RentautomationService_AllStaffWithServer) error {
+	return nil
+}
 
+func (s *server) SignInWith(ctx context.Context, signInReq *pb.SignInRequest) (*pb.StaffRequest, error) {
+	return  nil, nil
+}
 
-
-
+func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrderRequest) (*pb.CreateOrderRequest, error) {
+	return nil, nil
+}
 
 var db *sqlx.DB
 

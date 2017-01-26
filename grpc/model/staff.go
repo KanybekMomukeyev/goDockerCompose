@@ -75,7 +75,7 @@ func StoreStaff(db *sqlx.DB, staff *pb.StaffRequest) (uint64, error)  {
 		fmt.Println(commitError)
 		return 0, commitError
 	}
-	
+
 	fmt.Println("last inserted staff_id =", lastInsertId)
 
 	return lastInsertId, nil
