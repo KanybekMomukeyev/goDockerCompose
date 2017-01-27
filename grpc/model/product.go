@@ -84,7 +84,7 @@ func UpdateProduct(db *sqlx.DB, product *pb.ProductRequest) (uint64, error)  {
 	return uint64(affect), nil
 }
 
-func StoreProduct(db *sqlx.DB, product *pb.ProductRequest) (uint64, error)  {
+func StoreProduct(db *sqlx.DB, product *pb.ProductRequest) (uint64, error) {
 
 	tx := db.MustBegin()
 	var lastInsertId uint64
@@ -111,6 +111,16 @@ func StoreProduct(db *sqlx.DB, product *pb.ProductRequest) (uint64, error)  {
 	fmt.Println("last inserted product_id =", lastInsertId)
 
 	return lastInsertId, nil
+}
+
+func IncreaseProductsInStock(db *sqlx.DB, orderDetailReq *pb.OrderDetailRequest)  (uint64, error)  {
+
+	return nil, nil
+}
+
+func DecreaseProductsInStock(db *sqlx.DB, orderDetailReq *pb.OrderDetailRequest)  (uint64, error)  {
+
+	return nil, nil
 }
 
 func AllProducts(db *sqlx.DB) ([]*pb.ProductRequest, error) {
