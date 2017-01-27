@@ -500,7 +500,49 @@ func (s *server) SignInWith(ctx context.Context, signInReq *pb.SignInRequest) (*
 }
 
 func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrderRequest) (*pb.CreateOrderRequest, error) {
-	return nil, nil
+
+	// payment
+	paymentSerial, storeError := model.StorePayment(db, creatOrdReq.Payment)
+	if storeError != nil {
+		return nil, storeError
+	}
+	creatOrdReq.Payment.PaymentId = paymentSerial
+	creatOrdReq.Order.PaymentId = paymentSerial
+
+	// order
+	orderSerial, storeError := model.StoreOrder(db, creatOrdReq.Order)
+	if storeError != nil {
+		return nil, storeError
+	}
+	creatOrdReq.Order.OrderId = orderSerial
+	creatOrdReq.Transaction.OrderId = orderSerial
+
+	// transaction
+	transactionSerial, storeError := model.StoreTransaction(db, creatOrdReq.Transaction)
+	if storeError != nil {
+		return nil, storeError
+	}
+	creatOrdReq.Transaction.TransactionId = transactionSerial
+
+	// customer balance
+	rowsAffected, storeError := model.UpdateCustomerBalance(db, creatOrdReq.Account)
+	if storeError != nil {
+		return nil, storeError
+	}
+	fmt.Printf("rowsAffected %v\n", &rowsAffected)
+
+	// orderDetails
+	for _, orderDetailReq := range creatOrdReq.OrderDetails {
+		orderDetailReq.OrderId = orderSerial
+
+		orderDetailSerial, storeError := model.StoreOrderDetails(db, orderDetailReq)
+		if storeError != nil {
+			return nil, storeError
+		}
+		orderDetailReq.OrderDetailId = orderDetailSerial
+	}
+
+	return creatOrdReq, nil
 }
 
 var db *sqlx.DB
