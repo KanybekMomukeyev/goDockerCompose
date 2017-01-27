@@ -48,6 +48,28 @@ func StoreCategory(db *sqlx.DB, categoryRequest *pb.CategoryRequest) (uint64, er
 	return lastInsertId, nil
 }
 
+func UpdateCategory(db *sqlx.DB, categoryRequest *pb.CategoryRequest) (uint64, error)  {
+
+	tx := db.MustBegin()
+
+	stmt, err :=tx.Prepare("UPDATE categories SET category_name=$1 WHERE category_id=$2")
+	CheckErr(err)
+
+	res, err2 := stmt.Exec(categoryRequest.CategoryName,
+		categoryRequest.CategoryId)
+	CheckErr(err2)
+
+	affect, err := res.RowsAffected()
+	CheckErr(err)
+
+	fmt.Println(affect, "rows changed")
+
+	commitError := tx.Commit()
+	CheckErr(commitError)
+
+	return uint64(affect), nil
+}
+
 func AllCategory(db *sqlx.DB) ([]*pb.CategoryRequest, error) {
 
 	pingError := db.Ping()

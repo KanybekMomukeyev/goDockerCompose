@@ -15,6 +15,7 @@ var schemaCreateOrderDetail = `
 CREATE TABLE IF NOT EXISTS orderdetails (
     	order_detail_id BIGSERIAL PRIMARY KEY NOT NULL,
     	order_id BIGINT,
+    	order_detail_date BIGINT,
     	billing_no varchar (400),
     	product_id BIGINT,
     	price REAL,
@@ -25,11 +26,12 @@ CREATE TABLE IF NOT EXISTS orderdetails (
 
 var schemaCreateIndexForOrderDetail1 = `CREATE INDEX IF NOT EXISTS order_id_order_details_idx ON orderdetails (order_id)`
 var schemaCreateIndexForOrderDetail2 = `CREATE INDEX IF NOT EXISTS product_id_order_details_idx ON orderdetails (product_id)`
-
+var schemaCreateIndexForOrderDetail3 = `CREATE INDEX IF NOT EXISTS order_detail_date_order_details_idx ON orderdetails (order_detail_date)`
 
 type OrderDetail struct {
 	orderDetailId uint64 `db:"order_detail_id"`
 	orderId uint64 `db:"order_id"`
+	orderDetailDate uint64 `db:"order_detail_date"`
 	billingNo string `db:"billing_no"`
 	productId uint64 `db:"product_id"`
 	price float32 `db:"price"`
@@ -42,6 +44,7 @@ func CreateOrderDetailsIfNotExsists(db *sqlx.DB) {
 	db.MustExec(schemaCreateOrderDetail)
 	db.MustExec(schemaCreateIndexForOrderDetail1)
 	db.MustExec(schemaCreateIndexForOrderDetail2)
+	db.MustExec(schemaCreateIndexForOrderDetail3)
 }
 
 func StoreOrderDetails(db *sqlx.DB, orderDetail *pb.OrderDetailRequest) (uint64, error)  {
@@ -50,9 +53,10 @@ func StoreOrderDetails(db *sqlx.DB, orderDetail *pb.OrderDetailRequest) (uint64,
 	var lastInsertId uint64
 
 	err := tx.QueryRow("INSERT INTO orderdetails " +
-		"(order_id, billing_no, product_id, price, order_quantity, discount) " +
-		"VALUES($1, $2, $3, $4, $5, $6) returning order_detail_id;",
+		"(order_id, order_detail_date, billing_no, product_id, price, order_quantity, discount) " +
+		"VALUES($1, $2, $3, $4, $5, $6, $7) returning order_detail_id;",
 		orderDetail.OrderId,
+		orderDetail.OrderDetailDate,
 		orderDetail.BillingNo,
 		orderDetail.ProductId,
 		orderDetail.Price,
@@ -78,7 +82,7 @@ func AllOrderDetails(db *sqlx.DB) ([]*pb.OrderDetailRequest, error) {
 		return nil, pingError
 	}
 
-	rows, err := db.Queryx("SELECT order_detail_id, order_id, billing_no, product_id, " +
+	rows, err := db.Queryx("SELECT order_detail_id, order_id, order_detail_date, billing_no, product_id, " +
 		"price, order_quantity, discount FROM orderdetails ORDER BY order_detail_id DESC")
 
 	if err != nil {
@@ -88,9 +92,14 @@ func AllOrderDetails(db *sqlx.DB) ([]*pb.OrderDetailRequest, error) {
 	orderDetails := make([]*pb.OrderDetailRequest, 0)
 	for rows.Next() {
 		orderDetail := new(pb.OrderDetailRequest)
-		err := rows.Scan(&orderDetail.OrderDetailId, &orderDetail.OrderId, &orderDetail.BillingNo,
-			&orderDetail.ProductId, &orderDetail.Price,
-			&orderDetail.OrderQuantity, &orderDetail.Discount)
+		err := rows.Scan(&orderDetail.OrderDetailId,
+				&orderDetail.OrderId,
+				&orderDetail.OrderDetailDate,
+				&orderDetail.BillingNo,
+				&orderDetail.ProductId,
+				&orderDetail.Price,
+				&orderDetail.OrderQuantity,
+				&orderDetail.Discount)
 
 		if err != nil {
 			return nil, err

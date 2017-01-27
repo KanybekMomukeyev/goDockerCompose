@@ -100,7 +100,13 @@ func (s *server) CreateCategory(ctx context.Context, categoryReq *pb.CategoryReq
 }
 
 func (s *server) UpdateCategory(ctx context.Context, categoryReq *pb.CategoryRequest) (*pb.CategoryRequest, error) {
-	return nil, nil
+
+	rowsAffected, updateError := model.UpdateCategory(db, categoryReq)
+	if updateError != nil {
+		return nil, updateError
+	}
+	fmt.Printf("rowsAffected UpdateCategory==> %v\n", rowsAffected)
+	return categoryReq, nil
 }
 
 func (s *server) GetCategories(filter *pb.CategoryFilter, stream pb.RentautomationService_GetCategoriesServer) error {
@@ -524,8 +530,8 @@ func main() {
 	var err error
 	var lis net.Listener
 	var grpcServer *grpc.Server
-	if false {
-		lis, err = net.Listen("tcp", ":8080")
+	if true {
+		lis, err = net.Listen("tcp", port)
 		if err != nil {
 			log.Fatalf("failed to listen: %v", err)
 		}
