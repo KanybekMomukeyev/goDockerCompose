@@ -576,7 +576,7 @@ func main() {
 	var err error
 	var lis net.Listener
 	var grpcServer *grpc.Server
-	if true {
+	if false {
 		lis, err = net.Listen("tcp", port)
 		if err != nil {
 			log.Fatalf("failed to listen: %v", err)
