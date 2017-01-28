@@ -8,7 +8,7 @@ ADD . /go/src/github.com/KanybekMomukeyev/goDockerCompose/
 ADD client /go/src/github.com/KanybekMomukeyev/goDockerCompose/grpc/client
 ADD model /go/src/github.com/KanybekMomukeyev/goDockerCompose/grpc/model
 ADD proto /go/src/github.com/KanybekMomukeyev/goDockerCompose/grpc/proto
-ADD server /go/src/github.com/KanybekMomukeyev/goDockerCompose/grpc/server
+ADD certfiles /go/src/github.com/KanybekMomukeyev/goDockerCompose/grpc/certfiles
 ADD mainserver.go /go/src/github.com/KanybekMomukeyev/goDockerCompose/grpc/mainserver.go
 
 # Install our dependencies
