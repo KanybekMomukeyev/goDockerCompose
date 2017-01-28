@@ -496,7 +496,11 @@ func (s *server) AllStaffWith(filter *pb.StaffFilter, stream pb.RentautomationSe
 }
 
 func (s *server) SignInWith(ctx context.Context, signInReq *pb.SignInRequest) (*pb.StaffRequest, error) {
-	return  nil, nil
+	stafReq, selectError := model.SignIn(db, signInReq)
+	if selectError != nil {
+		return nil, selectError
+	}
+	return  stafReq, nil
 }
 
 func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrderRequest) (*pb.CreateOrderRequest, error) {

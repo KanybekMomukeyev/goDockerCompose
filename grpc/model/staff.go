@@ -5,6 +5,7 @@ import (
 	pb "github.com/KanybekMomukeyev/goDockerCompose/grpc/proto"
 	"fmt"
 	"log"
+	"errors"
 )
 
 var schemaRemoveStaff = `
@@ -26,7 +27,8 @@ CREATE TABLE IF NOT EXISTS staff (
 `
 //UNIQUE  set on email!!!!
 
-var schemaCreateIndex = `CREATE INDEX IF NOT EXISTS role_id_idx ON staff (role_id)`
+var schemaCreateIndexForStaff1 = `CREATE INDEX IF NOT EXISTS role_id_staff_idx ON staff (role_id)`
+var schemaCreateIndexForStaff2 = `CREATE INDEX IF NOT EXISTS email_staff_idx ON staff (email)`
 
 type Staff struct {
 	staffId uint64 `db:"staff_id"`
@@ -43,7 +45,8 @@ type Staff struct {
 func CreateStaffIfNotExsists(db *sqlx.DB) {
 	//db.MustExec(schemaRemoveStaff)
 	db.MustExec(schemaCreateStaff)
-	db.MustExec(schemaCreateIndex)
+	db.MustExec(schemaCreateIndexForStaff1)
+	db.MustExec(schemaCreateIndexForStaff2)
 }
 
 func StoreStaff(db *sqlx.DB, staff *pb.StaffRequest) (uint64, error)  {
@@ -121,6 +124,33 @@ func UpdateStaff(db *sqlx.DB, staff *pb.StaffRequest) (uint64, error)  {
 	}
 
 	return uint64(affect), nil
+}
+
+func SignIn(db *sqlx.DB, signInReq *pb.SignInRequest) (*pb.StaffRequest, error)  {
+
+	rows, err := db.Queryx("SELECT staff_id, role_id, staff_image_path, first_name, second_name, email, password, phone_number, address FROM staff WHERE email=$1 AND password=$2 LIMIT 1", signInReq.Email, signInReq.Password)
+	if err != nil {
+		print("error")
+	}
+	staffFound := make([]*pb.StaffRequest, 0)
+	for rows.Next() {
+		employee := new(pb.StaffRequest)
+		err := rows.Scan(&employee.StaffId, &employee.RoleId, &employee.StaffImagePath, &employee.FirstName, &employee.SecondName, &employee.Email, &employee.Password, &employee.PhoneNumber, &employee.Address)
+		if err != nil {
+			return nil, err
+		}
+		staffFound = append(staffFound, employee)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	if len(staffFound) > 0 {
+		return staffFound[0], nil
+	}
+
+	return nil,errors.New("No such staff")
 }
 
 func AllStaff(db *sqlx.DB) ([]*pb.StaffRequest, error) {

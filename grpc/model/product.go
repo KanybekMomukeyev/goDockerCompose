@@ -115,12 +115,12 @@ func StoreProduct(db *sqlx.DB, product *pb.ProductRequest) (uint64, error) {
 
 func IncreaseProductsInStock(db *sqlx.DB, orderDetailReq *pb.OrderDetailRequest)  (uint64, error)  {
 
-	return nil, nil
+	return 0, nil
 }
 
 func DecreaseProductsInStock(db *sqlx.DB, orderDetailReq *pb.OrderDetailRequest)  (uint64, error)  {
 
-	return nil, nil
+	return 0, nil
 }
 
 func AllProducts(db *sqlx.DB) ([]*pb.ProductRequest, error) {
