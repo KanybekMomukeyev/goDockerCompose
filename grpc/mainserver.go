@@ -15,6 +15,12 @@ import (
 	"github.com/KanybekMomukeyev/goDockerCompose/grpc/model"
 
 	"fmt"
+	"flag"
+)
+
+var (
+	certFile   = flag.String("cert_file", "testkeys/ssl.crt", "The TLS cert file")
+	keyFile    = flag.String("key_file", "testkeys/ssl.key", "The TLS key file")
 )
 
 const (
@@ -573,37 +579,21 @@ func main() {
 	model.CreateTransactionIfNotExsists(db)
 
 
-	var err error
-	var lis net.Listener
-	var grpcServer *grpc.Server
-	if true {
-		lis, err = net.Listen("tcp", port)
-		if err != nil {
-			log.Fatalf("failed to listen: %v", err)
-		}
-		grpcServer = grpc.NewServer()
-	} else {
-		certFile := "certfiles/ssl.crt"
-		keyFile := "certfiles/ssl.key"
-		creds, err := credentials.NewServerTLSFromFile(certFile, keyFile)
-		lis, err = net.Listen("tcp", port)
-		if err != nil {
-			log.Fatalf("failed to listen: %v", err)
-		}
-		grpcServer = grpc.NewServer(grpc.Creds(creds))
+	listen, err := net.Listen("tcp", port)
+	if err != nil {
+		println("failed to listen: %v", err)
 	}
-	pb.RegisterRentautomationServiceServer(grpcServer, &server{})
-	grpcServer.Serve(lis)
 
+	creds, err := credentials.NewServerTLSFromFile(*certFile, *keyFile)
 
+	if err != nil {
+		println("Failed to generate credentials %v", &err)
+	}
 
-	//lis, err := net.Listen("tcp", port)
-	//if err != nil {
-	//	log.Fatalf("failed to listen: %v", err)
-	//}
-	//
-	//// Creates a new gRPC server
-	//s := grpc.NewServer()
-	//pb.RegisterRentautomationServiceServer(s, &server{})
-	//s.Serve(lis)
+	s := grpc.NewServer(grpc.Creds(creds))
+	pb.RegisterRentautomationServiceServer(s, &server{})
+
+	println("Listen on " + port + " with TLS")
+
+	s.Serve(listen)
 }

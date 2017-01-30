@@ -6,13 +6,14 @@ import (
 
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 
 	pb "github.com/KanybekMomukeyev/goDockerCompose/grpc/proto"
 )
 
 const (
-	//address = "138.197.44.189:50051"
-	address = "localhost:50051"
+	address = "192.168.0.36:50051"
+	//address = "localhost:50051"
 )
 
 // createCustomer calls the RPC method CreateCustomer of CustomerServer
@@ -49,11 +50,17 @@ func getCustomers(client pb.RentautomationServiceClient, filter *pb.ExampleFilte
 	}
 }
 func main() {
-	// Set up a connection to the gRPC server.
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
+
+	creds, err := credentials.NewClientTLSFromFile("../testkeys/ssl.crt", "example.com")
 	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		println("Failed to create TLS credentials %v", err)
 	}
+
+	conn, err := grpc.Dial(address, grpc.WithTransportCredentials(creds))
+	if err != nil {
+		println("did not connect: %v", err)
+	}
+
 	defer conn.Close()
 	// Creates a new CustomerClient
 	client := pb.NewRentautomationServiceClient(conn)
