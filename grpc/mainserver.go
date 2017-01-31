@@ -19,8 +19,8 @@ import (
 )
 
 var (
-	certFile   = flag.String("cert_file", "testkeys/ssl.crt", "The TLS cert file")
-	keyFile    = flag.String("key_file", "testkeys/ssl.key", "The TLS key file")
+	certFile   = flag.String("cert_file", "certfiles/server.crt", "The TLS cert file")
+	keyFile    = flag.String("key_file", "certfiles/server.key", "The TLS key file")
 )
 
 const (
@@ -579,21 +579,27 @@ func main() {
 	model.CreateTransactionIfNotExsists(db)
 
 
-	listen, err := net.Listen("tcp", port)
-	if err != nil {
-		println("failed to listen: %v", err)
+
+	var err error
+	var lis net.Listener
+	var grpcServer *grpc.Server
+	if false {
+		lis, err = net.Listen("tcp", port)
+		if err != nil {
+			log.Fatalf("failed to listen: %v", err)
+		}
+		grpcServer = grpc.NewServer()
+		println("Listen on " + port + " without TLS")
+	} else {
+		creds, err := credentials.NewServerTLSFromFile(*certFile, *keyFile)
+		lis, err = net.Listen("tcp", port)
+		if err != nil {
+			log.Fatalf("failed to listen: %v", err)
+		}
+		grpcServer = grpc.NewServer(grpc.Creds(creds))
+		println("Listen on " + port + " with TLS")
 	}
 
-	creds, err := credentials.NewServerTLSFromFile(*certFile, *keyFile)
-
-	if err != nil {
-		println("Failed to generate credentials %v", &err)
-	}
-
-	s := grpc.NewServer(grpc.Creds(creds))
-	pb.RegisterRentautomationServiceServer(s, &server{})
-
-	println("Listen on " + port + " with TLS")
-
-	s.Serve(listen)
+	pb.RegisterRentautomationServiceServer(grpcServer, &server{})
+	grpcServer.Serve(lis)
 }

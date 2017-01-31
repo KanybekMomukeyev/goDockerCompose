@@ -4,7 +4,7 @@
 # Replace "example.com" with the host name you'd like for your certificate.
 # 
 openssl genrsa -out ssl.key 2048
-openssl req -new -key ssl.key -out ssl.csr -subj "/CN=example.com"
+openssl req -new -key ssl.key -out ssl.csr -subj "/CN=localhost"
 openssl x509 -req -days 365 -in ssl.csr -signkey ssl.key -out ssl.crt
 
 
@@ -16,3 +16,8 @@ openssl rsa -inform DER -outform PEM -in ssl.crt -out ssl.crt.pem
 cat ssl.crt ssl.key > server.includesprivatekey.pem
 
 https://gist.github.com/stevenhaddox/1501893
+
+
+openssl req -x509 -newkey rsa:4096 -sha256 -nodes -keyout example.key -out example.crt -subj "/CN=example.com" -days 3650
+
+openssl req -x509 -days 365 -nodes -newkey rsa:1024 -keyout key.pem -out cert.pem

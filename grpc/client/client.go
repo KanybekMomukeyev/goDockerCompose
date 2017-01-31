@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	address = "192.168.0.36:50051"
-	//address = "localhost:50051"
+	//address = "192.168.0.36:50051"
+	address = "localhost:50051"
 )
 
 // createCustomer calls the RPC method CreateCustomer of CustomerServer
@@ -51,7 +51,7 @@ func getCustomers(client pb.RentautomationServiceClient, filter *pb.ExampleFilte
 }
 func main() {
 
-	creds, err := credentials.NewClientTLSFromFile("../testkeys/ssl.crt", "example.com")
+	creds, err := credentials.NewClientTLSFromFile("../certfiles/ca.crt", "localhost")
 	if err != nil {
 		println("Failed to create TLS credentials %v", err)
 	}
