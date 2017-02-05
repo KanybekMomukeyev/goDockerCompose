@@ -115,6 +115,7 @@ func StoreProduct(db *sqlx.DB, product *pb.ProductRequest) (uint64, error) {
 
 func IncreaseProductsInStock(db *sqlx.DB, orderDetailReq *pb.OrderDetailRequest)  (uint64, error)  {
 
+	//create array of ids
 	return 0, nil
 }
 

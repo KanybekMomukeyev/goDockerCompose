@@ -16,6 +16,7 @@ import (
 
 	"fmt"
 	"flag"
+	"io"
 )
 
 var (
@@ -509,6 +510,27 @@ func (s *server) SignInWith(ctx context.Context, signInReq *pb.SignInRequest) (*
 	return  stafReq, nil
 }
 
+func (s *server) UpdateStream(stream pb.RentautomationService_UpdateStreamServer) error {
+	for {
+		stickyNoteReq, err := stream.Recv()
+		if err == io.EOF {
+			return nil
+		}
+
+		if err != nil {
+			return err
+		}
+
+		resp := &pb.StickyNoteResponse{}
+		resp.Message = stickyNoteReq.Message
+
+		if err := stream.Send(resp); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrderRequest) (*pb.CreateOrderRequest, error) {
 
 	// payment
@@ -534,12 +556,58 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 	}
 	creatOrdReq.Transaction.TransactionId = transactionSerial
 
-	// customer balance
-	rowsAffected, storeError := model.UpdateCustomerBalance(db, creatOrdReq.Account)
-	if storeError != nil {
-		return nil, storeError
+	var orderDocument string = "sdfsdf"
+	if creatOrdReq.Order.OrderDocument == 0 {
+		orderDocument = ".none"
+
+
+	} else if creatOrdReq.Order.OrderDocument == 1000 {
+		orderDocument = ".productOrderSaledToCustomer"
+		updateBalanceOfCustomer(creatOrdReq.Account)
+	} else if creatOrdReq.Order.OrderDocument == 2000 {
+		orderDocument = ".productOrderSaleEditedToCustomer"
+		updateBalanceOfCustomer(creatOrdReq.Account)
+
+
+	} else if creatOrdReq.Order.OrderDocument == 3000 {
+		orderDocument = ".productOrderReceivedFromSupplier"
+		updateBalanceOfSupplier(creatOrdReq.Account)
+	} else if creatOrdReq.Order.OrderDocument == 4000 {
+		orderDocument = ".productOrderReceiveEditedFromSupplier"
+		updateBalanceOfSupplier(creatOrdReq.Account)
+
+
+	} else if creatOrdReq.Order.OrderDocument == 5000 {
+		orderDocument = ".productReturnedFromCustomer"
+		updateBalanceOfCustomer(creatOrdReq.Account)
+	} else if creatOrdReq.Order.OrderDocument == 6000 {
+		orderDocument = ".productReturneEditedFromCustomer"
+		updateBalanceOfCustomer(creatOrdReq.Account)
+
+
+	} else if creatOrdReq.Order.OrderDocument == 5500 {
+		orderDocument = ".productReturnedToSupplier"
+		updateBalanceOfSupplier(creatOrdReq.Account)
+	} else if creatOrdReq.Order.OrderDocument == 6600 {
+		orderDocument = ".productReturneEditedToSupplier"
+		updateBalanceOfSupplier(creatOrdReq.Account)
+
+
+	} else if creatOrdReq.Order.OrderDocument == 7000 {
+		orderDocument = ".moneyReceived"
+	} else if creatOrdReq.Order.OrderDocument == 8000 {
+		orderDocument = ".moneyReceiveEdited"
+
+
+	} else if creatOrdReq.Order.OrderDocument == 10000 {
+		orderDocument = ".moneyGone"
+		// not correct!!!!
+	} else if creatOrdReq.Order.OrderDocument == 11000 {
+		orderDocument = ".moneyGoneEdited"
 	}
-	fmt.Printf("rowsAffected %v\n", &rowsAffected)
+
+	println(orderDocument)
+
 
 	// orderDetails
 	for _, orderDetailReq := range creatOrdReq.OrderDetails {
@@ -553,6 +621,26 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 	}
 
 	return creatOrdReq, nil
+}
+
+func updateBalanceOfCustomer(accountReq *pb.AccountRequest) (uint64, error) {
+	// customer balance /// ---------------
+	rowsAffected, storeError := model.UpdateCustomerBalance(db, accountReq)
+	if storeError != nil {
+		return 0, storeError
+	}
+	fmt.Printf("rowsAffected %v\n", &rowsAffected)
+	return rowsAffected, nil
+}
+
+func updateBalanceOfSupplier(accountReq *pb.AccountRequest) (uint64, error) {
+	// customer balance /// ---------------
+	rowsAffected, storeError := model.UpdateSupplierBalance(db, accountReq)
+	if storeError != nil {
+		return 0, storeError
+	}
+	fmt.Printf("rowsAffected %v\n", &rowsAffected)
+	return rowsAffected, nil
 }
 
 var db *sqlx.DB
@@ -583,7 +671,7 @@ func main() {
 	var err error
 	var lis net.Listener
 	var grpcServer *grpc.Server
-	if false {
+	if true {
 		lis, err = net.Listen("tcp", port)
 		if err != nil {
 			log.Fatalf("failed to listen: %v", err)
