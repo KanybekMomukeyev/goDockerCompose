@@ -118,6 +118,49 @@ func AllOrderDetails(db *sqlx.DB) ([]*pb.OrderDetailRequest, error) {
 	return orderDetails, nil
 }
 
+func AllOrderDetailsForFilter(db *sqlx.DB, orderDetFilter *pb.OrderDetailFilter) ([]*pb.OrderDetailRequest, error) {
+
+	pingError := db.Ping()
+
+	if pingError != nil {
+		log.Fatalln(pingError)
+		return nil, pingError
+	}
+
+	rows, err := db.Queryx("SELECT order_detail_id, order_id, order_detail_date, is_last, billing_no, product_id, " +
+		"price, order_quantity, discount FROM orderdetails WHERE order_detail_date<=$1 AND product_id=$2" +
+		" ORDER BY order_detail_date DESC LIMIT $3", orderDetFilter.OrderDetailDate, orderDetFilter.ProductId, orderDetFilter.Limit)
+
+	if err != nil {
+		print("error")
+	}
+
+	orderDetails := make([]*pb.OrderDetailRequest, 0)
+	for rows.Next() {
+		orderDetail := new(pb.OrderDetailRequest)
+		err := rows.Scan(&orderDetail.OrderDetailId,
+			&orderDetail.OrderId,
+			&orderDetail.OrderDetailDate,
+			&orderDetail.IsLast,
+			&orderDetail.BillingNo,
+			&orderDetail.ProductId,
+			&orderDetail.Price,
+			&orderDetail.OrderQuantity,
+			&orderDetail.Discount)
+
+		if err != nil {
+			return nil, err
+		}
+		orderDetails = append(orderDetails, orderDetail)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return orderDetails, nil
+}
+
 func RecentOrderDetailForProduct(db *sqlx.DB, productReq *pb.ProductRequest) (*pb.OrderDetailRequest, error) {
 
 	pingError := db.Ping()

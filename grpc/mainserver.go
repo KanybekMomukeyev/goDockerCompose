@@ -352,7 +352,7 @@ func (s *server) UpdateProductWith(ctx context.Context, createPrReq *pb.CreatePr
 }
 
 func (s *server) AllProductsForInitial(ctx context.Context, prFilter *pb.ProductFilter) (*pb.AllProductsResponse, error) {
-	
+
 	createProdRequests := make([]*pb.CreateProductRequest, 0)
 	products, _ := model.AllProducts(db)
 
@@ -374,11 +374,28 @@ func (s *server) AllProductsForInitial(ctx context.Context, prFilter *pb.Product
 }
 
 func (s *server) AllCategoriesForInitial(ctx context.Context, catFilter *pb.CategoryFilter) (*pb.AllCategoryResponse, error) {
-	return nil,nil
+
+	categories, error := model.AllCategory(db)
+	if error != nil {
+		return nil, error
+	}
+	allCategoryResponse := new(pb.AllCategoryResponse)
+	allCategoryResponse.CategoryRequest = categories
+
+	return allCategoryResponse, nil
 }
 
 func (s *server) AllOrderDetails(ctx context.Context, oDetFilter *pb.OrderDetailFilter) (*pb.AllOrderDetailResponse, error) {
-	return nil,nil
+
+	orderDetails, error := model.AllOrderDetailsForFilter(db, oDetFilter)
+	if error != nil {
+		return nil, error
+	}
+
+	allOrderDetailResponse := new(pb.AllOrderDetailResponse)
+	allOrderDetailResponse.OrderDetailRequest = orderDetails
+
+	return allOrderDetailResponse,nil
 }
 
 // ----------------------------  -------------------------------- //
