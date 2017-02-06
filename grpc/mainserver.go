@@ -351,9 +351,16 @@ func (s *server) UpdateProductWith(ctx context.Context, createPrReq *pb.CreatePr
 	return createPrReq, nil
 }
 
-func (s *server) AllProductsWith(filter *pb.ProductFilter, stream pb.RentautomationService_AllProductsWithServer) error {
+func (s *server) AllProductsForInitial(ctx context.Context, prFilter *pb.ProductFilter) (*pb.AllProductsResponse, error) {
+	return nil,nil
+}
 
-	return nil
+func (s *server) AllCategoriesForInitial(ctx context.Context, catFilter *pb.CategoryFilter) (*pb.AllCategoryResponse, error) {
+	return nil,nil
+}
+
+func (s *server) AllOrderDetails(ctx context.Context, oDetFilter *pb.OrderDetailFilter) (*pb.AllOrderDetailResponse, error) {
+	return nil,nil
 }
 
 // ----------------------------  -------------------------------- //
@@ -411,8 +418,8 @@ func (s *server) UpdateCustomerBalanceWith(ctx context.Context, updateCustBalanc
 	return updateCustBalanceReq, nil
 }
 
-func (s *server) AllCustomersWith(filter *pb.CustomerFilter, stream pb.RentautomationService_AllCustomersWithServer) error {
-	return nil
+func (s *server) AllCustomersForInitial(ctx context.Context, custFilter *pb.CustomerFilter) (*pb.AllCustomersResponse, error) {
+	return nil, nil
 }
 
 // ----------------------------  -------------------------------- //
@@ -470,9 +477,12 @@ func (s *server) UpdateSupplierBalanceWith(ctx context.Context, createSuppReq *p
 	return createSuppReq, nil
 }
 
-func (s *server) AllSuppliersWith(filter *pb.SupplierFilter, stream pb.RentautomationService_AllSuppliersWithServer) error {
+func (s *server) AllSuppliersForInitial(ctx context.Context, suppFilter *pb.SupplierFilter) (*pb.AllSuppliersResponse, error) {
+	return nil, nil
+}
 
-	return  nil
+func (s *server) AllTransactionsForInitial(ctx context.Context, transFilter *pb.TransactionFilter) (*pb.AllTransactionResponse, error) {
+	return nil, nil
 }
 
 // ----------------------------  -------------------------------- //
@@ -498,8 +508,8 @@ func (s *server) UpdateStaffWith(ctx context.Context, staffReq *pb.StaffRequest)
 	return staffReq, nil
 }
 
-func (s *server) AllStaffWith(filter *pb.StaffFilter, stream pb.RentautomationService_AllStaffWithServer) error {
-	return nil
+func (s *server) AllStaffForInitial(ctx context.Context, staffFilter *pb.StaffFilter) (*pb.AllStaffResponse, error) {
+	return nil, nil
 }
 
 func (s *server) SignInWith(ctx context.Context, signInReq *pb.SignInRequest) (*pb.StaffRequest, error) {
@@ -623,6 +633,10 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 	return creatOrdReq, nil
 }
 
+func (s *server) AllOrdersForInitial(ctx context.Context, orderFilter *pb.OrderFilter) (*pb.AllOrderResponse, error) {
+	return nil, nil
+}
+
 func updateBalanceOfCustomer(accountReq *pb.AccountRequest) (uint64, error) {
 	// customer balance /// ---------------
 	rowsAffected, storeError := model.UpdateCustomerBalance(db, accountReq)
@@ -665,7 +679,6 @@ func main() {
 
 	model.CreateProductIfNotExsists(db)
 	model.CreateTransactionIfNotExsists(db)
-
 
 
 	var err error

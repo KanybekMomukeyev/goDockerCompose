@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS orderdetails (
     	order_detail_id BIGSERIAL PRIMARY KEY NOT NULL,
     	order_id BIGINT,
     	order_detail_date BIGINT,
+    	is_last INTEGER,
     	billing_no varchar (400),
     	product_id BIGINT,
     	price REAL,
@@ -53,10 +54,11 @@ func StoreOrderDetails(db *sqlx.DB, orderDetail *pb.OrderDetailRequest) (uint64,
 	var lastInsertId uint64
 
 	err := tx.QueryRow("INSERT INTO orderdetails " +
-		"(order_id, order_detail_date, billing_no, product_id, price, order_quantity, discount) " +
-		"VALUES($1, $2, $3, $4, $5, $6, $7) returning order_detail_id;",
+		"(order_id, order_detail_date, is_last, billing_no, product_id, price, order_quantity, discount) " +
+		"VALUES($1, $2, $3, $4, $5, $6, $7, $8) returning order_detail_id;",
 		orderDetail.OrderId,
 		orderDetail.OrderDetailDate,
+		orderDetail.IsLast,
 		orderDetail.BillingNo,
 		orderDetail.ProductId,
 		orderDetail.Price,
@@ -82,7 +84,7 @@ func AllOrderDetails(db *sqlx.DB) ([]*pb.OrderDetailRequest, error) {
 		return nil, pingError
 	}
 
-	rows, err := db.Queryx("SELECT order_detail_id, order_id, order_detail_date, billing_no, product_id, " +
+	rows, err := db.Queryx("SELECT order_detail_id, order_id, order_detail_date, is_last, billing_no, product_id, " +
 		"price, order_quantity, discount FROM orderdetails ORDER BY order_detail_id DESC")
 
 	if err != nil {
@@ -95,6 +97,7 @@ func AllOrderDetails(db *sqlx.DB) ([]*pb.OrderDetailRequest, error) {
 		err := rows.Scan(&orderDetail.OrderDetailId,
 				&orderDetail.OrderId,
 				&orderDetail.OrderDetailDate,
+				&orderDetail.IsLast,
 				&orderDetail.BillingNo,
 				&orderDetail.ProductId,
 				&orderDetail.Price,

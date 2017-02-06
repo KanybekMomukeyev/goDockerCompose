@@ -15,6 +15,7 @@ var schemaCreateTransaction = `
 CREATE TABLE IF NOT EXISTS transactions (
     	transaction_id BIGSERIAL PRIMARY KEY NOT NULL,
     	transaction_date BIGINT,
+    	is_last_transaction INTEGER,
     	transaction_type INTEGER,
     	money_amount REAL,
     	order_id BIGINT,
@@ -54,9 +55,10 @@ func StoreTransaction(db *sqlx.DB, transaction *pb.TransactionRequest) (uint64, 
 	tx := db.MustBegin()
 	var lastInsertId uint64
 
-	err := tx.QueryRow("INSERT INTO transactions (transaction_date, transaction_type, money_amount, order_id, customer_id, supplier_id, staff_id) " +
-		"VALUES($1, $2, $3, $4, $5, $6, $7) returning transaction_id;",
+	err := tx.QueryRow("INSERT INTO transactions (transaction_date, is_last_transaction, transaction_type, money_amount, order_id, customer_id, supplier_id, staff_id) " +
+		"VALUES($1, $2, $3, $4, $5, $6, $7, $8) returning transaction_id;",
 		transaction.TransactionDate,
+		transaction.IsLastTransaction,
 		transaction.TransactionType,
 		transaction.MoneyAmount,
 		transaction.OrderId,
@@ -83,7 +85,7 @@ func AllTransactions(db *sqlx.DB) ([]*pb.TransactionRequest, error) {
 		return nil, pingError
 	}
 
-	rows, err := db.Queryx("SELECT transaction_id, transaction_date, transaction_type, money_amount, " +
+	rows, err := db.Queryx("SELECT transaction_id, transaction_date, is_last_transaction, transaction_type, money_amount, " +
 		"order_id, customer_id, supplier_id, staff_id " +
 		"FROM transactions ORDER BY transaction_id DESC")
 
@@ -94,7 +96,7 @@ func AllTransactions(db *sqlx.DB) ([]*pb.TransactionRequest, error) {
 	transactions := make([]*pb.TransactionRequest, 0)
 	for rows.Next() {
 		transaction := new(pb.TransactionRequest)
-		err := rows.Scan(&transaction.TransactionId, &transaction.TransactionDate, &transaction.TransactionType,
+		err := rows.Scan(&transaction.TransactionId, &transaction.TransactionDate, &transaction.IsLastTransaction, &transaction.TransactionType,
 			&transaction.MoneyAmount, &transaction.OrderId, &transaction.CustomerId, &transaction.SupplierId,
 			&transaction.StaffId)
 

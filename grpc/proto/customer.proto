@@ -39,29 +39,66 @@ service RentautomationService {
     // ------------------ New methods ------------------ //
     rpc CreateProductWith (CreateProductRequest) returns (CreateProductRequest) {}
     rpc UpdateProductWith (CreateProductRequest) returns (CreateProductRequest) {}
-    rpc AllProductsWith (ProductFilter) returns (stream CreateProductRequest) {}
+    rpc AllProductsForInitial (ProductFilter) returns (AllProductsResponse) {}
+    rpc AllCategoriesForInitial(CategoryFilter) returns (AllCategoryResponse) {}
+    rpc AllOrderDetails(OrderDetailFilter) returns (AllOrderDetailResponse) {}
 
     rpc CreateCustomerWith (CreateCustomerRequest) returns (CreateCustomerRequest) {}
     rpc UpdateCustomerWith (CustomerRequest) returns (CustomerRequest) {}
     rpc UpdateCustomerBalanceWith (CreateCustomerRequest) returns (CreateCustomerRequest) {}
-    rpc AllCustomersWith (CustomerFilter) returns (stream CreateCustomerRequest) {}
+    rpc AllCustomersForInitial (CustomerFilter) returns (AllCustomersResponse) {}
 
     rpc CreateSupplierWith (CreateSupplierRequest) returns (CreateSupplierRequest) {}
     rpc UpdateSupplierWith (SupplierRequest) returns (SupplierRequest) {}
     rpc UpdateSupplierBalanceWith (CreateSupplierRequest) returns (CreateSupplierRequest) {}
-    rpc AllSuppliersWith (SupplierFilter) returns (stream CreateSupplierRequest) {}
+    rpc AllSuppliersForInitial (SupplierFilter) returns (AllSuppliersResponse) {}
+
+    rpc AllTransactionsForInitial (TransactionFilter) returns (AllTransactionResponse) {}
 
     rpc CreateStaffWith (StaffRequest) returns (StaffRequest) {}
     rpc UpdateStaffWith (StaffRequest) returns (StaffRequest) {}
-    rpc AllStaffWith (StaffFilter) returns (stream StaffRequest) {}
+    rpc AllStaffForInitial (StaffFilter) returns (AllStaffResponse) {}
     rpc SignInWith (SignInRequest) returns (StaffRequest) {}
 
     rpc CreateOrderWith (CreateOrderRequest) returns (CreateOrderRequest) {}
+    rpc AllOrdersForInitial (OrderFilter) returns (AllOrderResponse) {}
 
     rpc UpdateStream(stream StickyNoteRequest) returns (stream StickyNoteResponse) {}
 }
 
 // Request message for creating a new customer
+message AllProductsResponse {
+    repeated CreateProductRequest productRequest = 1;
+}
+
+message AllCustomersResponse {
+    repeated CreateCustomerRequest customerRequest = 1;
+}
+
+message AllSuppliersResponse {
+    repeated CreateSupplierRequest supplierRequest = 1;
+}
+
+message AllStaffResponse {
+    repeated StaffRequest staffRequest = 1;
+}
+
+message AllCategoryResponse {
+    repeated CategoryRequest categoryRequest = 1;
+}
+
+message AllOrderResponse {
+    repeated CreateOrderRequest orderRequest = 1;
+}
+
+message AllOrderDetailResponse {
+    repeated OrderDetailRequest orderDetailRequest = 1;
+}
+
+message AllTransactionResponse {
+    repeated TransactionRequest transactionRequest = 1;
+}
+
 message StickyNoteRequest {
     string message = 1;
     bytes requestImage = 2;
@@ -221,6 +258,8 @@ message OrderRequest {
 
 message OrderFilter {
     string orderKeyword = 1;
+    uint64 orderDate = 2;
+    uint32 limit = 3;
 }
 
 message PaymentRequest {
@@ -248,6 +287,8 @@ message OrderDetailRequest {
 
 message OrderDetailFilter {
     string orderDetailKeyword = 1;
+    uint64 orderDetailDate = 2;
+    uint32 limit = 3;
 }
 
 message TransactionRequest {
@@ -264,6 +305,10 @@ message TransactionRequest {
 
 message TransactionFilter {
     string transactionKeyword = 1;
+    uint64 transactionDate = 2;
+    uint32 limit = 3;
+    uint64 customerId = 4;
+    uint64 supplierId = 5;
 }
 
 message SignInRequest {
