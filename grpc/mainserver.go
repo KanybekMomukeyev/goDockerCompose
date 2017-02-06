@@ -352,7 +352,25 @@ func (s *server) UpdateProductWith(ctx context.Context, createPrReq *pb.CreatePr
 }
 
 func (s *server) AllProductsForInitial(ctx context.Context, prFilter *pb.ProductFilter) (*pb.AllProductsResponse, error) {
-	return nil,nil
+	
+	createProdRequests := make([]*pb.CreateProductRequest, 0)
+	products, _ := model.AllProducts(db)
+
+	for _, productReq := range products {
+
+		orderDetReq, _ := model.RecentOrderDetailForProduct(db, productReq)
+
+		createProductReq := new(pb.CreateProductRequest)
+		createProductReq.OrderDetail = orderDetReq
+		createProductReq.Product = productReq
+
+		createProdRequests = append(createProdRequests, createProductReq)
+	}
+
+	allProdResponse := new(pb.AllProductsResponse)
+	allProdResponse.ProductRequest = createProdRequests
+
+	return allProdResponse,nil
 }
 
 func (s *server) AllCategoriesForInitial(ctx context.Context, catFilter *pb.CategoryFilter) (*pb.AllCategoryResponse, error) {

@@ -5,6 +5,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"fmt"
 	pb "github.com/KanybekMomukeyev/goDockerCompose/grpc/proto"
+	"errors"
 )
 
 var schemaRemoveOrderDetail = `
@@ -117,3 +118,48 @@ func AllOrderDetails(db *sqlx.DB) ([]*pb.OrderDetailRequest, error) {
 	return orderDetails, nil
 }
 
+func RecentOrderDetailForProduct(db *sqlx.DB, productReq *pb.ProductRequest) (*pb.OrderDetailRequest, error) {
+
+	pingError := db.Ping()
+
+	if pingError != nil {
+		log.Fatalln(pingError)
+		return nil, pingError
+	}
+
+	rows, err := db.Queryx("SELECT order_detail_id, order_id, order_detail_date, is_last, billing_no, product_id, " +
+		"price, order_quantity, discount FROM orderdetails WHERE product_id=$1 ORDER BY order_detail_date DESC LIMIT $2", productReq.ProductId, 1)
+
+	if err != nil {
+		print("error")
+	}
+
+	orderDetails := make([]*pb.OrderDetailRequest, 0)
+	for rows.Next() {
+		orderDetail := new(pb.OrderDetailRequest)
+		err := rows.Scan(&orderDetail.OrderDetailId,
+			&orderDetail.OrderId,
+			&orderDetail.OrderDetailDate,
+			&orderDetail.IsLast,
+			&orderDetail.BillingNo,
+			&orderDetail.ProductId,
+			&orderDetail.Price,
+			&orderDetail.OrderQuantity,
+			&orderDetail.Discount)
+
+		if err != nil {
+			return nil, err
+		}
+		orderDetails = append(orderDetails, orderDetail)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	if len(orderDetails) > 0 {
+		return orderDetails[0], nil
+	}
+
+	return nil, errors.New("Not found")
+}
