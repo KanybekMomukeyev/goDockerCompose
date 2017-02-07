@@ -206,3 +206,46 @@ func RecentOrderDetailForProduct(db *sqlx.DB, productReq *pb.ProductRequest) (*p
 
 	return nil, errors.New("Not found")
 }
+
+func AllOrderDetailsForOrder(db *sqlx.DB, order *pb.OrderRequest) ([]*pb.OrderDetailRequest, error) {
+
+	pingError := db.Ping()
+
+	if pingError != nil {
+		log.Fatalln(pingError)
+		return nil, pingError
+	}
+
+	rows, err := db.Queryx("SELECT order_detail_id, order_id, order_detail_date, is_last, billing_no, product_id, " +
+		"price, order_quantity, discount FROM orderdetails WHERE order_id=$1" +
+		" ORDER BY order_detail_date DESC", order.OrderId)
+
+	if err != nil {
+		print("error")
+	}
+
+	orderDetails := make([]*pb.OrderDetailRequest, 0)
+	for rows.Next() {
+		orderDetail := new(pb.OrderDetailRequest)
+		err := rows.Scan(&orderDetail.OrderDetailId,
+			&orderDetail.OrderId,
+			&orderDetail.OrderDetailDate,
+			&orderDetail.IsLast,
+			&orderDetail.BillingNo,
+			&orderDetail.ProductId,
+			&orderDetail.Price,
+			&orderDetail.OrderQuantity,
+			&orderDetail.Discount)
+
+		if err != nil {
+			return nil, err
+		}
+		orderDetails = append(orderDetails, orderDetail)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return orderDetails, nil
+}

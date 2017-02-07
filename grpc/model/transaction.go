@@ -5,6 +5,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"fmt"
 	pb "github.com/KanybekMomukeyev/goDockerCompose/grpc/proto"
+	"errors"
 )
 
 var schemaRemoveTransaction = `
@@ -111,4 +112,174 @@ func AllTransactions(db *sqlx.DB) ([]*pb.TransactionRequest, error) {
 	}
 
 	return transactions, nil
+}
+
+func RecentTransactionForCustomer(db *sqlx.DB, custReq *pb.CustomerRequest) (*pb.TransactionRequest, error) {
+
+	pingError := db.Ping()
+
+	if pingError != nil {
+		log.Fatalln(pingError)
+		return nil, pingError
+	}
+
+	rows, err := db.Queryx("SELECT transaction_id, transaction_date, is_last_transaction, transaction_type, money_amount, " +
+		"order_id, customer_id, supplier_id, staff_id " +
+		"FROM transactions WHERE customer_id=$1 ORDER BY transaction_date DESC LIMIT $2", custReq.CustomerId, 1)
+
+	if err != nil {
+		print("error")
+	}
+
+	transactions := make([]*pb.TransactionRequest, 0)
+	for rows.Next() {
+		transaction := new(pb.TransactionRequest)
+		err := rows.Scan(&transaction.TransactionId, &transaction.TransactionDate, &transaction.IsLastTransaction, &transaction.TransactionType,
+			&transaction.MoneyAmount, &transaction.OrderId, &transaction.CustomerId, &transaction.SupplierId,
+			&transaction.StaffId)
+
+		if err != nil {
+			return nil, err
+		}
+		transactions = append(transactions, transaction)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	if len(transactions) > 0 {
+		return transactions[0], nil
+	}
+
+	return nil, errors.New("Not found")
+}
+
+func RecentTransactionForSupplier(db *sqlx.DB, supReq *pb.SupplierRequest) (*pb.TransactionRequest, error) {
+
+	pingError := db.Ping()
+
+	if pingError != nil {
+		log.Fatalln(pingError)
+		return nil, pingError
+	}
+
+	rows, err := db.Queryx("SELECT transaction_id, transaction_date, is_last_transaction, transaction_type, money_amount, " +
+		"order_id, customer_id, supplier_id, staff_id " +
+		"FROM transactions WHERE supplier_id=$1 ORDER BY transaction_date DESC LIMIT $2", supReq.SupplierId, 1)
+
+	if err != nil {
+		print("error")
+	}
+
+	transactions := make([]*pb.TransactionRequest, 0)
+	for rows.Next() {
+		transaction := new(pb.TransactionRequest)
+		err := rows.Scan(&transaction.TransactionId, &transaction.TransactionDate, &transaction.IsLastTransaction, &transaction.TransactionType,
+			&transaction.MoneyAmount, &transaction.OrderId, &transaction.CustomerId, &transaction.SupplierId,
+			&transaction.StaffId)
+
+		if err != nil {
+			return nil, err
+		}
+		transactions = append(transactions, transaction)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	if len(transactions) > 0 {
+		return transactions[0], nil
+	}
+
+	return nil, errors.New("Not found")
+}
+
+func AllTransactionsForFilter(db *sqlx.DB, transactFilter *pb.TransactionFilter) ([]*pb.TransactionRequest, error) {
+
+	pingError := db.Ping()
+
+	if pingError != nil {
+		log.Fatalln(pingError)
+		return nil, pingError
+	}
+
+	var rows *sqlx.Rows
+	var err error
+	if transactFilter.CustomerId > 0 {
+		rows, err = db.Queryx("SELECT transaction_id, transaction_date, is_last_transaction, transaction_type, " +
+			"money_amount, order_id, customer_id, supplier_id, staff_id FROM transactions " +
+			"WHERE transaction_date<=$1 AND customer_id=$2 ORDER BY transaction_date DESC LIMIT $3",
+			transactFilter.TransactionDate, transactFilter.CustomerId, transactFilter.Limit)
+	} else {
+		rows, err = db.Queryx("SELECT transaction_id, transaction_date, is_last_transaction, transaction_type, " +
+			"money_amount, order_id, customer_id, supplier_id, staff_id FROM transactions " +
+			"WHERE order_detail_date<=$1 AND supplier_id=$2 ORDER BY transaction_date DESC LIMIT $3",
+			transactFilter.TransactionDate, transactFilter.SupplierId, transactFilter.Limit)
+	}
+
+	if err != nil {
+		print("error")
+	}
+
+	transactions := make([]*pb.TransactionRequest, 0)
+	for rows.Next() {
+		transaction := new(pb.TransactionRequest)
+		err := rows.Scan(&transaction.TransactionId, &transaction.TransactionDate, &transaction.IsLastTransaction, &transaction.TransactionType,
+			&transaction.MoneyAmount, &transaction.OrderId, &transaction.CustomerId, &transaction.SupplierId,
+			&transaction.StaffId)
+
+		if err != nil {
+			return nil, err
+		}
+		transactions = append(transactions, transaction)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return transactions, nil
+}
+
+func TransactionForOrder(db *sqlx.DB, orderReq *pb.OrderRequest) (*pb.TransactionRequest, error) {
+
+	pingError := db.Ping()
+
+	if pingError != nil {
+		log.Fatalln(pingError)
+		return nil, pingError
+	}
+
+	rows, err := db.Queryx("SELECT transaction_id, transaction_date, is_last_transaction, transaction_type, money_amount, " +
+		"order_id, customer_id, supplier_id, staff_id " +
+		"FROM transactions WHERE order_id=$1 ORDER BY transaction_date DESC LIMIT $2", orderReq.OrderId, 1)
+
+	if err != nil {
+		print("error")
+	}
+
+	transactions := make([]*pb.TransactionRequest, 0)
+	for rows.Next() {
+		transaction := new(pb.TransactionRequest)
+		err := rows.Scan(&transaction.TransactionId, &transaction.TransactionDate, &transaction.IsLastTransaction, &transaction.TransactionType,
+			&transaction.MoneyAmount, &transaction.OrderId, &transaction.CustomerId, &transaction.SupplierId,
+			&transaction.StaffId)
+
+		if err != nil {
+			return nil, err
+		}
+		transactions = append(transactions, transaction)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	if len(transactions) > 0 {
+		return transactions[0], nil
+	}
+
+	return nil, errors.New("Not found")
 }

@@ -358,7 +358,11 @@ func (s *server) AllProductsForInitial(ctx context.Context, prFilter *pb.Product
 
 	for _, productReq := range products {
 
-		orderDetReq, _ := model.RecentOrderDetailForProduct(db, productReq)
+		orderDetReq, err := model.RecentOrderDetailForProduct(db, productReq)
+		if err != nil {
+			break
+			return nil, err
+		}
 
 		createProductReq := new(pb.CreateProductRequest)
 		createProductReq.OrderDetail = orderDetReq
@@ -454,7 +458,29 @@ func (s *server) UpdateCustomerBalanceWith(ctx context.Context, updateCustBalanc
 }
 
 func (s *server) AllCustomersForInitial(ctx context.Context, custFilter *pb.CustomerFilter) (*pb.AllCustomersResponse, error) {
-	return nil, nil
+
+	createCustomerRequests := make([]*pb.CreateCustomerRequest, 0)
+	customers, _ := model.AllRealCustomers(db)
+
+	for _, customerReq := range customers {
+
+		transactionReq, err := model.RecentTransactionForCustomer(db, customerReq)
+		if err != nil {
+			break
+			return nil, err
+		}
+
+		createCustomerRequest := new(pb.CreateCustomerRequest)
+		createCustomerRequest.Customer = customerReq
+		createCustomerRequest.Transaction = transactionReq
+
+		createCustomerRequests = append(createCustomerRequests, createCustomerRequest)
+	}
+
+	allCustomersResponse := new(pb.AllCustomersResponse)
+	allCustomersResponse.CustomerRequest = createCustomerRequests
+
+	return allCustomersResponse, nil
 }
 
 // ----------------------------  -------------------------------- //
@@ -513,11 +539,42 @@ func (s *server) UpdateSupplierBalanceWith(ctx context.Context, createSuppReq *p
 }
 
 func (s *server) AllSuppliersForInitial(ctx context.Context, suppFilter *pb.SupplierFilter) (*pb.AllSuppliersResponse, error) {
-	return nil, nil
+
+	createSupplierRequests := make([]*pb.CreateSupplierRequest, 0)
+	suppliers, _ := model.AllSuppliers(db)
+
+	for _, supplierReq := range suppliers {
+
+		transactionReq, err := model.RecentTransactionForSupplier(db, supplierReq)
+		if err != nil {
+			break
+			return nil, err
+		}
+
+		createSupplierRequest := new(pb.CreateSupplierRequest)
+		createSupplierRequest.Supplier = supplierReq
+		createSupplierRequest.Transaction = transactionReq
+
+		createSupplierRequests = append(createSupplierRequests, createSupplierRequest)
+	}
+
+	allSuppliersResponse := new(pb.AllSuppliersResponse)
+	allSuppliersResponse.SupplierRequest = createSupplierRequests
+
+	return allSuppliersResponse, nil
 }
 
 func (s *server) AllTransactionsForInitial(ctx context.Context, transFilter *pb.TransactionFilter) (*pb.AllTransactionResponse, error) {
-	return nil, nil
+
+	transactions, error := model.AllTransactionsForFilter(db, transFilter)
+	if error != nil {
+		return nil, error
+	}
+
+	allTransactionResponse := new(pb.AllTransactionResponse)
+	allTransactionResponse.TransactionRequest = transactions
+
+	return allTransactionResponse, nil
 }
 
 // ----------------------------  -------------------------------- //
@@ -669,7 +726,51 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 }
 
 func (s *server) AllOrdersForInitial(ctx context.Context, orderFilter *pb.OrderFilter) (*pb.AllOrderResponse, error) {
-	return nil, nil
+
+	createOrderRequests := make([]*pb.CreateOrderRequest, 0)
+	orders, err := model.AllOrdersForFilter(db, orderFilter)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, order := range orders {
+		createOrderRequest := new(pb.CreateOrderRequest)
+		createOrderRequest.Order = order
+
+		payment, error := model.PaymentForOrder(db, order)
+		if error != nil {
+			break
+			return nil, err
+		}
+		createOrderRequest.Payment = payment
+
+		transaction, error := model.TransactionForOrder(db, order)
+		if error != nil {
+			break
+			return nil, err
+		}
+		createOrderRequest.Transaction = transaction
+
+		account, error := model.AccountForOrder(db, order)
+		if error != nil {
+			break
+			return nil, err
+		}
+		createOrderRequest.Account = account
+
+		orderDetails, error := model.AllOrderDetailsForOrder(db, order)
+		if error != nil {
+			break
+			return nil, err
+		}
+		createOrderRequest.OrderDetails = orderDetails
+		createOrderRequests = append(createOrderRequests, createOrderRequest)
+	}
+
+	allOrderResponse := new(pb.AllOrderResponse)
+	allOrderResponse.OrderRequest = createOrderRequests
+
+	return allOrderResponse, nil
 }
 
 func updateBalanceOfCustomer(accountReq *pb.AccountRequest) (uint64, error) {

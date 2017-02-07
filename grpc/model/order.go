@@ -138,3 +138,43 @@ func AllOrders(db *sqlx.DB) ([]*pb.OrderRequest, error) {
 
 	return orders, nil
 }
+
+func AllOrdersForFilter(db *sqlx.DB, orderFilter *pb.OrderFilter) ([]*pb.OrderRequest, error) {
+
+	pingError := db.Ping()
+
+	if pingError != nil {
+		log.Fatalln(pingError)
+		return nil, pingError
+	}
+
+	rows, err := db.Queryx("SELECT order_id, order_document, money_movement, billing_no, " +
+		"staff_id, customer_id, supplier_id, order_date, " +
+		"payment_id, error_msg, comment, is_deleted, is_paid," +
+		" is_editted FROM orders WHERE order_date<=$1 ORDER BY order_date DESC LIMIT $2", orderFilter.OrderDate, orderFilter.Limit)
+
+	if err != nil {
+		print("error")
+	}
+
+	orders := make([]*pb.OrderRequest, 0)
+	for rows.Next() {
+		order := new(pb.OrderRequest)
+		err := rows.Scan(&order.OrderId, &order.OrderDocument, &order.MoneyMovementType,
+			&order.BillingNo, &order.StaffId, &order.CustomerId,
+			&order.SupplierId, &order.OrderDate, &order.PaymentId,
+			&order.ErrorMsg, &order.Comment, &order.IsDeleted,
+			&order.IsPaid, &order.IsEdited)
+
+		if err != nil {
+			return nil, err
+		}
+		orders = append(orders, order)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return orders, nil
+}

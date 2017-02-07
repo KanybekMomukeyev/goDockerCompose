@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	pb "github.com/KanybekMomukeyev/goDockerCompose/grpc/proto"
+	"errors"
 )
 
 var schemaRemovePayment = `
@@ -89,3 +90,41 @@ func AllPayments(db *sqlx.DB) ([]*pb.PaymentRequest, error) {
 	return payments, nil
 }
 
+func PaymentForOrder(db *sqlx.DB, order *pb.OrderRequest) (*pb.PaymentRequest, error) {
+
+	pingError := db.Ping()
+
+	if pingError != nil {
+		log.Fatalln(pingError)
+		return nil, pingError
+	}
+
+	rows, err := db.Queryx("SELECT payment_id, total_order_price, discount, total_price_with_discount " +
+		"FROM payments WHERE payment_id=$1 LIMIT $2", order.PaymentId, 1)
+
+	if err != nil {
+		print("error")
+	}
+
+	payments := make([]*pb.PaymentRequest, 0)
+	for rows.Next() {
+		payment := new(pb.PaymentRequest)
+		err := rows.Scan(&payment.PaymentId, &payment.TotalOrderPrice,
+			&payment.Discount, &payment.TotalPriceWithDiscount)
+
+		if err != nil {
+			return nil, err
+		}
+		payments = append(payments, payment)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	if len(payments) > 0 {
+		return payments[0], nil
+	}
+
+	return nil, errors.New("Not found")
+}
