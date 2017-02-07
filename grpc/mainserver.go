@@ -470,9 +470,16 @@ func (s *server) AllCustomersForInitial(ctx context.Context, custFilter *pb.Cust
 			return nil, err
 		}
 
+		accountReq, err := model.AccountForCustomer(db, customerReq)
+		if err != nil {
+			break
+			return nil, err
+		}
+
 		createCustomerRequest := new(pb.CreateCustomerRequest)
 		createCustomerRequest.Customer = customerReq
 		createCustomerRequest.Transaction = transactionReq
+		createCustomerRequest.Account = accountReq
 
 		createCustomerRequests = append(createCustomerRequests, createCustomerRequest)
 	}
@@ -551,10 +558,17 @@ func (s *server) AllSuppliersForInitial(ctx context.Context, suppFilter *pb.Supp
 			return nil, err
 		}
 
+		accountReq, err := model.AccountForSupplier(db, supplierReq)
+		if err != nil {
+			break
+			return nil, err
+		}
+
 		createSupplierRequest := new(pb.CreateSupplierRequest)
 		createSupplierRequest.Supplier = supplierReq
 		createSupplierRequest.Transaction = transactionReq
-
+		createSupplierRequest.Account = accountReq
+		
 		createSupplierRequests = append(createSupplierRequests, createSupplierRequest)
 	}
 

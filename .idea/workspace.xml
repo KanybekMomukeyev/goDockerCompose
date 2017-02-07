@@ -5,10 +5,6 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/grpc/mainserver.go" afterPath="$PROJECT_DIR$/grpc/mainserver.go" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/grpc/model/account.go" afterPath="$PROJECT_DIR$/grpc/model/account.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/grpc/model/order.go" afterPath="$PROJECT_DIR$/grpc/model/order.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/grpc/model/order_detail.go" afterPath="$PROJECT_DIR$/grpc/model/order_detail.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/grpc/model/payment.go" afterPath="$PROJECT_DIR$/grpc/model/payment.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/grpc/model/transaction.go" afterPath="$PROJECT_DIR$/grpc/model/transaction.go" />
     </list>
     <ignored path="goDockerCompose.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -44,30 +40,18 @@
       <file leaf-file-name="customer.proto" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/grpc/proto/customer.proto">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="486">
-              <caret line="322" column="34" selection-start-line="322" selection-start-column="23" selection-end-line="322" selection-end-column="34" />
+            <state relative-caret-position="276">
+              <caret line="48" column="30" selection-start-line="48" selection-start-column="8" selection-end-line="48" selection-end-column="30" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="payment.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/grpc/model/payment.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="49">
-              <caret line="92" column="34" selection-start-line="92" selection-start-column="34" selection-end-line="92" selection-end-column="56" />
-              <folding>
-                <element signature="e#15#137#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="mainserver.go" pinned="false" current-in-tab="false">
+      <file leaf-file-name="mainserver.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/grpc/mainserver.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="127">
-              <caret line="730" column="43" selection-start-line="730" selection-start-column="43" selection-end-line="730" selection-end-column="43" />
+            <state relative-caret-position="514">
+              <caret line="570" column="16" selection-start-line="570" selection-start-column="16" selection-end-line="570" selection-end-column="16" />
               <folding>
                 <element signature="e#14#314#0" expanded="true" />
               </folding>
@@ -75,42 +59,36 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="panic.go" pinned="false" current-in-tab="false">
-        <entry file="file:///usr/local/go/src/runtime/panic.go">
+      <file leaf-file-name="order_detail.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/grpc/model/order_detail.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="127">
-              <caret line="499" column="0" selection-start-line="499" selection-start-column="0" selection-end-line="499" selection-end-column="0" />
+            <state relative-caret-position="162">
+              <caret line="171" column="0" selection-start-line="171" selection-start-column="0" selection-end-line="171" selection-end-column="0" />
+              <folding>
+                <element signature="e#15#137#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="category.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/grpc/model/category.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="219">
+              <caret line="72" column="5" selection-start-line="72" selection-start-column="5" selection-end-line="72" selection-end-column="5" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="order.go" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/grpc/model/order.go">
+      <file leaf-file-name="account.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/grpc/model/account.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="222">
-              <caret line="153" column="95" selection-start-line="153" selection-start-column="95" selection-end-line="153" selection-end-column="95" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="product.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/grpc/model/product.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2261">
-              <caret line="126" column="5" selection-start-line="126" selection-start-column="5" selection-end-line="126" selection-end-column="5" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="supplier.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/grpc/model/supplier.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-920">
-              <caret line="41" column="0" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
-              <folding />
+            <state relative-caret-position="980">
+              <caret line="237" column="95" selection-start-line="237" selection-start-column="95" selection-end-line="237" selection-end-column="95" />
+              <folding>
+                <element signature="e#15#137#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -174,10 +152,10 @@
         <option value="$PROJECT_DIR$/grpc/proto/customer.pb.go" />
         <option value="$PROJECT_DIR$/grpc/model/payment.go" />
         <option value="$PROJECT_DIR$/grpc/model/transaction.go" />
-        <option value="$PROJECT_DIR$/grpc/model/account.go" />
-        <option value="$PROJECT_DIR$/grpc/model/order_detail.go" />
-        <option value="$PROJECT_DIR$/grpc/mainserver.go" />
         <option value="$PROJECT_DIR$/grpc/model/order.go" />
+        <option value="$PROJECT_DIR$/grpc/model/order_detail.go" />
+        <option value="$PROJECT_DIR$/grpc/model/account.go" />
+        <option value="$PROJECT_DIR$/grpc/mainserver.go" />
       </list>
     </option>
   </component>
@@ -235,7 +213,118 @@
     </navigator>
     <panes>
       <pane id="ProjectPane">
-        <subPane />
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="goDockerCompose" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="goDockerCompose" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="&lt; Go 1.7.1 &gt;" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="goDockerCompose" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="&lt; Go 1.7.1 &gt;" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="runtime" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="goDockerCompose" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="goDockerCompose" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="goDockerCompose" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="goDockerCompose" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="grpc" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="goDockerCompose" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="goDockerCompose" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="grpc" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="proto" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="goDockerCompose" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="goDockerCompose" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="grpc" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="model" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
       </pane>
       <pane id="Scope" />
       <pane id="PackagesPane" />
@@ -796,12 +885,12 @@
       <workItem from="1482726289065" duration="16474000" />
       <workItem from="1483074336826" duration="113814000" />
       <workItem from="1485754743911" duration="8862000" />
-      <workItem from="1485837122923" duration="34015000" />
+      <workItem from="1485837122923" duration="35669000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="231231000" />
+    <option name="totallyTimeSpent" value="232885000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -827,7 +916,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329927" sideWeight="0.4611021" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21312805" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21312805" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298217" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329927" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -981,14 +1070,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/grpc/model/category.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="219">
-          <caret line="72" column="5" selection-start-line="72" selection-start-column="5" selection-end-line="72" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../jmoiron/sqlx/sqlx.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="127">
@@ -1029,36 +1110,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/grpc/model/product.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2261">
-          <caret line="126" column="5" selection-start-line="126" selection-start-column="5" selection-end-line="126" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/grpc/proto/customer.proto">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="486">
-          <caret line="322" column="34" selection-start-line="322" selection-start-column="23" selection-end-line="322" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/grpc/model/payment.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="49">
           <caret line="92" column="34" selection-start-line="92" selection-start-column="34" selection-end-line="92" selection-end-column="56" />
-          <folding>
-            <element signature="e#15#137#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/grpc/model/account.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="201">
-          <caret line="141" column="30" selection-start-line="141" selection-start-column="30" selection-end-line="141" selection-end-column="30" />
           <folding>
             <element signature="e#15#137#0" expanded="true" />
           </folding>
@@ -1099,16 +1154,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/grpc/model/order_detail.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="118">
-          <caret line="120" column="5" selection-start-line="120" selection-start-column="5" selection-end-line="120" selection-end-column="5" />
-          <folding>
-            <element signature="e#15#137#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/grpc/model/supplier.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-920">
@@ -1117,13 +1162,19 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/grpc/mainserver.go">
+    <entry file="file://$PROJECT_DIR$/grpc/model/product.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="127">
-          <caret line="730" column="43" selection-start-line="730" selection-start-column="43" selection-end-line="730" selection-end-column="43" />
-          <folding>
-            <element signature="e#14#314#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="1406">
+          <caret line="126" column="5" selection-start-line="126" selection-start-column="5" selection-end-line="126" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/grpc/model/order.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="222">
+          <caret line="153" column="95" selection-start-line="153" selection-start-column="95" selection-end-line="153" selection-end-column="95" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1135,11 +1186,49 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/grpc/model/order.go">
+    <entry file="file://$PROJECT_DIR$/grpc/model/order_detail.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="222">
-          <caret line="153" column="95" selection-start-line="153" selection-start-column="95" selection-end-line="153" selection-end-column="95" />
+        <state relative-caret-position="162">
+          <caret line="171" column="0" selection-start-line="171" selection-start-column="0" selection-end-line="171" selection-end-column="0" />
+          <folding>
+            <element signature="e#15#137#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/grpc/model/category.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="219">
+          <caret line="72" column="5" selection-start-line="72" selection-start-column="5" selection-end-line="72" selection-end-column="5" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/grpc/model/account.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="980">
+          <caret line="237" column="95" selection-start-line="237" selection-start-column="95" selection-end-line="237" selection-end-column="95" />
+          <folding>
+            <element signature="e#15#137#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/grpc/proto/customer.proto">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="276">
+          <caret line="48" column="30" selection-start-line="48" selection-start-column="8" selection-end-line="48" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/grpc/mainserver.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="514">
+          <caret line="570" column="16" selection-start-line="570" selection-start-column="16" selection-end-line="570" selection-end-column="16" />
+          <folding>
+            <element signature="e#14#314#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

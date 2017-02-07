@@ -183,3 +183,81 @@ func AccountForOrder(db *sqlx.DB, order *pb.OrderRequest) (*pb.AccountRequest, e
 
 	return nil, errors.New("Not found")
 }
+
+func AccountForCustomer(db *sqlx.DB, customer *pb.CustomerRequest) (*pb.AccountRequest, error) {
+
+	pingError := db.Ping()
+
+	if pingError != nil {
+		log.Fatalln(pingError)
+		return nil, pingError
+	}
+
+	var rows *sqlx.Rows
+	var err error
+	rows, err = db.Queryx("SELECT account_id, customer_id, supplier_id, balance " +
+		"FROM accounts WHERE customer_id=$1 ORDER BY account_id ASC LIMIT $2", customer.CustomerId, 1)
+
+	if err != nil {
+		print("error")
+	}
+
+	accounts := make([]*pb.AccountRequest, 0)
+	for rows.Next() {
+		account := new(pb.AccountRequest)
+		err := rows.Scan(&account.AccountId, &account.CustomerId, &account.SupplierId, &account.Balance)
+		if err != nil {
+			return nil, err
+		}
+		accounts = append(accounts, account)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	if len(accounts) > 0 {
+		return accounts[0], nil
+	}
+
+	return nil, errors.New("Not found")
+}
+
+func AccountForSupplier(db *sqlx.DB, supplier *pb.SupplierRequest) (*pb.AccountRequest, error) {
+
+	pingError := db.Ping()
+
+	if pingError != nil {
+		log.Fatalln(pingError)
+		return nil, pingError
+	}
+
+	var rows *sqlx.Rows
+	var err error
+	rows, err = db.Queryx("SELECT account_id, customer_id, supplier_id, balance " +
+		"FROM accounts WHERE supplier_id=$1 ORDER BY account_id ASC LIMIT $2", supplier.SupplierId, 1)
+
+	if err != nil {
+		print("error")
+	}
+
+	accounts := make([]*pb.AccountRequest, 0)
+	for rows.Next() {
+		account := new(pb.AccountRequest)
+		err := rows.Scan(&account.AccountId, &account.CustomerId, &account.SupplierId, &account.Balance)
+		if err != nil {
+			return nil, err
+		}
+		accounts = append(accounts, account)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	if len(accounts) > 0 {
+		return accounts[0], nil
+	}
+
+	return nil, errors.New("Not found")
+}
