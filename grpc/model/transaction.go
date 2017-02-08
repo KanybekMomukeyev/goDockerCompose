@@ -198,11 +198,6 @@ func RecentTransactionForSupplier(db *sqlx.DB, supReq *pb.SupplierRequest) (*pb.
 
 func AllTransactionsForFilter(db *sqlx.DB, transactFilter *pb.TransactionFilter) ([]*pb.TransactionRequest, error) {
 
-	println(transactFilter.TransactionDate)
-	println(transactFilter.CustomerId)
-	println(transactFilter.SupplierId)
-	println(transactFilter.Limit)
-
 	pingError := db.Ping()
 
 	if pingError != nil {

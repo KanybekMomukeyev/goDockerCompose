@@ -120,6 +120,11 @@ func AllOrderDetails(db *sqlx.DB) ([]*pb.OrderDetailRequest, error) {
 
 func AllOrderDetailsForFilter(db *sqlx.DB, orderDetFilter *pb.OrderDetailFilter) ([]*pb.OrderDetailRequest, error) {
 
+	//println("----------------------------------------")
+	//fmt.Printf("orderDetFilter.OrderDetailDate = %v\n", orderDetFilter.OrderDetailDate)
+	//fmt.Printf("orderDetFilter.ProductId = %v\n", orderDetFilter.ProductId)
+	//fmt.Printf("orderDetFilter.Limit = %v\n", orderDetFilter.Limit)
+
 	pingError := db.Ping()
 
 	if pingError != nil {
@@ -157,6 +162,8 @@ func AllOrderDetailsForFilter(db *sqlx.DB, orderDetFilter *pb.OrderDetailFilter)
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
+
+	//fmt.Printf("orderDetails = %v\n", orderDetails)
 
 	return orderDetails, nil
 }
