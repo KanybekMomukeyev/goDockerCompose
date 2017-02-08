@@ -198,6 +198,11 @@ func RecentTransactionForSupplier(db *sqlx.DB, supReq *pb.SupplierRequest) (*pb.
 
 func AllTransactionsForFilter(db *sqlx.DB, transactFilter *pb.TransactionFilter) ([]*pb.TransactionRequest, error) {
 
+	println(transactFilter.TransactionDate)
+	println(transactFilter.CustomerId)
+	println(transactFilter.SupplierId)
+	println(transactFilter.Limit)
+
 	pingError := db.Ping()
 
 	if pingError != nil {
@@ -215,7 +220,7 @@ func AllTransactionsForFilter(db *sqlx.DB, transactFilter *pb.TransactionFilter)
 	} else if transactFilter.SupplierId > 0 {
 		rows, err = db.Queryx("SELECT transaction_id, transaction_date, is_last_transaction, transaction_type, " +
 			"money_amount, order_id, customer_id, supplier_id, staff_id FROM transactions " +
-			"WHERE order_detail_date<=$1 AND supplier_id=$2 ORDER BY transaction_date DESC LIMIT $3",
+			"WHERE transaction_date<=$1 AND supplier_id=$2 ORDER BY transaction_date DESC LIMIT $3",
 			transactFilter.TransactionDate, transactFilter.SupplierId, transactFilter.Limit)
 	} else {
 		rows, err = db.Queryx("SELECT transaction_id, transaction_date, is_last_transaction, transaction_type, " +
