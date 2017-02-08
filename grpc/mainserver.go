@@ -568,7 +568,7 @@ func (s *server) AllSuppliersForInitial(ctx context.Context, suppFilter *pb.Supp
 		createSupplierRequest.Supplier = supplierReq
 		createSupplierRequest.Transaction = transactionReq
 		createSupplierRequest.Account = accountReq
-		
+
 		createSupplierRequests = append(createSupplierRequests, createSupplierRequest)
 	}
 

@@ -212,11 +212,16 @@ func AllTransactionsForFilter(db *sqlx.DB, transactFilter *pb.TransactionFilter)
 			"money_amount, order_id, customer_id, supplier_id, staff_id FROM transactions " +
 			"WHERE transaction_date<=$1 AND customer_id=$2 ORDER BY transaction_date DESC LIMIT $3",
 			transactFilter.TransactionDate, transactFilter.CustomerId, transactFilter.Limit)
-	} else {
+	} else if transactFilter.SupplierId > 0 {
 		rows, err = db.Queryx("SELECT transaction_id, transaction_date, is_last_transaction, transaction_type, " +
 			"money_amount, order_id, customer_id, supplier_id, staff_id FROM transactions " +
 			"WHERE order_detail_date<=$1 AND supplier_id=$2 ORDER BY transaction_date DESC LIMIT $3",
 			transactFilter.TransactionDate, transactFilter.SupplierId, transactFilter.Limit)
+	} else {
+		rows, err = db.Queryx("SELECT transaction_id, transaction_date, is_last_transaction, transaction_type, " +
+			"money_amount, order_id, customer_id, supplier_id, staff_id FROM transactions " +
+			"WHERE order_detail_date<=$1 ORDER BY transaction_date DESC LIMIT $2",
+			transactFilter.TransactionDate, transactFilter.Limit)
 	}
 
 	if err != nil {
