@@ -113,15 +113,142 @@ func StoreProduct(db *sqlx.DB, product *pb.ProductRequest) (uint64, error) {
 	return lastInsertId, nil
 }
 
-func IncreaseProductsInStock(db *sqlx.DB, orderDetailReq *pb.OrderDetailRequest)  (uint64, error)  {
+func IncreaseProductsInStock(db *sqlx.DB, orderDetailReqs []*pb.OrderDetailRequest)  (uint64, error)  {
+
+	productIds := make([]uint64, 0)
+	updateValues := make(map[uint64]float64)
+
+	for _, orderDetailReq := range orderDetailReqs {
+		productIds = append(productIds, orderDetailReq.ProductId)
+		updateValues[orderDetailReq.ProductId] = orderDetailReq.OrderQuantity
+	}
+
+	products_, err := getProductsForProductIds(db, productIds)
+	if err != nil {
+		print("error")
+		return 0, err
+	}
+
+	forUpdatesInDatabase := make(map[uint64]float64)
+
+	for _, product := range products_ {
+		quantity := updateValues[product.ProductId]
+		product.UnitsInStock = product.UnitsInStock + quantity
+		forUpdatesInDatabase[product.ProductId] = product.UnitsInStock
+	}
+
+	rowsAffected, err := updateProductsInStock(db, forUpdatesInDatabase)
+	if err != nil {
+		print("error")
+		return 0, err
+	}
 
 	//create array of ids
-	return 0, nil
+	return rowsAffected, nil
 }
 
-func DecreaseProductsInStock(db *sqlx.DB, orderDetailReq *pb.OrderDetailRequest)  (uint64, error)  {
+func DecreaseProductsInStock(db *sqlx.DB, orderDetailReqs []*pb.OrderDetailRequest) (uint64, error) {
 
-	return 0, nil
+	productIds := make([]uint64, 0)
+	updateValues := make(map[uint64]float64)
+
+	for _, orderDetailReq := range orderDetailReqs {
+		productIds = append(productIds, orderDetailReq.ProductId)
+		updateValues[orderDetailReq.ProductId] = orderDetailReq.OrderQuantity
+	}
+
+	products_, err := getProductsForProductIds(db, productIds)
+	if err != nil {
+		print("error")
+		return 0, err
+	}
+
+	forUpdatesInDatabase := make(map[uint64]float64)
+
+	for _, product := range products_ {
+		quantity := updateValues[product.ProductId]
+		product.UnitsInStock = product.UnitsInStock - quantity
+		forUpdatesInDatabase[product.ProductId] = product.UnitsInStock
+	}
+
+	rowsAffected, err := updateProductsInStock(db, forUpdatesInDatabase)
+	if err != nil {
+		print("error")
+		return 0, err
+	}
+
+	//create array of ids
+	return rowsAffected, nil
+}
+
+func updateProductsInStock(db *sqlx.DB, updateValues map[uint64]float64) (uint64, error) {
+
+	tx := db.MustBegin()
+	var j int64 = 0
+
+	for key, value := range updateValues {
+		//fmt.Println("Key:", key, "Value:", value)
+		stmt, err :=tx.Prepare("UPDATE products SET units_in_stock=$1 WHERE product_id=$2")
+		CheckErr(err)
+
+		res, err2 := stmt.Exec(value, key)
+		CheckErr(err2)
+
+		affect, err := res.RowsAffected()
+		CheckErr(err)
+
+		fmt.Println(affect, "rows changed")
+
+		j = j + affect
+	}
+
+	commitError := tx.Commit()
+	CheckErr(commitError)
+
+	return uint64(j), nil
+}
+
+func getProductsForProductIds(db *sqlx.DB, productIds []uint64) ([]*pb.ProductRequest, error) {
+
+	query, args, err := sqlx.In("SELECT product_id, product_image_path, product_name, supplier_id, " +
+				"category_id, barcode, quantity_per_unit, sale_unit_price, " +
+				"income_unit_price, units_in_stock FROM products WHERE product_id IN (?)", productIds)
+
+	if err != nil {
+		print("error")
+		return nil, err
+	}
+
+	query = sqlx.Rebind(sqlx.DOLLAR, query) //only if postgres
+	rows, err := db.Query(query, args...)
+
+	//var str string
+	//for _, value := range productIds {
+	//	str += strconv.Itoa(int(value)) + ","
+	//}
+	//
+	//rows, err := db.Queryx("SELECT product_id, product_image_path, product_name, supplier_id, " +
+	//	"category_id, barcode, quantity_per_unit, sale_unit_price, " +
+	//	"income_unit_price, units_in_stock FROM products WHERE product_id IN (" + str[:len(str)-1] + ")")
+
+	products := make([]*pb.ProductRequest, 0)
+	for rows.Next() {
+		product := new(pb.ProductRequest)
+		err := rows.Scan(&product.ProductId, &product.ProductImagePath, &product.ProductName,
+			&product.SupplierId, &product.CategoryId, &product.Barcode, &product.QuantityPerUnit,
+			&product.SaleUnitPrice, &product.IncomeUnitPrice, &product.UnitsInStock)
+
+		if err != nil {
+			return nil, err
+		}
+		products = append(products, product)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return products, nil
 }
 
 func AllProducts(db *sqlx.DB) ([]*pb.ProductRequest, error) {

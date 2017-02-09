@@ -680,14 +680,26 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 	} else if creatOrdReq.Order.OrderDocument == 1000 {
 		orderDocument = ".productOrderSaledToCustomer"
 		updateBalanceOfCustomer(creatOrdReq.Account)
+
+		// product amount
+		_, error := model.DecreaseProductsInStock(db, creatOrdReq.OrderDetails)
+		if error != nil {
+			return nil, error
+		}
+
 	} else if creatOrdReq.Order.OrderDocument == 2000 {
 		orderDocument = ".productOrderSaleEditedToCustomer"
 		updateBalanceOfCustomer(creatOrdReq.Account)
-
-
 	} else if creatOrdReq.Order.OrderDocument == 3000 {
 		orderDocument = ".productOrderReceivedFromSupplier"
 		updateBalanceOfSupplier(creatOrdReq.Account)
+
+		// product amount
+		_, error := model.IncreaseProductsInStock(db, creatOrdReq.OrderDetails)
+		if error != nil {
+			return nil, error
+		}
+
 	} else if creatOrdReq.Order.OrderDocument == 4000 {
 		orderDocument = ".productOrderReceiveEditedFromSupplier"
 		updateBalanceOfSupplier(creatOrdReq.Account)
@@ -696,6 +708,13 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 	} else if creatOrdReq.Order.OrderDocument == 5000 {
 		orderDocument = ".productReturnedFromCustomer"
 		updateBalanceOfCustomer(creatOrdReq.Account)
+
+		// product amount
+		_, error := model.IncreaseProductsInStock(db, creatOrdReq.OrderDetails)
+		if error != nil {
+			return nil, error
+		}
+
 	} else if creatOrdReq.Order.OrderDocument == 6000 {
 		orderDocument = ".productReturneEditedFromCustomer"
 		updateBalanceOfCustomer(creatOrdReq.Account)
@@ -704,6 +723,13 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 	} else if creatOrdReq.Order.OrderDocument == 5500 {
 		orderDocument = ".productReturnedToSupplier"
 		updateBalanceOfSupplier(creatOrdReq.Account)
+
+		// product amount
+		_, error := model.DecreaseProductsInStock(db, creatOrdReq.OrderDetails)
+		if error != nil {
+			return nil, error
+		}
+
 	} else if creatOrdReq.Order.OrderDocument == 6600 {
 		orderDocument = ".productReturneEditedToSupplier"
 		updateBalanceOfSupplier(creatOrdReq.Account)
