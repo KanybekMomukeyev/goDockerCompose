@@ -62,6 +62,7 @@ service RentautomationService {
 
     rpc CreateOrderWith (CreateOrderRequest) returns (CreateOrderRequest) {}
     rpc AllOrdersForInitial (OrderFilter) returns (AllOrderResponse) {}
+    rpc AllOrdersForRecent (OrderFilter) returns (AllOrderResponse) {}
 
     rpc UpdateStream(stream StickyNoteRequest) returns (stream StickyNoteResponse) {}
 }

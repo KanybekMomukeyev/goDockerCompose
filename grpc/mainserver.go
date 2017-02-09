@@ -813,6 +813,54 @@ func (s *server) AllOrdersForInitial(ctx context.Context, orderFilter *pb.OrderF
 	return allOrderResponse, nil
 }
 
+func (s *server) AllOrdersForRecent(ctx context.Context, orderFilter *pb.OrderFilter) (*pb.AllOrderResponse, error) {
+
+	createOrderRequests := make([]*pb.CreateOrderRequest, 0)
+	orders, err := model.AllOrdersForRecentFilter(db, orderFilter)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, order := range orders {
+		createOrderRequest := new(pb.CreateOrderRequest)
+		createOrderRequest.Order = order
+
+		payment, error := model.PaymentForOrder(db, order)
+		if error != nil {
+			break
+			return nil, err
+		}
+		createOrderRequest.Payment = payment
+
+		transaction, error := model.TransactionForOrder(db, order)
+		if error != nil {
+			break
+			return nil, err
+		}
+		createOrderRequest.Transaction = transaction
+
+		account, error := model.AccountForOrder(db, order)
+		if error != nil {
+			break
+			return nil, err
+		}
+		createOrderRequest.Account = account
+
+		orderDetails, error := model.AllOrderDetailsForOrder(db, order)
+		if error != nil {
+			break
+			return nil, err
+		}
+		createOrderRequest.OrderDetails = orderDetails
+		createOrderRequests = append(createOrderRequests, createOrderRequest)
+	}
+
+	allOrderResponse := new(pb.AllOrderResponse)
+	allOrderResponse.OrderRequest = createOrderRequests
+
+	return allOrderResponse, nil
+}
+
 func updateBalanceOfCustomer(accountReq *pb.AccountRequest) (uint64, error) {
 	// customer balance /// ---------------
 	rowsAffected, storeError := model.UpdateCustomerBalance(db, accountReq)
