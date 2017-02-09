@@ -615,7 +615,15 @@ func (s *server) UpdateStaffWith(ctx context.Context, staffReq *pb.StaffRequest)
 }
 
 func (s *server) AllStaffForInitial(ctx context.Context, staffFilter *pb.StaffFilter) (*pb.AllStaffResponse, error) {
-	return nil, nil
+	
+	staff, error := model.AllStaff(db)
+	if error != nil {
+		return nil, error
+	}
+	allStaffResponse := new(pb.AllStaffResponse)
+	allStaffResponse.StaffRequest = staff
+
+	return allStaffResponse, nil
 }
 
 func (s *server) SignInWith(ctx context.Context, signInReq *pb.SignInRequest) (*pb.StaffRequest, error) {
