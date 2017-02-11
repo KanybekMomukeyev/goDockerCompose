@@ -615,7 +615,7 @@ func (s *server) UpdateStaffWith(ctx context.Context, staffReq *pb.StaffRequest)
 }
 
 func (s *server) AllStaffForInitial(ctx context.Context, staffFilter *pb.StaffFilter) (*pb.AllStaffResponse, error) {
-	
+
 	staff, error := model.AllStaff(db)
 	if error != nil {
 		return nil, error
