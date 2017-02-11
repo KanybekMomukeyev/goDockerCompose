@@ -40,12 +40,13 @@ postgres:
 ##    - DB_NAME=project
 ##  volumes:
 ##        - ./api:/go/src/github.com/KanybekMomukeyev/goDockerCompose/api
-go:
-  restart: always
-  build: ./grpc
-  ports:
-    - 50051:50051
-  links:
-    - postgres:db
+
+#go:
+#  restart: always
+#  build: ./grpc
+#  ports:
+#    - 50051:50051
+#  links:
+#    - postgres:db
 
 
