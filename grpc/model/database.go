@@ -21,8 +21,8 @@ func NewDB(dataSourceName string) (*sqlx.DB, error) {
 	)
 
 	fmt.Println(connInfo)
-	//db, err := sqlx.Connect("postgres", connInfo)
-	db, err := sqlx.Connect("postgres", "user=kanybek dbname=databasename password=nazgulum host=172.17.0.4 port=5432 sslmode=disable")
+	db, err := sqlx.Connect("postgres", connInfo)
+	//db, err := sqlx.Connect("postgres", "user=kanybek dbname=databasename password=nazgulum host=172.17.0.4 port=5432 sslmode=disable")
 	//db, err := sqlx.Connect("postgres", "user=kanybek dbname=databasename password=nazgulum host=localhost port=5432 sslmode=disable")
 	if err != nil {
 		log.Fatalln(err)
