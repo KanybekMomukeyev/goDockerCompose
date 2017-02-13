@@ -680,10 +680,11 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 	}
 	creatOrdReq.Transaction.TransactionId = transactionSerial
 
-	var orderDocument string = "sdfsdf"
+	// order document, to update customer/supplier balance
+	// also update product amount in stock
+	var orderDocument string = ""
 	if creatOrdReq.Order.OrderDocument == 0 {
 		orderDocument = ".none"
-
 
 	} else if creatOrdReq.Order.OrderDocument == 1000 {
 		orderDocument = ".productOrderSaledToCustomer"
@@ -698,6 +699,13 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 	} else if creatOrdReq.Order.OrderDocument == 2000 {
 		orderDocument = ".productOrderSaleEditedToCustomer"
 		updateBalanceOfCustomer(creatOrdReq.Account)
+
+		// product amount
+		_, error := model.IncreaseProductsInStock(db, creatOrdReq.OrderDetails)
+		if error != nil {
+			return nil, error
+		}
+
 	} else if creatOrdReq.Order.OrderDocument == 3000 {
 		orderDocument = ".productOrderReceivedFromSupplier"
 		updateBalanceOfSupplier(creatOrdReq.Account)
@@ -712,6 +720,11 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 		orderDocument = ".productOrderReceiveEditedFromSupplier"
 		updateBalanceOfSupplier(creatOrdReq.Account)
 
+		// product amount
+		_, error := model.DecreaseProductsInStock(db, creatOrdReq.OrderDetails)
+		if error != nil {
+			return nil, error
+		}
 
 	} else if creatOrdReq.Order.OrderDocument == 5000 {
 		orderDocument = ".productReturnedFromCustomer"
@@ -745,19 +758,33 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 
 	} else if creatOrdReq.Order.OrderDocument == 7000 {
 		orderDocument = ".moneyReceived"
+
+		if creatOrdReq.Order.CustomerId > 0 {
+			updateBalanceOfCustomer(creatOrdReq.Account)
+		} else if creatOrdReq.Order.SupplierId > 0 {
+			updateBalanceOfSupplier(creatOrdReq.Account)
+		}
+
+
 	} else if creatOrdReq.Order.OrderDocument == 8000 {
 		orderDocument = ".moneyReceiveEdited"
 
 
 	} else if creatOrdReq.Order.OrderDocument == 10000 {
 		orderDocument = ".moneyGone"
-		// not correct!!!!
+
+		if creatOrdReq.Order.CustomerId > 0 {
+			updateBalanceOfCustomer(creatOrdReq.Account)
+		} else if creatOrdReq.Order.SupplierId > 0 {
+			updateBalanceOfSupplier(creatOrdReq.Account)
+		}
+
+
 	} else if creatOrdReq.Order.OrderDocument == 11000 {
 		orderDocument = ".moneyGoneEdited"
 	}
 
 	println(orderDocument)
-
 
 	// orderDetails
 	for _, orderDetailReq := range creatOrdReq.OrderDetails {
