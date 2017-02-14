@@ -132,9 +132,17 @@ func AllOrderDetailsForFilter(db *sqlx.DB, orderDetFilter *pb.OrderDetailFilter)
 		return nil, pingError
 	}
 
-	rows, err := db.Queryx("SELECT order_detail_id, order_id, order_detail_date, is_last, billing_no, product_id, " +
-		"price, order_quantity, discount FROM orderdetails WHERE order_detail_date<=$1 AND product_id=$2" +
-		" ORDER BY order_detail_date DESC LIMIT $3", orderDetFilter.OrderDetailDate, orderDetFilter.ProductId, orderDetFilter.Limit)
+	var rows *sqlx.Rows
+	var err error
+	if orderDetFilter.ProductId > 0 {
+		rows, err = db.Queryx("SELECT order_detail_id, order_id, order_detail_date, is_last, billing_no, product_id, " +
+			"price, order_quantity, discount FROM orderdetails WHERE order_detail_date<=$1 AND product_id=$2" +
+			" ORDER BY order_detail_date DESC LIMIT $3", orderDetFilter.OrderDetailDate, orderDetFilter.ProductId, orderDetFilter.Limit)
+	} else {
+		rows, err = db.Queryx("SELECT order_detail_id, order_id, order_detail_date, is_last, billing_no, product_id, " +
+			"price, order_quantity, discount FROM orderdetails WHERE order_detail_date<=$1 AND order_id=$2" +
+			" ORDER BY order_detail_date DESC LIMIT $3", orderDetFilter.OrderDetailDate, 0, orderDetFilter.Limit)
+	}
 
 	if err != nil {
 		print("error")
