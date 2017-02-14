@@ -447,7 +447,8 @@ func (s *server) UpdateCustomerBalanceWith(ctx context.Context, updateCustBalanc
 	}
 	updateCustBalanceReq.Transaction.TransactionId = transactionSerial
 
-	rowsAffected, storeError := model.UpdateCustomerBalance(db, updateCustBalanceReq.Account)
+	rowsAffected, storeError := model.UpdateCustomerBalance(db, updateCustBalanceReq.Account.CustomerId, updateCustBalanceReq.Account.Balance)
+
 	if storeError != nil {
 		return nil, storeError
 	}
@@ -470,7 +471,7 @@ func (s *server) AllCustomersForInitial(ctx context.Context, custFilter *pb.Cust
 			return nil, err
 		}
 
-		accountReq, err := model.AccountForCustomer(db, customerReq)
+		accountReq, err := model.AccountForCustomer(db, customerReq.CustomerId)
 		if err != nil {
 			break
 			return nil, err
@@ -535,7 +536,7 @@ func (s *server) UpdateSupplierBalanceWith(ctx context.Context, createSuppReq *p
 	}
 	createSuppReq.Transaction.TransactionId = transactionSerial
 
-	rowsAffected, storeError := model.UpdateSupplierBalance(db, createSuppReq.Account)
+	rowsAffected, storeError := model.UpdateSupplierBalance(db, createSuppReq.Account.SupplierId, createSuppReq.Account.Balance)
 	if storeError != nil {
 		return nil, storeError
 	}
@@ -558,7 +559,7 @@ func (s *server) AllSuppliersForInitial(ctx context.Context, suppFilter *pb.Supp
 			return nil, err
 		}
 
-		accountReq, err := model.AccountForSupplier(db, supplierReq)
+		accountReq, err := model.AccountForSupplier(db, supplierReq.SupplierId)
 		if err != nil {
 			break
 			return nil, err
@@ -688,7 +689,14 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 
 	} else if creatOrdReq.Order.OrderDocument == 1000 {
 		orderDocument = ".productOrderSaledToCustomer"
-		updateBalanceOfCustomer(creatOrdReq.Account)
+
+		// customer balance
+		acountReq, err := model.AccountForCustomer(db, creatOrdReq.Order.CustomerId)
+		if err != nil {
+			return nil, err
+		}
+		acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
+		model.UpdateCustomerBalance(db, creatOrdReq.Order.CustomerId, acountReq.Balance)
 
 		// product amount
 		_, error := model.DecreaseProductsInStock(db, creatOrdReq.OrderDetails)
@@ -698,7 +706,14 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 
 	} else if creatOrdReq.Order.OrderDocument == 2000 {
 		orderDocument = ".productOrderSaleEditedToCustomer"
-		updateBalanceOfCustomer(creatOrdReq.Account)
+
+		// customer balance
+		acountReq, err := model.AccountForCustomer(db, creatOrdReq.Order.CustomerId)
+		if err != nil {
+			return nil, err
+		}
+		acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
+		model.UpdateCustomerBalance(db, creatOrdReq.Order.CustomerId, acountReq.Balance)
 
 		// product amount
 		_, error := model.IncreaseProductsInStock(db, creatOrdReq.OrderDetails)
@@ -708,7 +723,14 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 
 	} else if creatOrdReq.Order.OrderDocument == 3000 {
 		orderDocument = ".productOrderReceivedFromSupplier"
-		updateBalanceOfSupplier(creatOrdReq.Account)
+
+		// supplier balance
+		acountReq, err := model.AccountForSupplier(db, creatOrdReq.Order.SupplierId)
+		if err != nil {
+			return nil, err
+		}
+		acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
+		model.UpdateSupplierBalance(db, creatOrdReq.Order.SupplierId, acountReq.Balance)
 
 		// product amount
 		_, error := model.IncreaseProductsInStock(db, creatOrdReq.OrderDetails)
@@ -718,7 +740,14 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 
 	} else if creatOrdReq.Order.OrderDocument == 4000 {
 		orderDocument = ".productOrderReceiveEditedFromSupplier"
-		updateBalanceOfSupplier(creatOrdReq.Account)
+
+		// supplier balance
+		acountReq, err := model.AccountForSupplier(db, creatOrdReq.Order.SupplierId)
+		if err != nil {
+			return nil, err
+		}
+		acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
+		model.UpdateSupplierBalance(db, creatOrdReq.Order.SupplierId, acountReq.Balance)
 
 		// product amount
 		_, error := model.DecreaseProductsInStock(db, creatOrdReq.OrderDetails)
@@ -728,7 +757,14 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 
 	} else if creatOrdReq.Order.OrderDocument == 5000 {
 		orderDocument = ".productReturnedFromCustomer"
-		updateBalanceOfCustomer(creatOrdReq.Account)
+
+		// customer balance
+		acountReq, err := model.AccountForCustomer(db, creatOrdReq.Order.CustomerId)
+		if err != nil {
+			return nil, err
+		}
+		acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
+		model.UpdateCustomerBalance(db, creatOrdReq.Order.CustomerId, acountReq.Balance)
 
 		// product amount
 		_, error := model.IncreaseProductsInStock(db, creatOrdReq.OrderDetails)
@@ -738,12 +774,17 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 
 	} else if creatOrdReq.Order.OrderDocument == 6000 {
 		orderDocument = ".productReturneEditedFromCustomer"
-		updateBalanceOfCustomer(creatOrdReq.Account)
-
 
 	} else if creatOrdReq.Order.OrderDocument == 5500 {
 		orderDocument = ".productReturnedToSupplier"
-		updateBalanceOfSupplier(creatOrdReq.Account)
+
+		// supplier balance
+		acountReq, err := model.AccountForSupplier(db, creatOrdReq.Order.SupplierId)
+		if err != nil {
+			return nil, err
+		}
+		acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
+		model.UpdateSupplierBalance(db, creatOrdReq.Order.SupplierId, acountReq.Balance)
 
 		// product amount
 		_, error := model.DecreaseProductsInStock(db, creatOrdReq.OrderDetails)
@@ -753,16 +794,29 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 
 	} else if creatOrdReq.Order.OrderDocument == 6600 {
 		orderDocument = ".productReturneEditedToSupplier"
-		updateBalanceOfSupplier(creatOrdReq.Account)
-
 
 	} else if creatOrdReq.Order.OrderDocument == 7000 {
 		orderDocument = ".moneyReceived"
 
 		if creatOrdReq.Order.CustomerId > 0 {
-			updateBalanceOfCustomer(creatOrdReq.Account)
+
+			// customer balance
+			acountReq, err := model.AccountForCustomer(db, creatOrdReq.Order.CustomerId)
+			if err != nil {
+				return nil, err
+			}
+			acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
+			model.UpdateCustomerBalance(db, creatOrdReq.Order.CustomerId, acountReq.Balance)
+
 		} else if creatOrdReq.Order.SupplierId > 0 {
-			updateBalanceOfSupplier(creatOrdReq.Account)
+
+			// supplier balance
+			acountReq, err := model.AccountForSupplier(db, creatOrdReq.Order.SupplierId)
+			if err != nil {
+				return nil, err
+			}
+			acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
+			model.UpdateSupplierBalance(db, creatOrdReq.Order.SupplierId, acountReq.Balance)
 		}
 
 
@@ -774,9 +828,22 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 		orderDocument = ".moneyGone"
 
 		if creatOrdReq.Order.CustomerId > 0 {
-			updateBalanceOfCustomer(creatOrdReq.Account)
+			// customer balance
+			acountReq, err := model.AccountForCustomer(db, creatOrdReq.Order.CustomerId)
+			if err != nil {
+				return nil, err
+			}
+			acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
+			model.UpdateCustomerBalance(db, creatOrdReq.Order.CustomerId, acountReq.Balance)
+
 		} else if creatOrdReq.Order.SupplierId > 0 {
-			updateBalanceOfSupplier(creatOrdReq.Account)
+			// supplier balance
+			acountReq, err := model.AccountForSupplier(db, creatOrdReq.Order.SupplierId)
+			if err != nil {
+				return nil, err
+			}
+			acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
+			model.UpdateSupplierBalance(db, creatOrdReq.Order.SupplierId, acountReq.Balance)
 		}
 
 
@@ -826,12 +893,12 @@ func (s *server) AllOrdersForInitial(ctx context.Context, orderFilter *pb.OrderF
 		}
 		createOrderRequest.Transaction = transaction
 
-		account, error := model.AccountForOrder(db, order)
-		if error != nil {
-			break
-			return nil, err
-		}
-		createOrderRequest.Account = account
+		//account, error := model.AccountForOrder(db, order)
+		//if error != nil {
+		//	break
+		//	return nil, err
+		//}
+		//createOrderRequest.Account = account
 
 		orderDetails, error := model.AllOrderDetailsForOrder(db, order)
 		if error != nil {
@@ -874,12 +941,12 @@ func (s *server) AllOrdersForRecent(ctx context.Context, orderFilter *pb.OrderFi
 		}
 		createOrderRequest.Transaction = transaction
 
-		account, error := model.AccountForOrder(db, order)
-		if error != nil {
-			break
-			return nil, err
-		}
-		createOrderRequest.Account = account
+		//account, error := model.AccountForOrder(db, order)
+		//if error != nil {
+		//	break
+		//	return nil, err
+		//}
+		//createOrderRequest.Account = account
 
 		orderDetails, error := model.AllOrderDetailsForOrder(db, order)
 		if error != nil {
@@ -894,26 +961,6 @@ func (s *server) AllOrdersForRecent(ctx context.Context, orderFilter *pb.OrderFi
 	allOrderResponse.OrderRequest = createOrderRequests
 
 	return allOrderResponse, nil
-}
-
-func updateBalanceOfCustomer(accountReq *pb.AccountRequest) (uint64, error) {
-	// customer balance /// ---------------
-	rowsAffected, storeError := model.UpdateCustomerBalance(db, accountReq)
-	if storeError != nil {
-		return 0, storeError
-	}
-	fmt.Printf("rowsAffected %v\n", &rowsAffected)
-	return rowsAffected, nil
-}
-
-func updateBalanceOfSupplier(accountReq *pb.AccountRequest) (uint64, error) {
-	// customer balance /// ---------------
-	rowsAffected, storeError := model.UpdateSupplierBalance(db, accountReq)
-	if storeError != nil {
-		return 0, storeError
-	}
-	fmt.Printf("rowsAffected %v\n", &rowsAffected)
-	return rowsAffected, nil
 }
 
 var db *sqlx.DB

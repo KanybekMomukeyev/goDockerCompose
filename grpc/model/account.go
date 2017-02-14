@@ -60,15 +60,15 @@ func StoreAccount(db *sqlx.DB, accountRequest *pb.AccountRequest) (uint64, error
 	return lastInsertId, nil
 }
 
-func UpdateCustomerBalance(db *sqlx.DB, accountReq *pb.AccountRequest) (uint64, error)  {
+func UpdateCustomerBalance(db *sqlx.DB, customerId uint64, balance float64) (uint64, error)  {
 
 	tx := db.MustBegin()
 
 	stmt, err :=tx.Prepare("UPDATE accounts SET balance=$1 WHERE customer_id=$2")
 	CheckErr(err)
 
-	res, err2 := stmt.Exec(accountReq.Balance,
-		accountReq.CustomerId)
+	res, err2 := stmt.Exec(balance,
+		customerId)
 
 	CheckErr(err2)
 
@@ -83,15 +83,15 @@ func UpdateCustomerBalance(db *sqlx.DB, accountReq *pb.AccountRequest) (uint64, 
 	return uint64(affect), nil
 }
 
-func UpdateSupplierBalance(db *sqlx.DB, accountReq *pb.AccountRequest) (uint64, error)  {
+func UpdateSupplierBalance(db *sqlx.DB, supplierId uint64, balance float64) (uint64, error)  {
 
 	tx := db.MustBegin()
 
 	stmt, err :=tx.Prepare("UPDATE accounts SET balance=$1 WHERE supplier_id=$2")
 	CheckErr(err)
 
-	res, err2 := stmt.Exec(accountReq.Balance,
-		accountReq.SupplierId)
+	res, err2 := stmt.Exec(balance,
+		supplierId)
 
 	CheckErr(err2)
 
@@ -137,7 +137,7 @@ func AllAccounts(db *sqlx.DB) ([]*pb.AccountRequest, error) {
 	return accounts, nil
 }
 
-func AccountForOrder(db *sqlx.DB, order *pb.OrderRequest) (*pb.AccountRequest, error) {
+func AccountFor(db *sqlx.DB, order *pb.OrderRequest) (*pb.AccountRequest, error) {
 
 	pingError := db.Ping()
 
@@ -184,7 +184,7 @@ func AccountForOrder(db *sqlx.DB, order *pb.OrderRequest) (*pb.AccountRequest, e
 	return nil, errors.New("Not found")
 }
 
-func AccountForCustomer(db *sqlx.DB, customer *pb.CustomerRequest) (*pb.AccountRequest, error) {
+func AccountForCustomer(db *sqlx.DB, customerId uint64) (*pb.AccountRequest, error) {
 
 	pingError := db.Ping()
 
@@ -196,7 +196,7 @@ func AccountForCustomer(db *sqlx.DB, customer *pb.CustomerRequest) (*pb.AccountR
 	var rows *sqlx.Rows
 	var err error
 	rows, err = db.Queryx("SELECT account_id, customer_id, supplier_id, balance " +
-		"FROM accounts WHERE customer_id=$1 ORDER BY account_id ASC LIMIT $2", customer.CustomerId, 1)
+		"FROM accounts WHERE customer_id=$1 ORDER BY account_id ASC LIMIT $2", customerId, 1)
 
 	if err != nil {
 		print("error")
@@ -223,7 +223,7 @@ func AccountForCustomer(db *sqlx.DB, customer *pb.CustomerRequest) (*pb.AccountR
 	return nil, errors.New("Not found")
 }
 
-func AccountForSupplier(db *sqlx.DB, supplier *pb.SupplierRequest) (*pb.AccountRequest, error) {
+func AccountForSupplier(db *sqlx.DB, supplierId uint64) (*pb.AccountRequest, error) {
 
 	pingError := db.Ping()
 
@@ -235,7 +235,7 @@ func AccountForSupplier(db *sqlx.DB, supplier *pb.SupplierRequest) (*pb.AccountR
 	var rows *sqlx.Rows
 	var err error
 	rows, err = db.Queryx("SELECT account_id, customer_id, supplier_id, balance " +
-		"FROM accounts WHERE supplier_id=$1 ORDER BY account_id ASC LIMIT $2", supplier.SupplierId, 1)
+		"FROM accounts WHERE supplier_id=$1 ORDER BY account_id ASC LIMIT $2", supplierId, 1)
 
 	if err != nil {
 		print("error")
