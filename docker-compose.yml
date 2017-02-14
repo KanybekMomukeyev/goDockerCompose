@@ -6,16 +6,16 @@ store:
       - /var/lib/postgresql/data
   command: "true"
 
-s3minio:
-    image: minio/minio
-    ports:
-      - "9000:9000"
-    volumes:
-      - "./kanoexport:/export"
-    environment:
-      - "MINIO_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE"
-      - "MINIO_SECRET_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
-    command: server /export
+#s3minio:
+#    image: minio/minio
+#    ports:
+#      - "9000:9000"
+#    volumes:
+#      - "./kanoexport:/export"
+#    environment:
+#      - "MINIO_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE"
+#      - "MINIO_SECRET_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+#    command: server /export
 
 postgres:
   restart: always
