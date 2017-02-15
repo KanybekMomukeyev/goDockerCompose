@@ -1,9 +1,8 @@
 package main
 
 import (
-	"log"
+	log "github.com/Sirupsen/logrus"
 	"net"
-	//"strings"
 
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -17,7 +16,20 @@ import (
 	"fmt"
 	"flag"
 	"io"
+	"os"
 )
+
+func init() {
+	// Log as JSON instead of the default ASCII formatter.
+	log.SetFormatter(&log.JSONFormatter{})
+
+	// Output to stdout instead of the default stderr
+	// Can be any io.Writer, see below for File example
+	log.SetOutput(os.Stdout)
+
+	// Only log the warning severity or above.
+	log.SetLevel(log.DebugLevel)
+}
 
 var (
 	certFile   = flag.String("cert_file", "certfiles/server.crt", "The TLS cert file")
@@ -658,6 +670,10 @@ func (s *server) UpdateStream(stream pb.RentautomationService_UpdateStreamServer
 
 func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrderRequest) (*pb.CreateOrderRequest, error) {
 
+	log.WithFields(log.Fields{
+		"creat_order_req": creatOrdReq,
+	}).Info("CreateOrderWith rpc method called")
+
 	// payment
 	paymentSerial, storeError := model.StorePayment(db, creatOrdReq.Payment)
 	if storeError != nil {
@@ -869,6 +885,10 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 
 func (s *server) AllOrdersForInitial(ctx context.Context, orderFilter *pb.OrderFilter) (*pb.AllOrderResponse, error) {
 
+	log.WithFields(log.Fields{
+		"orderFilter": orderFilter,
+	}).Info("AllOrdersForInitial rpc method called")
+
 	createOrderRequests := make([]*pb.CreateOrderRequest, 0)
 	orders, err := model.AllOrdersForFilter(db, orderFilter)
 	if err != nil {
@@ -912,10 +932,18 @@ func (s *server) AllOrdersForInitial(ctx context.Context, orderFilter *pb.OrderF
 	allOrderResponse := new(pb.AllOrderResponse)
 	allOrderResponse.OrderRequest = createOrderRequests
 
+	log.WithFields(log.Fields{
+		"createOrderRequests length":  len(createOrderRequests),
+	}).Info("AllOrdersForInitial Found orders")
+
 	return allOrderResponse, nil
 }
 
 func (s *server) AllOrdersForRecent(ctx context.Context, orderFilter *pb.OrderFilter) (*pb.AllOrderResponse, error) {
+
+	log.WithFields(log.Fields{
+		"orderFilter": orderFilter,
+	}).Info("AllOrdersForRecent rpc method called")
 
 	createOrderRequests := make([]*pb.CreateOrderRequest, 0)
 	orders, err := model.AllOrdersForRecentFilter(db, orderFilter)
@@ -960,6 +988,10 @@ func (s *server) AllOrdersForRecent(ctx context.Context, orderFilter *pb.OrderFi
 	allOrderResponse := new(pb.AllOrderResponse)
 	allOrderResponse.OrderRequest = createOrderRequests
 
+	log.WithFields(log.Fields{
+		"createOrderRequests length":  len(createOrderRequests),
+	}).Info("AllOrdersForRecent Found orders")
+
 	return allOrderResponse, nil
 }
 
@@ -970,8 +1002,32 @@ func main() {
 	var databaseError error
 	db, databaseError = model.NewDB("datasource")
 	if databaseError != nil {
-		log.Fatalf("failed to listen: %v", databaseError)
+		log.WithFields(log.Fields{
+			"omg":    databaseError,
+			"number": 100,
+		}).Fatal("failed to listen:")
 	}
+
+	log.WithFields(log.Fields{
+		"animal": "walrus",
+		"size":   10,
+	}).Info("A group of walrus emerges from the ocean")
+
+	log.WithFields(log.Fields{
+		"omg":    true,
+		"number": 122,
+	}).Warn("The group's number increased tremendously!")
+
+	// A common pattern is to re-use fields between logging statements by re-using
+	// the logrus.Entry returned from WithFields()
+	contextLogger := log.WithFields(log.Fields{
+		"common": "this is a common field",
+		"other": "I also should be logged always",
+	})
+
+	contextLogger.Info("I'll be logged with common and other field")
+	contextLogger.Info("Me too")
+
 
 	model.CreateStaffIfNotExsists(db)
 	model.CreateAccountIfNotExsists(db)

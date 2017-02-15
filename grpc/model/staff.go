@@ -4,7 +4,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	pb "github.com/KanybekMomukeyev/goDockerCompose/grpc/proto"
 	"fmt"
-	"log"
+	log "github.com/Sirupsen/logrus"
 	"errors"
 )
 
@@ -51,6 +51,10 @@ func CreateStaffIfNotExsists(db *sqlx.DB) {
 
 func StoreStaff(db *sqlx.DB, staff *pb.StaffRequest) (uint64, error)  {
 
+	log.WithFields(log.Fields{
+		"staff_request:": staff,
+	}).Info("StoreStaff method called")
+
 	tx := db.MustBegin()
 	var lastInsertId uint64
 
@@ -66,25 +70,34 @@ func StoreStaff(db *sqlx.DB, staff *pb.StaffRequest) (uint64, error)  {
 		staff.PhoneNumber,
 		staff.Address).Scan(&lastInsertId)
 
-	//CheckErr(err)
 	if err != nil {
-		fmt.Println(err)
+		log.WithFields(log.Fields{
+			"error": err,
+		}).Warn("Save staff error ocurred")
 		return 0, err
 	}
 
 	commitError := tx.Commit()
-	//CheckErr(commitError)
+
 	if commitError != nil {
-		fmt.Println(commitError)
+		log.WithFields(log.Fields{
+			"error": commitError,
+		}).Warn("Save staff commit error ocurred")
 		return 0, commitError
 	}
 
-	fmt.Println("last inserted staff_id =", lastInsertId)
+	log.WithFields(log.Fields{
+		"count staff_id:": lastInsertId,
+	}).Info("Staff saved succes")
 
 	return lastInsertId, nil
 }
 
 func UpdateStaff(db *sqlx.DB, staff *pb.StaffRequest) (uint64, error)  {
+
+	log.WithFields(log.Fields{
+		"staff_request:": staff,
+	}).Info("UpdateStaff method called")
 
 	tx := db.MustBegin()
 

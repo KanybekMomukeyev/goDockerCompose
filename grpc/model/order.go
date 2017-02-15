@@ -2,8 +2,7 @@ package model
 
 import (
 	"github.com/jmoiron/sqlx"
-	"fmt"
-	"log"
+	log "github.com/Sirupsen/logrus"
 	pb "github.com/KanybekMomukeyev/goDockerCompose/grpc/proto"
 )
 
@@ -94,7 +93,9 @@ func StoreOrder(db *sqlx.DB, order *pb.OrderRequest) (uint64, error)  {
 	commitError := tx.Commit()
 	CheckErr(commitError)
 
-	fmt.Println("last inserted order_id =", lastInsertId)
+	log.WithFields(log.Fields{
+		"count order_id": lastInsertId,
+	}).Info("Order success saved")
 
 	return lastInsertId, nil
 }

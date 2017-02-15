@@ -3,9 +3,9 @@ package model
 import (
 	_ "github.com/lib/pq"
 	"github.com/jmoiron/sqlx"
-	"log"
 	"fmt"
 	"os"
+	log "github.com/Sirupsen/logrus"
 )
 
 
@@ -21,18 +21,24 @@ func NewDB(dataSourceName string) (*sqlx.DB, error) {
 	)
 
 	fmt.Println(connInfo)
-	db, err := sqlx.Connect("postgres", connInfo) // for compose
+	//db, err := sqlx.Connect("postgres", connInfo) // for compose
 	//db, err := sqlx.Connect("postgres", "user=kanybek dbname=databasename password=nazgulum host=172.17.0.4 port=5432 sslmode=disable") // for single docker app
-	//db, err := sqlx.Connect("postgres", "user=kanybek dbname=databasename password=nazgulum host=localhost port=5432 sslmode=disable")
+	db, err := sqlx.Connect("postgres", "user=kanybek dbname=databasename password=nazgulum host=localhost port=5432 sslmode=disable")
 	if err != nil {
-		log.Fatalln(err)
+		log.WithFields(log.Fields{
+			"connection info": connInfo,
+			"error": err,
+		}).Fatal("Can not connected to database")
 		return nil, err
 	}
 
 	pingError := db.Ping()
 
 	if pingError != nil {
-		log.Fatalln(pingError)
+		log.WithFields(log.Fields{
+			"info": connInfo,
+			"ping": pingError,
+		}).Fatal("Can not connected Ping to database")
 		return nil, pingError
 	}
 

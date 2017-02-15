@@ -1,8 +1,7 @@
 package model
 
 import (
-	"log"
-	"fmt"
+	log "github.com/Sirupsen/logrus"
 	"github.com/jmoiron/sqlx"
 	pb "github.com/KanybekMomukeyev/goDockerCompose/grpc/proto"
 	"errors"
@@ -50,7 +49,9 @@ func StorePayment(db *sqlx.DB, payment *pb.PaymentRequest) (uint64, error)  {
 	commitError := tx.Commit()
 	CheckErr(commitError)
 
-	fmt.Println("last inserted payment_id =", lastInsertId)
+	log.WithFields(log.Fields{
+		"count payment_id": lastInsertId,
+	}).Info("Payment success saved")
 
 	return lastInsertId, nil
 }
