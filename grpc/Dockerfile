@@ -18,6 +18,7 @@ RUN go get golang.org/x/net/context
 RUN go get github.com/golang/protobuf/proto
 RUN go get github.com/golang/protobuf/protoc-gen-go
 RUN go get google.golang.org/grpc
+RUN go get github.com/Sirupsen/logrus
 
 RUN go install github.com/KanybekMomukeyev/goDockerCompose/grpc
 
