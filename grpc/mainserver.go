@@ -17,6 +17,9 @@ import (
 	"flag"
 	"io"
 	"os"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 )
 
 func init() {
@@ -46,9 +49,41 @@ type server struct {
 	savedStaff []*pb.StaffRequest
 }
 
+func isAuthorized(ctx context.Context) error{
+	md, ok := metadata.FromContext(ctx)
+
+	if !ok {
+		return grpc.Errorf(codes.Unauthenticated, "Token unsetted")
+	}
+
+	var (
+		appid  string
+		appkey string
+	)
+
+	if val, ok := md["appid"]; ok {
+		appid = val[0]
+	}
+
+	if val, ok := md["appkey"]; ok {
+		appkey = val[0]
+	}
+
+	if appid != "101010" || appkey != "i am key" {
+		return grpc.Errorf(codes.Unauthenticated, "Token is uncorrect: appid=%s, appkey=%s", appid, appkey)
+	}
+
+	return nil
+}
+
 // CreateCustomer creates a new Customer
 // ------------------------------------------------------------ //
 func (s *server) CreateExample(ctx context.Context, customerReq *pb.ExampleRequest) (*pb.ExampleResponse, error) {
+
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
 
 	s.savedCustomers = append(s.savedCustomers, customerReq)
 
@@ -327,7 +362,11 @@ func (s *server) GetTransactions(filter *pb.TransactionFilter, stream pb.Rentaut
 
 // ---------------------------- ADDITTION -------------------------------- //
 func (s *server) CreateProductWith(ctx context.Context, createPrReq *pb.CreateProductRequest) (*pb.CreateProductRequest, error) {
-
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
+	
 	productSerialKey, storeError := model.StoreProduct(db, createPrReq.Product)
 	if storeError != nil {
 		return nil, storeError
@@ -347,6 +386,10 @@ func (s *server) CreateProductWith(ctx context.Context, createPrReq *pb.CreatePr
 }
 
 func (s *server) UpdateProductWith(ctx context.Context, createPrReq *pb.CreateProductRequest) (*pb.CreateProductRequest, error) {
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
 
 	_, updateError := model.UpdateProduct(db, createPrReq.Product)
 	if updateError != nil {
@@ -364,6 +407,10 @@ func (s *server) UpdateProductWith(ctx context.Context, createPrReq *pb.CreatePr
 }
 
 func (s *server) AllProductsForInitial(ctx context.Context, prFilter *pb.ProductFilter) (*pb.AllProductsResponse, error) {
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
 
 	createProdRequests := make([]*pb.CreateProductRequest, 0)
 	products, _ := model.AllProducts(db)
@@ -390,6 +437,10 @@ func (s *server) AllProductsForInitial(ctx context.Context, prFilter *pb.Product
 }
 
 func (s *server) AllCategoriesForInitial(ctx context.Context, catFilter *pb.CategoryFilter) (*pb.AllCategoryResponse, error) {
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
 
 	categories, error := model.AllCategory(db)
 	if error != nil {
@@ -402,6 +453,10 @@ func (s *server) AllCategoriesForInitial(ctx context.Context, catFilter *pb.Cate
 }
 
 func (s *server) AllOrderDetails(ctx context.Context, oDetFilter *pb.OrderDetailFilter) (*pb.AllOrderDetailResponse, error) {
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
 
 	orderDetails, error := model.AllOrderDetailsForFilter(db, oDetFilter)
 	if error != nil {
@@ -416,6 +471,10 @@ func (s *server) AllOrderDetails(ctx context.Context, oDetFilter *pb.OrderDetail
 
 // ----------------------------  -------------------------------- //
 func (s *server) CreateCustomerWith(ctx context.Context, createCustReq *pb.CreateCustomerRequest) (*pb.CreateCustomerRequest, error) {
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
 
 	customerSerial, storeError := model.StoreRealCustomer(db, createCustReq.Customer)
 	if storeError != nil {
@@ -442,6 +501,10 @@ func (s *server) CreateCustomerWith(ctx context.Context, createCustReq *pb.Creat
 }
 
 func (s *server) UpdateCustomerWith(ctx context.Context, createCustReq *pb.CustomerRequest) (*pb.CustomerRequest, error) {
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
 
 	rowsAffected, updateError := model.UpdateRealCustomer(db, createCustReq)
 	if updateError != nil {
@@ -452,6 +515,10 @@ func (s *server) UpdateCustomerWith(ctx context.Context, createCustReq *pb.Custo
 }
 
 func (s *server) UpdateCustomerBalanceWith(ctx context.Context, updateCustBalanceReq *pb.CreateCustomerRequest) (*pb.CreateCustomerRequest, error) {
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
 
 	transactionSerial, storeError := model.StoreTransaction(db, updateCustBalanceReq.Transaction)
 	if storeError != nil {
@@ -471,6 +538,10 @@ func (s *server) UpdateCustomerBalanceWith(ctx context.Context, updateCustBalanc
 }
 
 func (s *server) AllCustomersForInitial(ctx context.Context, custFilter *pb.CustomerFilter) (*pb.AllCustomersResponse, error) {
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
 
 	createCustomerRequests := make([]*pb.CreateCustomerRequest, 0)
 	customers, _ := model.AllRealCustomers(db)
@@ -505,6 +576,10 @@ func (s *server) AllCustomersForInitial(ctx context.Context, custFilter *pb.Cust
 
 // ----------------------------  -------------------------------- //
 func (s *server) CreateSupplierWith(ctx context.Context, createSuppReq *pb.CreateSupplierRequest) (*pb.CreateSupplierRequest, error) {
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
 
 	supplierSerial, storeError := model.StoreSupplier(db, createSuppReq.Supplier)
 	if storeError != nil {
@@ -532,6 +607,11 @@ func (s *server) CreateSupplierWith(ctx context.Context, createSuppReq *pb.Creat
 
 func (s *server) UpdateSupplierWith(ctx context.Context, createSuppReq *pb.SupplierRequest) (*pb.SupplierRequest, error) {
 
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
+
 	rowsAffected, updateError := model.UpdateSupplier(db, createSuppReq)
 	if updateError != nil {
 		return nil, updateError
@@ -541,6 +621,11 @@ func (s *server) UpdateSupplierWith(ctx context.Context, createSuppReq *pb.Suppl
 }
 
 func (s *server) UpdateSupplierBalanceWith(ctx context.Context, createSuppReq *pb.CreateSupplierRequest) (*pb.CreateSupplierRequest, error) {
+
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
 
 	transactionSerial, storeError := model.StoreTransaction(db, createSuppReq.Transaction)
 	if storeError != nil {
@@ -559,6 +644,11 @@ func (s *server) UpdateSupplierBalanceWith(ctx context.Context, createSuppReq *p
 }
 
 func (s *server) AllSuppliersForInitial(ctx context.Context, suppFilter *pb.SupplierFilter) (*pb.AllSuppliersResponse, error) {
+
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
 
 	createSupplierRequests := make([]*pb.CreateSupplierRequest, 0)
 	suppliers, _ := model.AllSuppliers(db)
@@ -593,6 +683,11 @@ func (s *server) AllSuppliersForInitial(ctx context.Context, suppFilter *pb.Supp
 
 func (s *server) AllTransactionsForInitial(ctx context.Context, transFilter *pb.TransactionFilter) (*pb.AllTransactionResponse, error) {
 
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
+
 	transactions, error := model.AllTransactionsForFilter(db, transFilter)
 	if error != nil {
 		return nil, error
@@ -607,6 +702,11 @@ func (s *server) AllTransactionsForInitial(ctx context.Context, transFilter *pb.
 // ----------------------------  -------------------------------- //
 func (s *server) CreateStaffWith(ctx context.Context, staffReq *pb.StaffRequest) (*pb.StaffRequest, error) {
 
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
+
 	staffSerialKey, storeError := model.StoreStaff(db, staffReq)
 	if storeError != nil {
 		return nil, storeError
@@ -619,6 +719,11 @@ func (s *server) CreateStaffWith(ctx context.Context, staffReq *pb.StaffRequest)
 
 func (s *server) UpdateStaffWith(ctx context.Context, staffReq *pb.StaffRequest) (*pb.StaffRequest, error) {
 
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
+
 	rowsAffected, updateError := model.UpdateStaff(db, staffReq)
 	if updateError != nil {
 		return nil, updateError
@@ -628,6 +733,11 @@ func (s *server) UpdateStaffWith(ctx context.Context, staffReq *pb.StaffRequest)
 }
 
 func (s *server) AllStaffForInitial(ctx context.Context, staffFilter *pb.StaffFilter) (*pb.AllStaffResponse, error) {
+
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
 
 	staff, error := model.AllStaff(db)
 	if error != nil {
@@ -640,6 +750,12 @@ func (s *server) AllStaffForInitial(ctx context.Context, staffFilter *pb.StaffFi
 }
 
 func (s *server) SignInWith(ctx context.Context, signInReq *pb.SignInRequest) (*pb.StaffRequest, error) {
+
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
+
 	stafReq, selectError := model.SignIn(db, signInReq)
 	if selectError != nil {
 		return nil, selectError
@@ -673,6 +789,11 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 	log.WithFields(log.Fields{
 		"creat_order_req": creatOrdReq,
 	}).Info("CreateOrderWith rpc method called")
+
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
 
 	// payment
 	paymentSerial, storeError := model.StorePayment(db, creatOrdReq.Payment)
@@ -889,6 +1010,11 @@ func (s *server) AllOrdersForInitial(ctx context.Context, orderFilter *pb.OrderF
 		"orderFilter": orderFilter,
 	}).Info("AllOrdersForInitial rpc method called")
 
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
+
 	createOrderRequests := make([]*pb.CreateOrderRequest, 0)
 	orders, err := model.AllOrdersForFilter(db, orderFilter)
 	if err != nil {
@@ -944,6 +1070,11 @@ func (s *server) AllOrdersForRecent(ctx context.Context, orderFilter *pb.OrderFi
 	log.WithFields(log.Fields{
 		"orderFilter": orderFilter,
 	}).Info("AllOrdersForRecent rpc method called")
+
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
 
 	createOrderRequests := make([]*pb.CreateOrderRequest, 0)
 	orders, err := model.AllOrdersForRecentFilter(db, orderFilter)
