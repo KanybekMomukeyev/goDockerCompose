@@ -46,7 +46,6 @@ const (
 // server is used to implement customer.CustomerServer.
 type server struct {
 	savedCustomers []*pb.ExampleRequest
-	savedStaff []*pb.StaffRequest
 }
 
 func isAuthorized(ctx context.Context) error{
