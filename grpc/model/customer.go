@@ -59,44 +59,6 @@ func CheckErr(err error) {
 	}
 }
 
-func AllCustomers(db *sqlx.DB) ([]*Customer, error) {
-
-	pingError := db.Ping()
-
-	if pingError != nil {
-		log.Fatalln(pingError)
-		return nil, pingError
-	}
-
-
-	rows, err := db.Queryx("SELECT cid, first_name, email, phone FROM customer")
-	if err != nil {
-		print("error")
-	}
-
-	customers := make([]*Customer, 0)
-	for rows.Next() {
-		bk := new(Customer)
-		err := rows.Scan(&bk.customerId, &bk.firstName, &bk.secondName, &bk.phoneNumber)
-		if err != nil {
-			return nil, err
-		}
-		customers = append(customers, bk)
-	}
-	if err = rows.Err(); err != nil {
-		return nil, err
-	}
-	return customers, nil
-}
-
-func AllCustomersAuto(db *sqlx.DB) ([]*Customer, error) {
-
-	customers := []*Customer{}
-	db.Select(&customers, "SELECT cid, first_name, email, phone FROM customers ORDER BY first_name ASC")
-
-	return customers, nil
-}
-
 func StoreRealCustomer(db *sqlx.DB, customerRequest *pb.CustomerRequest) (uint64, error)  {
 
 	tx := db.MustBegin()

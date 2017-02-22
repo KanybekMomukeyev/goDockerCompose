@@ -17,6 +17,14 @@ func main() {
 
 	fmt.Println("Integer recieved at the other end of the bridge in the new go routine and hence the main unblocks and control comes here")
 
+	i := 1000
+	p := &i // get reference to i
+	fmt.Println(*p) // get value from reference
+	fmt.Println(p)
+
+	*p = *p / 10
+	fmt.Println(i)
+	fmt.Println(*p)
 }
 
 func testRunConcurrent(bridgeReferenceFromMain chan int) {

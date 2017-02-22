@@ -7,36 +7,9 @@ service RentautomationService {
     rpc GetExamples(ExampleFilter) returns (stream ExampleRequest) {}
     rpc CreateExample(ExampleRequest) returns (ExampleResponse) {}
 
-    rpc CreateAccount (AccountRequest) returns (AccountRequest) {}
-    rpc GetAccounts(AccountFilter) returns (stream AccountRequest) {}
-
     rpc CreateCategory (CategoryRequest) returns (CategoryRequest) {}
     rpc UpdateCategory (CategoryRequest) returns (CategoryRequest) {}
-    rpc GetCategories(CategoryFilter) returns (stream CategoryRequest) {}
 
-    rpc CreateCustomer (CustomerRequest) returns (CustomerRequest) {}
-    rpc GetCustomers(CustomerFilter) returns (stream CustomerRequest) {}
-
-    rpc CreateOrder (OrderRequest) returns (OrderRequest) {}
-    rpc GetOrders(OrderFilter) returns (stream OrderRequest) {}
-
-    rpc CreateOrderDetail (OrderDetailRequest) returns (OrderDetailRequest) {}
-    rpc GetOrderDetails(OrderDetailFilter) returns (stream OrderDetailRequest) {}
-
-    rpc CreatePayment (PaymentRequest) returns (PaymentRequest) {}
-    rpc GetPayments(PaymentFilter) returns (stream PaymentRequest) {}
-
-    rpc CreateProduct (ProductRequest) returns (ProductRequest) {}
-    rpc GetProducts(ProductFilter) returns (stream ProductRequest) {}
-
-    rpc CreateStaff (StaffRequest) returns (StaffRequest) {}
-    rpc GetStaff(StaffFilter) returns (stream StaffRequest) {}
-
-    rpc CreateTransaction (TransactionRequest) returns (TransactionRequest) {}
-    rpc GetTransactions(TransactionFilter) returns (stream TransactionRequest) {}
-
-
-    // ------------------ New methods ------------------ //
     rpc CreateProductWith (CreateProductRequest) returns (CreateProductRequest) {}
     rpc UpdateProductWith (CreateProductRequest) returns (CreateProductRequest) {}
     rpc AllProductsForInitial (ProductFilter) returns (AllProductsResponse) {}
