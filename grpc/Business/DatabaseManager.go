@@ -2,8 +2,9 @@ package Business
 
 import (
 	"github.com/jmoiron/sqlx"
-	"fmt"
 	pb "github.com/KanybekMomukeyev/goDockerCompose/grpc/proto"
+	"github.com/KanybekMomukeyev/goDockerCompose/grpc/model"
+	log "github.com/Sirupsen/logrus"
 )
 
 type DatabaseManager struct {
@@ -13,51 +14,66 @@ type DatabaseManager struct {
 func (db *DatabaseManager) Speak() {
 	return "?????"
 }
+func (db *DatabaseManager) CreateExample( customerReq *pb.ExampleRequest) (*pb.ExampleResponse, error) {
 
-func (db *DatabaseManager) CreateCustomer(createCustReq *pb.CreateCustomerRequest) (*pb.CreateCustomerRequest, error) {
-
-	//customerSerial, storeError := model.StoreRealCustomer(db, createCustReq.Customer)
-	//if storeError != nil {
-	//	return nil, storeError
-	//}
-	//createCustReq.Customer.CustomerId = customerSerial
-	//createCustReq.Transaction.CustomerId = customerSerial
-	//createCustReq.Account.CustomerId = customerSerial
-	//
-	//transactionSerial, storeError := model.StoreTransaction(db, createCustReq.Transaction)
-	//if storeError != nil {
-	//	return nil, storeError
-	//}
-	//createCustReq.Transaction.TransactionId = transactionSerial
-	//
-	//accountSerial, storeError := db.StoreAccount(db, createCustReq.Account)
-	//if storeError != nil {
-	//	return nil, storeError
-	//}
-	//createCustReq.Account.AccountId= accountSerial
-	//
-	//fmt.Printf("CreateCustomerWith of transaction ==> %v\n", &createCustReq )
-	//return createCustReq, nil
-	return nil, nil
-}
-
-
-func (db *DatabaseManager) StoreAccount(tx *sqlx.Tx, accountRequest *pb.AccountRequest) (uint64, error)  {
-
-	var lastInsertAccountId uint64
-
-	err := tx.QueryRow("INSERT INTO accounts " +
-		"(customer_id, supplier_id, balance) " +
-		"VALUES($1, $2, $3) returning account_id;",
-		accountRequest.CustomerId,
-		accountRequest.SupplierId,
-		accountRequest.Balance).Scan(&lastInsertAccountId)
-
+	tx := db.database.MustBegin()
+	unique_key, err := model.StoreCustomer(tx, customerReq)
 	if err != nil {
 		tx.Rollback()
-		panic(err)
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
 	}
 
-	fmt.Println("last inserted account_id =", lastInsertAccountId)
-	return lastInsertAccountId, nil
+	err = tx.Commit()
+	if err != nil {
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
+	}
+
+	return &pb.ExampleResponse{Id: unique_key, Success: true}, nil
+}
+
+// GetCustomers returns all customers by given filter
+func (db *DatabaseManager) GetExamples(filter *pb.ExampleFilter, stream pb.RentautomationService_GetExamplesServer) error {
+	return nil
+}
+
+func (db *DatabaseManager) CreateCategory(categoryReq *pb.CategoryRequest) (*pb.CategoryRequest, error) {
+
+	tx := db.database.MustBegin()
+	unique_key, err := model.StoreCategory(tx, categoryReq)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
+	}
+
+	categoryReq.CategoryId = unique_key
+
+	return categoryReq, nil
+}
+
+func (db *DatabaseManager) UpdateCategory(categoryReq *pb.CategoryRequest) (*pb.CategoryRequest, error) {
+
+	tx := db.database.MustBegin()
+	_, err := model.UpdateCategory(tx, categoryReq)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
+	}
+
+	return categoryReq, nil
 }

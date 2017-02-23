@@ -1041,7 +1041,7 @@ func (s *server) AllOrdersForRecent(ctx context.Context, orderFilter *pb.OrderFi
 	allOrderResponse.OrderRequest = createOrderRequests
 
 	log.WithFields(log.Fields{"found count":  len(createOrderRequests), }).Info("")
-	
+
 	return allOrderResponse, nil
 }
 
