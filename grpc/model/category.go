@@ -2,8 +2,7 @@ package model
 
 import (
 	"github.com/jmoiron/sqlx"
-	"fmt"
-	"log"
+	log "github.com/Sirupsen/logrus"
 	pb "github.com/KanybekMomukeyev/goDockerCompose/grpc/proto"
 )
 
@@ -28,9 +27,8 @@ func CreateCategoryIfNotExsists(db *sqlx.DB) {
 	db.MustExec(schemaCreateCategory)
 }
 
-func StoreCategory(db *sqlx.DB, categoryRequest *pb.CategoryRequest) (uint64, error)  {
+func StoreCategory(tx *sqlx.Tx, categoryRequest *pb.CategoryRequest) (uint64, error)  {
 
-	tx := db.MustBegin()
 	var lastInsertId uint64
 
 	err := tx.QueryRow("INSERT INTO categories " +
@@ -38,35 +36,36 @@ func StoreCategory(db *sqlx.DB, categoryRequest *pb.CategoryRequest) (uint64, er
 		"VALUES($1) returning category_id;",
 		categoryRequest.CategoryName).Scan(&lastInsertId)
 
-	CheckErr(err)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
-	commitError := tx.Commit()
-	CheckErr(commitError)
-
-	fmt.Println("last inserted category_id =", lastInsertId)
-
+	log.WithFields(log.Fields{
+		"last inserted category_id":  lastInsertId,
+	}).Info("")
 	return lastInsertId, nil
 }
 
-func UpdateCategory(db *sqlx.DB, categoryRequest *pb.CategoryRequest) (uint64, error)  {
+func UpdateCategory(tx *sqlx.Tx, categoryRequest *pb.CategoryRequest) (uint64, error)  {
 
-	tx := db.MustBegin()
+	stmt, err := tx.Prepare("UPDATE categories SET category_name=$1 WHERE category_id=$2")
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
-	stmt, err :=tx.Prepare("UPDATE categories SET category_name=$1 WHERE category_id=$2")
-	CheckErr(err)
-
-	res, err2 := stmt.Exec(categoryRequest.CategoryName,
-		categoryRequest.CategoryId)
-	CheckErr(err2)
+	res, err := stmt.Exec(categoryRequest.CategoryName, categoryRequest.CategoryId)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
 	affect, err := res.RowsAffected()
-	CheckErr(err)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
-	fmt.Println(affect, "rows changed")
-
-	commitError := tx.Commit()
-	CheckErr(commitError)
-
+	log.WithFields(log.Fields{
+		"rows changed UpdateCategory": affect,
+	}).Info("")
 	return uint64(affect), nil
 }
 

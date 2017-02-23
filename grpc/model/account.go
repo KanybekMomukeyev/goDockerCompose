@@ -2,9 +2,8 @@ package model
 
 import (
 	"github.com/jmoiron/sqlx"
-	"log"
+	log "github.com/Sirupsen/logrus"
 	pb "github.com/KanybekMomukeyev/goDockerCompose/grpc/proto"
-	"fmt"
 	"errors"
 )
 
@@ -38,9 +37,16 @@ func CreateAccountIfNotExsists(db *sqlx.DB) {
 	db.MustExec(schemaCreateIndexForAccount2)
 }
 
-func StoreAccount(db *sqlx.DB, accountRequest *pb.AccountRequest) (uint64, error)  {
+func ErrorFunc(err error) (uint64, error) {
+	log.WithFields(log.Fields{
+		"error":    err,
+	}).Fatal("QueryRow breaks")
+	panic(err)
+	return 0, err
+}
 
-	tx := db.MustBegin()
+func StoreAccount(tx *sqlx.Tx, accountRequest *pb.AccountRequest) (uint64, error)  {
+
 	var lastInsertId uint64
 
 	err := tx.QueryRow("INSERT INTO accounts " +
@@ -50,59 +56,59 @@ func StoreAccount(db *sqlx.DB, accountRequest *pb.AccountRequest) (uint64, error
 		accountRequest.SupplierId,
 		accountRequest.Balance).Scan(&lastInsertId)
 
-	CheckErr(err)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
-	commitError := tx.Commit()
-	CheckErr(commitError)
-
-	fmt.Println("last inserted account_id =", lastInsertId)
-
+	log.WithFields(log.Fields{
+		"last inserted account_id":  lastInsertId,
+	}).Info("")
 	return lastInsertId, nil
 }
 
-func UpdateCustomerBalance(db *sqlx.DB, customerId uint64, balance float64) (uint64, error)  {
+func UpdateCustomerBalance(tx *sqlx.Tx, customerId uint64, balance float64) (uint64, error)  {
 
-	tx := db.MustBegin()
+	stmt, err := tx.Prepare("UPDATE accounts SET balance=$1 WHERE customer_id=$2")
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
-	stmt, err :=tx.Prepare("UPDATE accounts SET balance=$1 WHERE customer_id=$2")
-	CheckErr(err)
-
-	res, err2 := stmt.Exec(balance,
-		customerId)
-
-	CheckErr(err2)
+	res, err := stmt.Exec(balance, customerId)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
 	affect, err := res.RowsAffected()
-	CheckErr(err)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
-	fmt.Println(affect, "rows changed")
-
-	commitError := tx.Commit()
-	CheckErr(commitError)
-
+	log.WithFields(log.Fields{
+		"update customer balance rows changed":  affect,
+	}).Info("")
 	return uint64(affect), nil
 }
 
-func UpdateSupplierBalance(db *sqlx.DB, supplierId uint64, balance float64) (uint64, error)  {
+func UpdateSupplierBalance(tx *sqlx.Tx, supplierId uint64, balance float64) (uint64, error)  {
 
-	tx := db.MustBegin()
+	stmt, err := tx.Prepare("UPDATE accounts SET balance=$1 WHERE supplier_id=$2")
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
-	stmt, err :=tx.Prepare("UPDATE accounts SET balance=$1 WHERE supplier_id=$2")
-	CheckErr(err)
-
-	res, err2 := stmt.Exec(balance,
-		supplierId)
-
-	CheckErr(err2)
+	res, err := stmt.Exec(balance, supplierId)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
 	affect, err := res.RowsAffected()
-	CheckErr(err)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
-	fmt.Println(affect, "rows changed")
-
-	commitError := tx.Commit()
-	CheckErr(commitError)
-
+	log.WithFields(log.Fields{
+		"update supplier balance rows changed":  affect,
+	}).Info("")
 	return uint64(affect), nil
 }
 

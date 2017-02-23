@@ -3,7 +3,6 @@ package model
 import (
 	"github.com/jmoiron/sqlx"
 	pb "github.com/KanybekMomukeyev/goDockerCompose/grpc/proto"
-	"fmt"
 	log "github.com/Sirupsen/logrus"
 	"errors"
 )
@@ -49,15 +48,9 @@ func CreateStaffIfNotExsists(db *sqlx.DB) {
 	db.MustExec(schemaCreateIndexForStaff2)
 }
 
-func StoreStaff(db *sqlx.DB, staff *pb.StaffRequest) (uint64, error)  {
+func StoreStaff(tx *sqlx.Tx, staff *pb.StaffRequest) (uint64, error)  {
 
-	log.WithFields(log.Fields{
-		"staff_request:": staff,
-	}).Info("StoreStaff method called")
-
-	tx := db.MustBegin()
 	var lastInsertId uint64
-
 	err := tx.QueryRow("INSERT INTO staff " +
 		"(role_id, staff_image_path, first_name, second_name, email, password, phone_number, address) " +
 		"VALUES($1, $2, $3, $4, $5, $6, $7, $8) returning staff_id;",
@@ -71,41 +64,24 @@ func StoreStaff(db *sqlx.DB, staff *pb.StaffRequest) (uint64, error)  {
 		staff.Address).Scan(&lastInsertId)
 
 	if err != nil {
-		log.WithFields(log.Fields{
-			"error": err,
-		}).Warn("Save staff error ocurred")
-		return 0, err
-	}
-
-	commitError := tx.Commit()
-
-	if commitError != nil {
-		log.WithFields(log.Fields{
-			"error": commitError,
-		}).Warn("Save staff commit error ocurred")
-		return 0, commitError
+		return ErrorFunc(err)
 	}
 
 	log.WithFields(log.Fields{
-		"count staff_id:": lastInsertId,
-	}).Info("Staff saved succes")
-
+		"last inserted staff_id": lastInsertId,
+	}).Info("")
 	return lastInsertId, nil
 }
 
-func UpdateStaff(db *sqlx.DB, staff *pb.StaffRequest) (uint64, error)  {
-
-	log.WithFields(log.Fields{
-		"staff_request:": staff,
-	}).Info("UpdateStaff method called")
-
-	tx := db.MustBegin()
+func UpdateStaff(tx *sqlx.Tx, staff *pb.StaffRequest) (uint64, error)  {
 
 	stmt, err :=tx.Prepare("UPDATE staff SET role_id=$1, staff_image_path=$2, first_name=$3, second_name=$4, " +
 		"email=$5, password=$6, phone_number=$7, address=$8 WHERE staff_id=$9")
-	CheckErr(err)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
-	res, err2 := stmt.Exec(staff.RoleId,
+	res, err := stmt.Exec(staff.RoleId,
 		staff.StaffImagePath,
 		staff.FirstName,
 		staff.SecondName,
@@ -115,27 +91,18 @@ func UpdateStaff(db *sqlx.DB, staff *pb.StaffRequest) (uint64, error)  {
 		staff.Address,
 		staff.StaffId)
 
-	//CheckErr(err2)
-	if err2 != nil {
-		fmt.Println(err2)
-		return 0, err2
+	if err != nil {
+		return ErrorFunc(err)
 	}
 
 	affect, err := res.RowsAffected()
 	if err != nil {
-		fmt.Println(err)
-		return 0, err
+		return ErrorFunc(err)
 	}
 
-	fmt.Println(affect, "rows changed")
-
-	commitError := tx.Commit()
-	//CheckErr(commitError)
-	if commitError != nil {
-		fmt.Println(commitError)
-		return 0, commitError
-	}
-
+	log.WithFields(log.Fields{
+		"update staff rows changed":  affect,
+	}).Info("")
 	return uint64(affect), nil
 }
 

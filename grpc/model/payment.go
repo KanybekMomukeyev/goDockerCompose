@@ -32,11 +32,9 @@ func CreatePaymentIfNotExsists(db *sqlx.DB) {
 	db.MustExec(schemaCreatePayment)
 }
 
-func StorePayment(db *sqlx.DB, payment *pb.PaymentRequest) (uint64, error)  {
+func StorePayment(tx *sqlx.Tx, payment *pb.PaymentRequest) (uint64, error)  {
 
-	tx := db.MustBegin()
 	var lastInsertId uint64
-
 	err := tx.QueryRow("INSERT INTO payments " +
 		"(total_order_price, discount, total_price_with_discount) " +
 		"VALUES($1, $2, $3) returning payment_id;",
@@ -44,15 +42,13 @@ func StorePayment(db *sqlx.DB, payment *pb.PaymentRequest) (uint64, error)  {
 		payment.Discount,
 		payment.TotalPriceWithDiscount).Scan(&lastInsertId)
 
-	CheckErr(err)
-
-	commitError := tx.Commit()
-	CheckErr(commitError)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
 	log.WithFields(log.Fields{
-		"count payment_id": lastInsertId,
-	}).Info("Payment success saved")
-
+		"last inserted payment_id": lastInsertId,
+	}).Info("")
 	return lastInsertId, nil
 }
 

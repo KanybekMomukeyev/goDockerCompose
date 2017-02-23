@@ -1,9 +1,8 @@
 package model
 
 import (
-	"log"
+	log "github.com/Sirupsen/logrus"
 	"github.com/jmoiron/sqlx"
-	"fmt"
 	pb "github.com/KanybekMomukeyev/goDockerCompose/grpc/proto"
 )
 
@@ -52,16 +51,16 @@ func CreateProductIfNotExsists(db *sqlx.DB) {
 }
 
 
-func UpdateProduct(db *sqlx.DB, product *pb.ProductRequest) (uint64, error)  {
-
-	tx := db.MustBegin()
+func UpdateProduct(tx *sqlx.Tx, product *pb.ProductRequest) (uint64, error)  {
 
 	stmt, err :=tx.Prepare("UPDATE products SET product_image_path=$1, product_name=$2, supplier_id=$3, " +
 		"category_id=$4, barcode=$5, quantity_per_unit=$6, sale_unit_price=$7, " +
 		"income_unit_price=$8, units_in_stock=$9 WHERE product_id=$10")
-	CheckErr(err)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
-	res, err2 := stmt.Exec(product.ProductImagePath,
+	res, err := stmt.Exec(product.ProductImagePath,
 		product.ProductName,
 		product.SupplierId,
 		product.CategoryId,
@@ -71,24 +70,24 @@ func UpdateProduct(db *sqlx.DB, product *pb.ProductRequest) (uint64, error)  {
 		product.IncomeUnitPrice,
 		product.UnitsInStock,
 		product.ProductId)
-	CheckErr(err2)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
 	affect, err := res.RowsAffected()
-	CheckErr(err)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
-	fmt.Println(affect, "rows changed")
-
-	commitError := tx.Commit()
-	CheckErr(commitError)
-
+	log.WithFields(log.Fields{
+		"update product rows changed":  affect,
+	}).Info("")
 	return uint64(affect), nil
 }
 
-func StoreProduct(db *sqlx.DB, product *pb.ProductRequest) (uint64, error) {
+func StoreProduct(tx *sqlx.Tx, product *pb.ProductRequest) (uint64, error) {
 
-	tx := db.MustBegin()
 	var lastInsertId uint64
-
 	err := tx.QueryRow("INSERT INTO products " +
 		"(product_image_path, product_name, supplier_id, category_id, barcode," +
 		" quantity_per_unit, sale_unit_price, income_unit_price, units_in_stock) " +
@@ -103,13 +102,13 @@ func StoreProduct(db *sqlx.DB, product *pb.ProductRequest) (uint64, error) {
 		product.IncomeUnitPrice,
 		product.UnitsInStock).Scan(&lastInsertId)
 
-	CheckErr(err)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
-	commitError := tx.Commit()
-	CheckErr(commitError)
-
-	fmt.Println("last inserted product_id =", lastInsertId)
-
+	log.WithFields(log.Fields{
+		"last inserted product_id":  lastInsertId,
+	}).Info("")
 	return lastInsertId, nil
 }
 
@@ -137,13 +136,18 @@ func IncreaseProductsInStock(db *sqlx.DB, orderDetailReqs []*pb.OrderDetailReque
 		forUpdatesInDatabase[product.ProductId] = product.UnitsInStock
 	}
 
-	rowsAffected, err := updateProductsInStock(db, forUpdatesInDatabase)
+	tx := db.MustBegin()
+	rowsAffected, err := updateProductsInStock(tx, forUpdatesInDatabase)
 	if err != nil {
-		print("error")
+		log.WithFields(log.Fields{"err": err}).Warn("")
 		return 0, err
 	}
 
-	//create array of ids
+	err = tx.Commit()
+	if err != nil {
+		return ErrorFunc(err)
+	}
+
 	return rowsAffected, nil
 }
 
@@ -171,40 +175,52 @@ func DecreaseProductsInStock(db *sqlx.DB, orderDetailReqs []*pb.OrderDetailReque
 		forUpdatesInDatabase[product.ProductId] = product.UnitsInStock
 	}
 
-	rowsAffected, err := updateProductsInStock(db, forUpdatesInDatabase)
+	tx := db.MustBegin()
+	rowsAffected, err := updateProductsInStock(tx, forUpdatesInDatabase)
 	if err != nil {
-		print("error")
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
 		return 0, err
 	}
 
-	//create array of ids
+	err = tx.Commit()
+	if err != nil {
+		return ErrorFunc(err)
+	}
+
 	return rowsAffected, nil
 }
 
-func updateProductsInStock(db *sqlx.DB, updateValues map[uint64]float64) (uint64, error) {
+func updateProductsInStock(tx *sqlx.Tx, updateValues map[uint64]float64) (uint64, error) {
 
-	tx := db.MustBegin()
 	var j int64 = 0
-
 	for key, value := range updateValues {
 		//fmt.Println("Key:", key, "Value:", value)
-		stmt, err :=tx.Prepare("UPDATE products SET units_in_stock=$1 WHERE product_id=$2")
-		CheckErr(err)
 
-		res, err2 := stmt.Exec(value, key)
-		CheckErr(err2)
+		stmt, err := tx.Prepare("UPDATE products SET units_in_stock=$1 WHERE product_id=$2")
+		if err != nil {
+			break
+			return ErrorFunc(err)
+		}
+
+		res, err := stmt.Exec(value, key)
+		if err != nil {
+			break
+			return ErrorFunc(err)
+		}
 
 		affect, err := res.RowsAffected()
-		CheckErr(err)
-
-		fmt.Println(affect, "rows changed")
+		if err != nil {
+			break
+			return ErrorFunc(err)
+		}
 
 		j = j + affect
 	}
 
-	commitError := tx.Commit()
-	CheckErr(commitError)
-
+	log.WithFields(log.Fields{
+		"update products in stock": j,
+	}).Info("")
 	return uint64(j), nil
 }
 

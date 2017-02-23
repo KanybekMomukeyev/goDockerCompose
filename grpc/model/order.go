@@ -65,11 +65,9 @@ func CreateOrderIfNotExsists(db *sqlx.DB) {
 	db.MustExec(schemaCreateIndexForOrder4)
 }
 
-func StoreOrder(db *sqlx.DB, order *pb.OrderRequest) (uint64, error)  {
+func StoreOrder(tx *sqlx.Tx, order *pb.OrderRequest) (uint64, error)  {
 
-	tx := db.MustBegin()
 	var lastInsertId uint64
-
 	err := tx.QueryRow("INSERT INTO orders " +
 		"(order_document, money_movement, billing_no, staff_id, customer_id," +
 		" supplier_id, order_date, payment_id, error_msg, comment, is_deleted, is_paid, is_editted) " +
@@ -88,15 +86,13 @@ func StoreOrder(db *sqlx.DB, order *pb.OrderRequest) (uint64, error)  {
 		order.IsPaid,
 		order.IsEdited).Scan(&lastInsertId)
 
-	CheckErr(err)
-
-	commitError := tx.Commit()
-	CheckErr(commitError)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
 	log.WithFields(log.Fields{
-		"count order_id": lastInsertId,
-	}).Info("Order success saved")
-
+		"last inserted order_id": lastInsertId,
+	}).Info("")
 	return lastInsertId, nil
 }
 

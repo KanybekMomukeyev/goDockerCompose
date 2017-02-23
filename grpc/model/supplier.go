@@ -1,9 +1,8 @@
 package model
 
 import (
-	"log"
+	log "github.com/Sirupsen/logrus"
 	"github.com/jmoiron/sqlx"
-	"fmt"
 	pb "github.com/KanybekMomukeyev/goDockerCompose/grpc/proto"
 )
 
@@ -32,16 +31,13 @@ type Supplier struct {
 }
 
 func CreateSupplierIfNotExsists(db *sqlx.DB) {
-	// for some migrations
 	//db.MustExec(schemaRemoveSupplier)
 	db.MustExec(schemaCreateSupplier)
 }
 
-func StoreSupplier(db *sqlx.DB, supplierRequest *pb.SupplierRequest) (uint64, error)  {
+func StoreSupplier(tx *sqlx.Tx, supplierRequest *pb.SupplierRequest) (uint64, error)  {
 
-	tx := db.MustBegin()
 	var lastInsertId uint64
-
 	err := tx.QueryRow("INSERT INTO suppliers(supplier_image_path, company_name, contact_fname, phone_number, address) VALUES($1, $2, $3, $4, $5) returning supplier_id;",
 		supplierRequest.SupplierImagePath,
 		supplierRequest.CompanyName,
@@ -49,40 +45,42 @@ func StoreSupplier(db *sqlx.DB, supplierRequest *pb.SupplierRequest) (uint64, er
 		supplierRequest.PhoneNumber,
 		supplierRequest.Address).Scan(&lastInsertId)
 
-	CheckErr(err)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
-	commitError := tx.Commit()
-	CheckErr(commitError)
-
-	fmt.Println("last inserted supplier_id =", lastInsertId)
-
+	log.WithFields(log.Fields{
+		"last inserted supplier_id": lastInsertId,
+	}).Info("")
 	return lastInsertId, nil
 }
 
-func UpdateSupplier(db *sqlx.DB, supplierRequest *pb.SupplierRequest) (uint64, error)  {
+func UpdateSupplier(tx *sqlx.Tx, supplierRequest *pb.SupplierRequest) (uint64, error)  {
 
-	tx := db.MustBegin()
-
-	stmt, err :=tx.Prepare("UPDATE suppliers SET supplier_image_path=$1, company_name=$2, contact_fname=$3, " +
+	stmt, err := tx.Prepare("UPDATE suppliers SET supplier_image_path=$1, company_name=$2, contact_fname=$3, " +
 		"phone_number=$4, address=$5 WHERE supplier_id=$6")
-	CheckErr(err)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
-	res, err2 := stmt.Exec(supplierRequest.SupplierImagePath,
+	res, err := stmt.Exec(supplierRequest.SupplierImagePath,
 		supplierRequest.CompanyName,
 		supplierRequest.ContactFname,
 		supplierRequest.PhoneNumber,
 		supplierRequest.Address,
 		supplierRequest.SupplierId)
-	CheckErr(err2)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
 	affect, err := res.RowsAffected()
-	CheckErr(err)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
-	fmt.Println(affect, "rows changed")
-
-	commitError := tx.Commit()
-	CheckErr(commitError)
-
+	log.WithFields(log.Fields{
+		"update supplier rows changed":  affect,
+	}).Info("")
 	return uint64(affect), nil
 }
 

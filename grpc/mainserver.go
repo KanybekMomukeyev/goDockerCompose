@@ -13,7 +13,6 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/KanybekMomukeyev/goDockerCompose/grpc/model"
 
-	"fmt"
 	"flag"
 	"io"
 	"os"
@@ -86,11 +85,20 @@ func (s *server) CreateExample(ctx context.Context, customerReq *pb.ExampleReque
 
 	s.savedCustomers = append(s.savedCustomers, customerReq)
 
-	unique_key, storeError := model.StoreCustomer(db, customerReq)
-	if storeError != nil {
-		return nil, storeError
+	tx := db.MustBegin()
+	unique_key, err := model.StoreCustomer(tx, customerReq)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
 	}
-	fmt.Printf("unique_key ==> %#v\n", unique_key)
+
+	err = tx.Commit()
+	if err != nil {
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
+	}
+
 	return &pb.ExampleResponse{Id: unique_key, Success: true}, nil
 }
 
@@ -114,25 +122,41 @@ func (s *server) GetExamples(filter *pb.ExampleFilter, stream pb.RentautomationS
 // -------------------------- CATEGORY ---------------------------------- //
 func (s *server) CreateCategory(ctx context.Context, categoryReq *pb.CategoryRequest) (*pb.CategoryRequest, error) {
 
-	unique_key, storeError := model.StoreCategory(db, categoryReq)
-	if storeError != nil {
-		return nil, storeError
+	tx := db.MustBegin()
+	unique_key, err := model.StoreCategory(tx, categoryReq)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
 	}
 
-	fmt.Printf("unique_key of staff ==> %v\n", unique_key)
+	err = tx.Commit()
+	if err != nil {
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
+	}
+
 	categoryReq.CategoryId = unique_key
-	fmt.Printf("categoryReq.CategoryId ==> %v\n", categoryReq.CategoryId)
 
 	return categoryReq, nil
 }
 
 func (s *server) UpdateCategory(ctx context.Context, categoryReq *pb.CategoryRequest) (*pb.CategoryRequest, error) {
 
-	rowsAffected, updateError := model.UpdateCategory(db, categoryReq)
-	if updateError != nil {
-		return nil, updateError
+	tx := db.MustBegin()
+	_, err := model.UpdateCategory(tx, categoryReq)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
 	}
-	fmt.Printf("rowsAffected UpdateCategory==> %v\n", rowsAffected)
+
+	err = tx.Commit()
+	if err != nil {
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
+	}
+
 	return categoryReq, nil
 }
 
@@ -143,21 +167,32 @@ func (s *server) CreateProductWith(ctx context.Context, createPrReq *pb.CreatePr
 		return nil, authorizeError
 	}
 
-	productSerialKey, storeError := model.StoreProduct(db, createPrReq.Product)
-	if storeError != nil {
-		return nil, storeError
+	tx := db.MustBegin()
+	productSerialKey, err := model.StoreProduct(tx, createPrReq.Product)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
 	}
 
 	createPrReq.Product.ProductId = productSerialKey
 	createPrReq.OrderDetail.ProductId = productSerialKey
 
-	orderDetailSerialKey, storeError2 := model.StoreOrderDetails(db, createPrReq.OrderDetail)
-	if storeError2 != nil {
-		return nil, storeError2
+	orderDetailSerialKey, err := model.StoreOrderDetails(tx, createPrReq.OrderDetail)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
 	}
+
+	err = tx.Commit()
+	if err != nil {
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
+	}
+
 	createPrReq.OrderDetail.OrderDetailId = orderDetailSerialKey
 
-	fmt.Printf("CreateProductWith of transaction ==> %v\n", &createPrReq )
 	return createPrReq, nil
 }
 
@@ -167,18 +202,28 @@ func (s *server) UpdateProductWith(ctx context.Context, createPrReq *pb.CreatePr
 		return nil, authorizeError
 	}
 
-	_, updateError := model.UpdateProduct(db, createPrReq.Product)
-	if updateError != nil {
-		return nil, updateError
+	tx := db.MustBegin()
+	_, err := model.UpdateProduct(tx, createPrReq.Product)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
 	}
 
-	orderDetailSerialKey, storeError2 := model.StoreOrderDetails(db, createPrReq.OrderDetail)
-	if storeError2 != nil {
-		return nil, storeError2
+	orderDetailSerialKey, err := model.StoreOrderDetails(tx, createPrReq.OrderDetail)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
 	}
+
+	err = tx.Commit()
+	if err != nil {
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
+	}
+
 	createPrReq.OrderDetail.OrderDetailId = orderDetailSerialKey
-
-	fmt.Printf("UpdateProductWith of transaction ==> %v\n", &createPrReq )
 	return createPrReq, nil
 }
 
@@ -252,27 +297,42 @@ func (s *server) CreateCustomerWith(ctx context.Context, createCustReq *pb.Creat
 		return nil, authorizeError
 	}
 
-	customerSerial, storeError := model.StoreRealCustomer(db, createCustReq.Customer)
-	if storeError != nil {
-		return nil, storeError
+	tx := db.MustBegin()
+	customerSerial, err := model.StoreRealCustomer(tx, createCustReq.Customer)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
 	}
+
 	createCustReq.Customer.CustomerId = customerSerial
 	createCustReq.Transaction.CustomerId = customerSerial
 	createCustReq.Account.CustomerId = customerSerial
 
-	transactionSerial, storeError := model.StoreTransaction(db, createCustReq.Transaction)
-	if storeError != nil {
-		return nil, storeError
+	transactionSerial, err := model.StoreTransaction(tx, createCustReq.Transaction)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
 	}
+
 	createCustReq.Transaction.TransactionId = transactionSerial
 
-	accountSerial, storeError := model.StoreAccount(db, createCustReq.Account)
-	if storeError != nil {
-		return nil, storeError
+	accountSerial, err := model.StoreAccount(tx, createCustReq.Account)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
 	}
-	createCustReq.Account.AccountId= accountSerial
 
-	fmt.Printf("CreateCustomerWith of transaction ==> %v\n", &createCustReq )
+	err = tx.Commit()
+	if err != nil {
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
+	}
+
+	createCustReq.Account.AccountId = accountSerial
+
 	return createCustReq, nil
 }
 
@@ -282,11 +342,20 @@ func (s *server) UpdateCustomerWith(ctx context.Context, createCustReq *pb.Custo
 		return nil, authorizeError
 	}
 
-	rowsAffected, updateError := model.UpdateRealCustomer(db, createCustReq)
-	if updateError != nil {
-		return nil, updateError
+	tx := db.MustBegin()
+	_, err := model.UpdateRealCustomer(tx, createCustReq)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
 	}
-	fmt.Printf("rowsAffected ==> %v\n", rowsAffected)
+
+	err = tx.Commit()
+	if err != nil {
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
+	}
+
 	return createCustReq, nil
 }
 
@@ -296,20 +365,29 @@ func (s *server) UpdateCustomerBalanceWith(ctx context.Context, updateCustBalanc
 		return nil, authorizeError
 	}
 
-	transactionSerial, storeError := model.StoreTransaction(db, updateCustBalanceReq.Transaction)
-	if storeError != nil {
-		return nil, storeError
+	tx := db.MustBegin()
+	transactionSerial, err := model.StoreTransaction(tx, updateCustBalanceReq.Transaction)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
 	}
+
 	updateCustBalanceReq.Transaction.TransactionId = transactionSerial
 
-	rowsAffected, storeError := model.UpdateCustomerBalance(db, updateCustBalanceReq.Account.CustomerId, updateCustBalanceReq.Account.Balance)
-
-	if storeError != nil {
-		return nil, storeError
+	rowsAffected, err := model.UpdateCustomerBalance(tx, updateCustBalanceReq.Account.CustomerId, updateCustBalanceReq.Account.Balance)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
 	}
 
-	fmt.Printf("rowsAffected %v\n", &rowsAffected)
-	fmt.Printf("UpdateCustomerBalanceWith of transaction ==> %v\n", &updateCustBalanceReq)
+	err = tx.Commit()
+	if err != nil {
+		log.WithFields(log.Fields{"err": err, "rowsAffected":rowsAffected}).Warn("")
+		return nil, err
+	}
+
 	return updateCustBalanceReq, nil
 }
 
@@ -356,28 +434,41 @@ func (s *server) CreateSupplierWith(ctx context.Context, createSuppReq *pb.Creat
 	if authorizeError != nil {
 		return nil, authorizeError
 	}
-
-	supplierSerial, storeError := model.StoreSupplier(db, createSuppReq.Supplier)
-	if storeError != nil {
-		return nil, storeError
+	tx := db.MustBegin()
+	supplierSerial, err := model.StoreSupplier(tx, createSuppReq.Supplier)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
 	}
+
 	createSuppReq.Supplier.SupplierId = supplierSerial
 	createSuppReq.Transaction.SupplierId = supplierSerial
 	createSuppReq.Account.SupplierId = supplierSerial
 
-	transactionSerial, storeError := model.StoreTransaction(db, createSuppReq.Transaction)
-	if storeError != nil {
-		return nil, storeError
+	transactionSerial, err := model.StoreTransaction(tx, createSuppReq.Transaction)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
 	}
+
 	createSuppReq.Transaction.TransactionId = transactionSerial
 
-	accountSerial, storeError := model.StoreAccount(db, createSuppReq.Account)
-	if storeError != nil {
-		return nil, storeError
+	accountSerial, err := model.StoreAccount(tx, createSuppReq.Account)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
 	}
-	createSuppReq.Account.AccountId= accountSerial
 
-	fmt.Printf("unique_key of transaction ==> %v\n", &createSuppReq )
+	err = tx.Commit()
+	if err != nil {
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
+	}
+
+	createSuppReq.Account.AccountId= accountSerial
 	return createSuppReq, nil
 }
 
@@ -388,11 +479,20 @@ func (s *server) UpdateSupplierWith(ctx context.Context, createSuppReq *pb.Suppl
 		return nil, authorizeError
 	}
 
-	rowsAffected, updateError := model.UpdateSupplier(db, createSuppReq)
-	if updateError != nil {
-		return nil, updateError
+	tx := db.MustBegin()
+	_, err := model.UpdateSupplier(tx, createSuppReq)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
 	}
-	fmt.Printf("rowsAffected UpdateSupplier==> %v\n", rowsAffected)
+
+	err = tx.Commit()
+	if err != nil {
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
+	}
+
 	return createSuppReq, nil
 }
 
@@ -403,19 +503,29 @@ func (s *server) UpdateSupplierBalanceWith(ctx context.Context, createSuppReq *p
 		return nil, authorizeError
 	}
 
-	transactionSerial, storeError := model.StoreTransaction(db, createSuppReq.Transaction)
-	if storeError != nil {
-		return nil, storeError
+	tx := db.MustBegin()
+	transactionSerial, err := model.StoreTransaction(tx, createSuppReq.Transaction)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
 	}
+
 	createSuppReq.Transaction.TransactionId = transactionSerial
 
-	rowsAffected, storeError := model.UpdateSupplierBalance(db, createSuppReq.Account.SupplierId, createSuppReq.Account.Balance)
-	if storeError != nil {
-		return nil, storeError
+	rowsAffected, err := model.UpdateSupplierBalance(tx, createSuppReq.Account.SupplierId, createSuppReq.Account.Balance)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err, "rowsAffected":rowsAffected}).Warn("")
+		return nil, err
 	}
 
-	fmt.Printf("rowsAffected %v\n", &rowsAffected)
-	fmt.Printf("UpdateSupplierBalanceWith of transaction ==> %v\n", &createSuppReq)
+	err = tx.Commit()
+	if err != nil {
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
+	}
+
 	return createSuppReq, nil
 }
 
@@ -483,13 +593,22 @@ func (s *server) CreateStaffWith(ctx context.Context, staffReq *pb.StaffRequest)
 		return nil, authorizeError
 	}
 
-	staffSerialKey, storeError := model.StoreStaff(db, staffReq)
-	if storeError != nil {
-		return nil, storeError
+	tx := db.MustBegin()
+	staffSerialKey, err := model.StoreStaff(tx, staffReq)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
 	}
 
 	staffReq.StaffId = staffSerialKey
-	fmt.Printf("CreateStaffWith of transaction ==> %v\n", &staffReq )
+
+	err = tx.Commit()
+	if err != nil {
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
+	}
+
 	return staffReq, nil
 }
 
@@ -500,11 +619,20 @@ func (s *server) UpdateStaffWith(ctx context.Context, staffReq *pb.StaffRequest)
 		return nil, authorizeError
 	}
 
-	rowsAffected, updateError := model.UpdateStaff(db, staffReq)
-	if updateError != nil {
-		return nil, updateError
+	tx := db.MustBegin()
+	_, err := model.UpdateStaff(tx, staffReq)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
 	}
-	fmt.Printf("rowsAffected UpdateStaffWith==> %v\n", rowsAffected)
+
+	err = tx.Commit()
+	if err != nil {
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
+	}
+
 	return staffReq, nil
 }
 
@@ -572,26 +700,36 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 	}
 
 	// payment
-	paymentSerial, storeError := model.StorePayment(db, creatOrdReq.Payment)
-	if storeError != nil {
-		return nil, storeError
+	tx := db.MustBegin()
+	paymentSerial, err := model.StorePayment(tx, creatOrdReq.Payment)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
 	}
+
 	creatOrdReq.Payment.PaymentId = paymentSerial
 	creatOrdReq.Order.PaymentId = paymentSerial
 
 	// order
-	orderSerial, storeError := model.StoreOrder(db, creatOrdReq.Order)
-	if storeError != nil {
-		return nil, storeError
+	orderSerial, err := model.StoreOrder(tx, creatOrdReq.Order)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
 	}
+
 	creatOrdReq.Order.OrderId = orderSerial
 	creatOrdReq.Transaction.OrderId = orderSerial
 
 	// transaction
-	transactionSerial, storeError := model.StoreTransaction(db, creatOrdReq.Transaction)
-	if storeError != nil {
-		return nil, storeError
+	transactionSerial, err := model.StoreTransaction(tx, creatOrdReq.Transaction)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
 	}
+
 	creatOrdReq.Transaction.TransactionId = transactionSerial
 
 	// order document, to update customer/supplier balance
@@ -609,7 +747,7 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 			return nil, err
 		}
 		acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
-		model.UpdateCustomerBalance(db, creatOrdReq.Order.CustomerId, acountReq.Balance)
+		model.UpdateCustomerBalance(tx, creatOrdReq.Order.CustomerId, acountReq.Balance)
 
 		// product amount
 		_, error := model.DecreaseProductsInStock(db, creatOrdReq.OrderDetails)
@@ -626,7 +764,7 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 			return nil, err
 		}
 		acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
-		model.UpdateCustomerBalance(db, creatOrdReq.Order.CustomerId, acountReq.Balance)
+		model.UpdateCustomerBalance(tx, creatOrdReq.Order.CustomerId, acountReq.Balance)
 
 		// product amount
 		_, error := model.IncreaseProductsInStock(db, creatOrdReq.OrderDetails)
@@ -643,7 +781,7 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 			return nil, err
 		}
 		acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
-		model.UpdateSupplierBalance(db, creatOrdReq.Order.SupplierId, acountReq.Balance)
+		model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
 
 		// product amount
 		_, error := model.IncreaseProductsInStock(db, creatOrdReq.OrderDetails)
@@ -660,7 +798,7 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 			return nil, err
 		}
 		acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
-		model.UpdateSupplierBalance(db, creatOrdReq.Order.SupplierId, acountReq.Balance)
+		model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
 
 		// product amount
 		_, error := model.DecreaseProductsInStock(db, creatOrdReq.OrderDetails)
@@ -677,7 +815,7 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 			return nil, err
 		}
 		acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
-		model.UpdateCustomerBalance(db, creatOrdReq.Order.CustomerId, acountReq.Balance)
+		model.UpdateCustomerBalance(tx, creatOrdReq.Order.CustomerId, acountReq.Balance)
 
 		// product amount
 		_, error := model.IncreaseProductsInStock(db, creatOrdReq.OrderDetails)
@@ -697,7 +835,7 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 			return nil, err
 		}
 		acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
-		model.UpdateSupplierBalance(db, creatOrdReq.Order.SupplierId, acountReq.Balance)
+		model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
 
 		// product amount
 		_, error := model.DecreaseProductsInStock(db, creatOrdReq.OrderDetails)
@@ -719,7 +857,7 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 				return nil, err
 			}
 			acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
-			model.UpdateCustomerBalance(db, creatOrdReq.Order.CustomerId, acountReq.Balance)
+			model.UpdateCustomerBalance(tx, creatOrdReq.Order.CustomerId, acountReq.Balance)
 
 		} else if creatOrdReq.Order.SupplierId > 0 {
 
@@ -729,7 +867,7 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 				return nil, err
 			}
 			acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
-			model.UpdateSupplierBalance(db, creatOrdReq.Order.SupplierId, acountReq.Balance)
+			model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
 		}
 
 
@@ -747,7 +885,7 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 				return nil, err
 			}
 			acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
-			model.UpdateCustomerBalance(db, creatOrdReq.Order.CustomerId, acountReq.Balance)
+			model.UpdateCustomerBalance(tx, creatOrdReq.Order.CustomerId, acountReq.Balance)
 
 		} else if creatOrdReq.Order.SupplierId > 0 {
 			// supplier balance
@@ -756,7 +894,7 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 				return nil, err
 			}
 			acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
-			model.UpdateSupplierBalance(db, creatOrdReq.Order.SupplierId, acountReq.Balance)
+			model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
 		}
 
 
@@ -764,19 +902,28 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 		orderDocument = ".moneyGoneEdited"
 	}
 
-	println(orderDocument)
-
 	// orderDetails
 	for _, orderDetailReq := range creatOrdReq.OrderDetails {
 		orderDetailReq.OrderId = orderSerial
 
-		orderDetailSerial, storeError := model.StoreOrderDetails(db, orderDetailReq)
-		if storeError != nil {
-			return nil, storeError
+		orderDetailSerial, err := model.StoreOrderDetails(tx, orderDetailReq)
+		if err != nil {
+			tx.Rollback()
+			log.WithFields(log.Fields{"err": err}).Warn("")
+			break
+			return nil, err
 		}
+
 		orderDetailReq.OrderDetailId = orderDetailSerial
 	}
 
+	err = tx.Commit()
+	if err != nil {
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
+	}
+
+	log.WithFields(log.Fields{"orderDocument": orderDocument}).Info("")
 	return creatOrdReq, nil
 }
 
@@ -843,9 +990,7 @@ func (s *server) AllOrdersForInitial(ctx context.Context, orderFilter *pb.OrderF
 
 func (s *server) AllOrdersForRecent(ctx context.Context, orderFilter *pb.OrderFilter) (*pb.AllOrderResponse, error) {
 
-	log.WithFields(log.Fields{
-		"orderFilter": orderFilter,
-	}).Info("AllOrdersForRecent rpc method called")
+	log.WithFields(log.Fields{"rpc allOrdersForRecent order filter": orderFilter, }).Info("")
 
 	authorizeError := isAuthorized(ctx)
 	if authorizeError != nil {
@@ -895,10 +1040,8 @@ func (s *server) AllOrdersForRecent(ctx context.Context, orderFilter *pb.OrderFi
 	allOrderResponse := new(pb.AllOrderResponse)
 	allOrderResponse.OrderRequest = createOrderRequests
 
-	log.WithFields(log.Fields{
-		"createOrderRequests length":  len(createOrderRequests),
-	}).Info("AllOrdersForRecent Found orders")
-
+	log.WithFields(log.Fields{"found count":  len(createOrderRequests), }).Info("")
+	
 	return allOrderResponse, nil
 }
 

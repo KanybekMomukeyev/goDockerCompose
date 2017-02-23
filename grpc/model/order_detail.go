@@ -1,9 +1,8 @@
 package model
 
 import (
-	"log"
+	log "github.com/Sirupsen/logrus"
 	"github.com/jmoiron/sqlx"
-	"fmt"
 	pb "github.com/KanybekMomukeyev/goDockerCompose/grpc/proto"
 	"errors"
 )
@@ -49,11 +48,9 @@ func CreateOrderDetailsIfNotExsists(db *sqlx.DB) {
 	db.MustExec(schemaCreateIndexForOrderDetail3)
 }
 
-func StoreOrderDetails(db *sqlx.DB, orderDetail *pb.OrderDetailRequest) (uint64, error)  {
+func StoreOrderDetails(tx *sqlx.Tx, orderDetail *pb.OrderDetailRequest) (uint64, error)  {
 
-	tx := db.MustBegin()
 	var lastInsertId uint64
-
 	err := tx.QueryRow("INSERT INTO orderdetails " +
 		"(order_id, order_detail_date, is_last, billing_no, product_id, price, order_quantity, discount) " +
 		"VALUES($1, $2, $3, $4, $5, $6, $7, $8) returning order_detail_id;",
@@ -66,13 +63,13 @@ func StoreOrderDetails(db *sqlx.DB, orderDetail *pb.OrderDetailRequest) (uint64,
 		orderDetail.OrderQuantity,
 		orderDetail.Discount).Scan(&lastInsertId)
 
-	CheckErr(err)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
-	commitError := tx.Commit()
-	CheckErr(commitError)
-
-	fmt.Println("last inserted order_detail_id =", lastInsertId)
-
+	log.WithFields(log.Fields{
+		"last inserted order_detail_id":  lastInsertId,
+	}).Info("")
 	return lastInsertId, nil
 }
 
@@ -119,11 +116,6 @@ func AllOrderDetails(db *sqlx.DB) ([]*pb.OrderDetailRequest, error) {
 }
 
 func AllOrderDetailsForFilter(db *sqlx.DB, orderDetFilter *pb.OrderDetailFilter) ([]*pb.OrderDetailRequest, error) {
-
-	//println("----------------------------------------")
-	//fmt.Printf("orderDetFilter.OrderDetailDate = %v\n", orderDetFilter.OrderDetailDate)
-	//fmt.Printf("orderDetFilter.ProductId = %v\n", orderDetFilter.ProductId)
-	//fmt.Printf("orderDetFilter.Limit = %v\n", orderDetFilter.Limit)
 
 	pingError := db.Ping()
 

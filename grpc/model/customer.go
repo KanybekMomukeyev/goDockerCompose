@@ -1,10 +1,10 @@
 package model
 
 import (
-	"log"
+	log "github.com/Sirupsen/logrus"
 	"github.com/jmoiron/sqlx"
-	"fmt"
 	pb "github.com/KanybekMomukeyev/goDockerCompose/grpc/proto"
+
 )
 
 var schemaRemoveCustomer = `
@@ -37,19 +37,18 @@ func CreateCustomerIfNotExsists(db *sqlx.DB) {
 	db.MustExec(schemaCreateCustomer)
 }
 
-func StoreCustomer(db *sqlx.DB, customer *pb.ExampleRequest) (uint64, error)  {
-
-	tx := db.MustBegin()
+func StoreCustomer(tx *sqlx.Tx, customer *pb.ExampleRequest) (uint64, error)  {
 
 	var lastInsertId uint64
+
 	err := tx.QueryRow("INSERT INTO customers (first_name, second_name, phone_number) VALUES($1, $2, $3) returning customer_id;", customer.Name, customer.Phone, customer.Email).Scan(&lastInsertId)
-	CheckErr(err)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
-	commitError := tx.Commit()
-	CheckErr(commitError)
-
-	fmt.Println("last inserted customer_id =", lastInsertId)
-
+	log.WithFields(log.Fields{
+		"last inserted customer_id":  lastInsertId,
+	}).Info("")
 	return lastInsertId, nil
 }
 
@@ -59,19 +58,9 @@ func CheckErr(err error) {
 	}
 }
 
-func StoreRealCustomer(db *sqlx.DB, customerRequest *pb.CustomerRequest) (uint64, error)  {
+func StoreRealCustomer(tx *sqlx.Tx, customerRequest *pb.CustomerRequest) (uint64, error)  {
 
-	tx := db.MustBegin()
 	var lastInsertId uint64
-
-		//customer_id SERIAL PRIMARY KEY NOT NULL,
-		//customer_image_path varchar (400),
-		//first_name varchar (400),
-		//second_name varchar (400),
-		//phone_number varchar (400),
-		//address varchar (400)
-
-
 	err := tx.QueryRow("INSERT INTO customers(customer_image_path, first_name, second_name, phone_number, address) VALUES($1, $2, $3, $4, $5) returning customer_id;",
 		customerRequest.CustomerImagePath,
 		customerRequest.FirstName,
@@ -79,40 +68,42 @@ func StoreRealCustomer(db *sqlx.DB, customerRequest *pb.CustomerRequest) (uint64
 		customerRequest.PhoneNumber,
 		customerRequest.Address).Scan(&lastInsertId)
 
-	CheckErr(err)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
-	commitError := tx.Commit()
-	CheckErr(commitError)
-
-	fmt.Println("last inserted customer_id =", lastInsertId)
-
+	log.WithFields(log.Fields{
+		"last inserted customer_id":  lastInsertId,
+	}).Info("")
 	return lastInsertId, nil
 }
 
-func UpdateRealCustomer(db *sqlx.DB, customerReq *pb.CustomerRequest) (uint64, error)  {
-
-	tx := db.MustBegin()
+func UpdateRealCustomer(tx *sqlx.Tx, customerReq *pb.CustomerRequest) (uint64, error)  {
 
 	stmt, err :=tx.Prepare("UPDATE customers SET customer_image_path=$1, first_name=$2, second_name=$3, " +
 		"phone_number=$4, address=$5 WHERE customer_id=$6")
-	CheckErr(err)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
-	res, err2 := stmt.Exec(customerReq.CustomerImagePath,
+	res, err := stmt.Exec(customerReq.CustomerImagePath,
 		customerReq.FirstName,
 		customerReq.SecondName,
 		customerReq.PhoneNumber,
 		customerReq.Address,
 		customerReq.CustomerId)
-	CheckErr(err2)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
 	affect, err := res.RowsAffected()
-	CheckErr(err)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
-	fmt.Println(affect, "rows changed")
-
-	commitError := tx.Commit()
-	CheckErr(commitError)
-
+	log.WithFields(log.Fields{
+		"update customer rows changed":  affect,
+	}).Info("")
 	return uint64(affect), nil
 }
 

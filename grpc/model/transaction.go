@@ -1,9 +1,8 @@
 package model
 
 import (
-	"log"
+	log "github.com/Sirupsen/logrus"
 	"github.com/jmoiron/sqlx"
-	"fmt"
 	pb "github.com/KanybekMomukeyev/goDockerCompose/grpc/proto"
 	"errors"
 )
@@ -51,11 +50,9 @@ func CreateTransactionIfNotExsists(db *sqlx.DB) {
 	db.MustExec(schemaCreateIndexForTransaction4)
 }
 
-func StoreTransaction(db *sqlx.DB, transaction *pb.TransactionRequest) (uint64, error)  {
+func StoreTransaction(tx *sqlx.Tx, transaction *pb.TransactionRequest) (uint64, error)  {
 
-	tx := db.MustBegin()
 	var lastInsertId uint64
-
 	err := tx.QueryRow("INSERT INTO transactions (transaction_date, is_last_transaction, transaction_type, money_amount, order_id, customer_id, supplier_id, staff_id) " +
 		"VALUES($1, $2, $3, $4, $5, $6, $7, $8) returning transaction_id;",
 		transaction.TransactionDate,
@@ -67,13 +64,13 @@ func StoreTransaction(db *sqlx.DB, transaction *pb.TransactionRequest) (uint64, 
 		transaction.SupplierId,
 		transaction.StaffId).Scan(&lastInsertId)
 
-	CheckErr(err)
+	if err != nil {
+		return ErrorFunc(err)
+	}
 
-	commitError := tx.Commit()
-	CheckErr(commitError)
-
-	fmt.Println("last inserted transaction_id =", lastInsertId)
-
+	log.WithFields(log.Fields{
+		"last inserted transaction_id":  lastInsertId,
+	}).Info("")
 	return lastInsertId, nil
 }
 
