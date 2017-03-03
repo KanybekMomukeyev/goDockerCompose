@@ -13,7 +13,7 @@ import (
 
 const (
 	//address = "192.168.0.36:50051"
-	address = "localhost:50051"
+	address = "10.113.1.43:50051"
 )
 
 // createCustomer calls the RPC method CreateCustomer of CustomerServer
