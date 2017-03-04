@@ -945,6 +945,27 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 
 func (s *server) UpdateOrderWith(ctx context.Context, orderReq *pb.OrderRequest) (*pb.OrderRequest, error) {
 
+	log.WithFields(log.Fields{"orderReq": orderReq, }).Info("UpdateOrderWith RPC")
+
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
+
+	tx := db.MustBegin()
+	_, err := model.UpdateOrder(tx, orderReq)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
+	}
+
 	return orderReq, nil
 }
 

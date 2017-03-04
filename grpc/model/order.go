@@ -96,6 +96,43 @@ func StoreOrder(tx *sqlx.Tx, order *pb.OrderRequest) (uint64, error)  {
 	return lastInsertId, nil
 }
 
+func UpdateOrder(tx *sqlx.Tx, order *pb.OrderRequest) (uint64, error)  {
+
+	stmt, err :=tx.Prepare("UPDATE orders SET order_document=$1, money_movement=$2, billing_no=$3, " +
+		"staff_id=$4, customer_id=$5, supplier_id=$6, order_date=$7, payment_id=$8, " +
+		"error_msg=$9, comment=$10, is_deleted=$11, is_paid=$12, is_editted=$13 WHERE order_id=$14")
+	if err != nil {
+		return ErrorFunc(err)
+	}
+
+	res, err := stmt.Exec(order.OrderDocument,
+		order.MoneyMovementType,
+		order.BillingNo,
+		order.StaffId,
+		order.CustomerId,
+		order.SupplierId,
+		order.OrderDate,
+		order.PaymentId,
+		order.ErrorMsg,
+		order.Comment,
+		order.IsDeleted,
+		order.IsPaid,
+		order.IsEdited,
+		order.OrderId)
+
+	if err != nil {
+		return ErrorFunc(err)
+	}
+
+	affect, err := res.RowsAffected()
+	if err != nil {
+		return ErrorFunc(err)
+	}
+
+	log.WithFields(log.Fields{"update order rows changed": affect,}).Info("")
+	return uint64(affect), nil
+}
+
 func AllOrders(db *sqlx.DB) ([]*pb.OrderRequest, error) {
 
 	pingError := db.Ping()
