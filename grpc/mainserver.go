@@ -943,6 +943,11 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 	return creatOrdReq, nil
 }
 
+func (s *server) UpdateOrderWith(ctx context.Context, orderReq *pb.OrderRequest) (*pb.OrderRequest, error) {
+
+	return orderReq, nil
+}
+
 func (s *server) AllOrdersForInitial(ctx context.Context, orderFilter *pb.OrderFilter) (*pb.AllOrderResponse, error) {
 
 	log.WithFields(log.Fields{"orderFilter": orderFilter, }).Info("AllOrdersForInitial")

@@ -2,17 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dcbd48d1-1be6-4e9c-b200-ded03459556f" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/grpc/certfiles/ca.crt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/grpc/certfiles/ca.key" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/grpc/certfiles/client.crt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/grpc/certfiles/client.csr" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/grpc/certfiles/client.key" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/grpc/certfiles/server.crt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/grpc/certfiles/server.csr" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/grpc/certfiles/server.key" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/grpc/certfiles/makecert" afterPath="$PROJECT_DIR$/grpc/certfiles/makecert" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/grpc/client/client.go" afterPath="$PROJECT_DIR$/grpc/client/client.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/grpc/mainserver.go" afterPath="$PROJECT_DIR$/grpc/mainserver.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/grpc/proto/customer.pb.go" afterPath="$PROJECT_DIR$/grpc/proto/customer.pb.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/grpc/proto/customer.proto" afterPath="$PROJECT_DIR$/grpc/proto/customer.proto" />
     </list>
     <ignored path="goDockerCompose.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -45,11 +38,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="mainserver.go" pinned="false" current-in-tab="true">
+      <file leaf-file-name="customer.proto" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/grpc/proto/customer.proto">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="266">
+              <caret line="36" column="64" selection-start-line="36" selection-start-column="4" selection-end-line="36" selection-end-column="64" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="mainserver.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/grpc/mainserver.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2116">
-              <caret line="947" column="62" selection-start-line="947" selection-start-column="62" selection-end-line="947" selection-end-column="62" />
+            <state relative-caret-position="260">
+              <caret line="945" column="0" selection-start-line="945" selection-start-column="0" selection-end-line="945" selection-end-column="0" />
               <folding>
                 <element signature="e#14#395#0" expanded="true" />
               </folding>
@@ -76,18 +79,6 @@
               <caret line="247" column="5" selection-start-line="247" selection-start-column="5" selection-end-line="247" selection-end-column="5" />
               <folding>
                 <element signature="e#15#157#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="channel_ex2.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/grpc/multithread/channel_ex2.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="38">
-              <caret line="2" column="7" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
-              <folding>
-                <element signature="e#14#39#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -146,10 +137,10 @@
       <file leaf-file-name="customer.pb.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/grpc/proto/customer.pb.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="219">
-              <caret line="2277" column="0" selection-start-line="2277" selection-start-column="0" selection-end-line="2277" selection-end-column="0" />
+            <state relative-caret-position="846">
+              <caret line="2310" column="0" selection-start-line="2310" selection-start-column="0" selection-end-line="2310" selection-end-column="0" />
               <folding>
-                <marker date="1487739769000" expanded="true" signature="97206:97221" ph="{...}" />
+                <marker date="1488599011000" expanded="true" signature="98577:98592" ph="{...}" />
               </folding>
             </state>
           </provider>
@@ -207,7 +198,6 @@
         <option value="$PROJECT_DIR$/grpc/multithread/channel_ex4.go" />
         <option value="$PROJECT_DIR$/grpc/multithread/channel_ex6.go" />
         <option value="$PROJECT_DIR$/grpc/multithread/channel_ex7.go" />
-        <option value="$PROJECT_DIR$/grpc/proto/customer.proto" />
         <option value="$PROJECT_DIR$/grpc/multithread/oop_ex1.go" />
         <option value="$PROJECT_DIR$/grpc/multithread/inheritance_ex1.go" />
         <option value="$PROJECT_DIR$/grpc/multithread/interface_ex1.go" />
@@ -226,6 +216,7 @@
         <option value="$PROJECT_DIR$/grpc/Business/RentautomationService.go" />
         <option value="$PROJECT_DIR$/grpc/client/client.go" />
         <option value="$PROJECT_DIR$/grpc/certfiles/makecert" />
+        <option value="$PROJECT_DIR$/grpc/proto/customer.proto" />
         <option value="$PROJECT_DIR$/grpc/mainserver.go" />
       </list>
     </option>
@@ -330,36 +321,6 @@
               <option name="myItemId" value="External Libraries" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="&lt; Go 1.7.1 &gt;" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="goDockerCompose" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="&lt; Go 1.7.1 &gt;" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="runtime" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -436,42 +397,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="model" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="goDockerCompose" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="goDockerCompose" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="grpc" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="goDockerCompose" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="goDockerCompose" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="grpc" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="certfiles" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1082,7 +1007,7 @@
       <workItem from="1485754743911" duration="8862000" />
       <workItem from="1485837122923" duration="46803000" />
       <workItem from="1486701014480" duration="5634000" />
-      <workItem from="1486966075363" duration="69708000" />
+      <workItem from="1486966075363" duration="70721000" />
     </task>
     <servers />
   </component>
@@ -1101,7 +1026,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="319361000" />
+    <option name="totallyTimeSpent" value="320374000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1382,14 +1307,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/grpc/proto/customer.proto">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
-          <caret line="4" column="8" selection-start-line="4" selection-start-column="8" selection-end-line="4" selection-end-column="29" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../grpc/grpc-go/test/end2end_test.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1539">
@@ -1511,7 +1428,7 @@
         <state relative-caret-position="38">
           <caret line="2" column="7" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
           <folding>
-            <element signature="e#14#39#0" expanded="true" />
+            <element signature="e#14#39#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1566,10 +1483,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/grpc/proto/customer.pb.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="219">
-          <caret line="2277" column="0" selection-start-line="2277" selection-start-column="0" selection-end-line="2277" selection-end-column="0" />
+        <state relative-caret-position="846">
+          <caret line="2310" column="0" selection-start-line="2310" selection-start-column="0" selection-end-line="2310" selection-end-column="0" />
           <folding>
-            <marker date="1487739769000" expanded="true" signature="97206:97221" ph="{...}" />
+            <marker date="1488599011000" expanded="true" signature="98577:98592" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -1596,11 +1513,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/grpc/mainserver.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2116">
-          <caret line="947" column="62" selection-start-line="947" selection-start-column="62" selection-end-line="947" selection-end-column="62" />
+        <state relative-caret-position="260">
+          <caret line="945" column="0" selection-start-line="945" selection-start-column="0" selection-end-line="945" selection-end-column="0" />
           <folding>
             <element signature="e#14#395#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/grpc/proto/customer.proto">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="266">
+          <caret line="36" column="64" selection-start-line="36" selection-start-column="4" selection-end-line="36" selection-end-column="64" />
+          <folding />
         </state>
       </provider>
     </entry>

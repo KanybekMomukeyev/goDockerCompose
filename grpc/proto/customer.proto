@@ -34,6 +34,7 @@ service RentautomationService {
     rpc SignInWith (SignInRequest) returns (StaffRequest) {}
 
     rpc CreateOrderWith (CreateOrderRequest) returns (CreateOrderRequest) {}
+    rpc UpdateOrderWith (OrderRequest) returns (OrderRequest) {}
     rpc AllOrdersForInitial (OrderFilter) returns (AllOrderResponse) {}
     rpc AllOrdersForRecent (OrderFilter) returns (AllOrderResponse) {}
 
