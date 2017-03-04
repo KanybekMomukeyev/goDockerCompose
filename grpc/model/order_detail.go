@@ -67,9 +67,9 @@ func StoreOrderDetails(tx *sqlx.Tx, orderDetail *pb.OrderDetailRequest) (uint64,
 		return ErrorFunc(err)
 	}
 
-	log.WithFields(log.Fields{
-		"last inserted order_detail_id":  lastInsertId,
-	}).Info("")
+	//log.WithFields(log.Fields{
+	//	"last inserted order_detail_id":  lastInsertId,
+	//}).Info("")
 	return lastInsertId, nil
 }
 

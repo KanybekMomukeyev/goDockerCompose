@@ -79,9 +79,9 @@ func UpdateProduct(tx *sqlx.Tx, product *pb.ProductRequest) (uint64, error)  {
 		return ErrorFunc(err)
 	}
 
-	log.WithFields(log.Fields{
-		"update product rows changed":  affect,
-	}).Info("")
+	//log.WithFields(log.Fields{
+	//	"update product rows changed":  affect,
+	//}).Info("")
 	return uint64(affect), nil
 }
 
