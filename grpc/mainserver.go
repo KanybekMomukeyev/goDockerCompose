@@ -19,6 +19,7 @@ import (
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
+	"runtime"
 )
 
 func init() {
@@ -30,7 +31,7 @@ func init() {
 	log.SetOutput(os.Stdout)
 
 	// Only log the warning severity or above.
-	log.SetLevel(log.WarnLevel)
+	log.SetLevel(log.InfoLevel)
 }
 
 var (
@@ -1127,6 +1128,7 @@ func main() {
 	contextLogger.Info("I'll be logged with common and other field")
 	contextLogger.Info("Me too")
 
+	runtime.GOMAXPROCS(4)
 
 	model.CreateStaffIfNotExsists(db)
 	model.CreateAccountIfNotExsists(db)
@@ -1140,7 +1142,6 @@ func main() {
 
 	model.CreateProductIfNotExsists(db)
 	model.CreateTransactionIfNotExsists(db)
-
 
 	var err error
 	var lis net.Listener
