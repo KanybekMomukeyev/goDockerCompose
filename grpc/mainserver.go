@@ -131,6 +131,13 @@ func (s *server) CreateCategory(ctx context.Context, categoryReq *pb.CategoryReq
 		return nil, err
 	}
 
+	contexErr := ctx.Err()
+	if contexErr != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": contexErr}).Warn("")
+		return nil, contexErr
+	}
+
 	err = tx.Commit()
 	if err != nil {
 		log.WithFields(log.Fields{"err": err}).Warn("")
@@ -150,6 +157,13 @@ func (s *server) UpdateCategory(ctx context.Context, categoryReq *pb.CategoryReq
 		tx.Rollback()
 		log.WithFields(log.Fields{"err": err}).Warn("")
 		return nil, err
+	}
+
+	contexErr := ctx.Err()
+	if contexErr != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": contexErr}).Warn("")
+		return nil, contexErr
 	}
 
 	err = tx.Commit()
@@ -186,6 +200,13 @@ func (s *server) CreateProductWith(ctx context.Context, createPrReq *pb.CreatePr
 		return nil, err
 	}
 
+	contexErr := ctx.Err()
+	if contexErr != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": contexErr}).Warn("")
+		return nil, contexErr
+	}
+
 	err = tx.Commit()
 	if err != nil {
 		log.WithFields(log.Fields{"err": err}).Warn("")
@@ -216,6 +237,13 @@ func (s *server) UpdateProductWith(ctx context.Context, createPrReq *pb.CreatePr
 		tx.Rollback()
 		log.WithFields(log.Fields{"err": err}).Warn("")
 		return nil, err
+	}
+
+	contexErr := ctx.Err()
+	if contexErr != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": contexErr}).Warn("")
+		return nil, contexErr
 	}
 
 	err = tx.Commit()
@@ -326,6 +354,13 @@ func (s *server) CreateCustomerWith(ctx context.Context, createCustReq *pb.Creat
 		return nil, err
 	}
 
+	contexErr := ctx.Err()
+	if contexErr != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": contexErr}).Warn("")
+		return nil, contexErr
+	}
+
 	err = tx.Commit()
 	if err != nil {
 		log.WithFields(log.Fields{"err": err}).Warn("")
@@ -349,6 +384,13 @@ func (s *server) UpdateCustomerWith(ctx context.Context, createCustReq *pb.Custo
 		tx.Rollback()
 		log.WithFields(log.Fields{"err": err}).Warn("")
 		return nil, err
+	}
+
+	contexErr := ctx.Err()
+	if contexErr != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": contexErr}).Warn("")
+		return nil, contexErr
 	}
 
 	err = tx.Commit()
@@ -381,6 +423,13 @@ func (s *server) UpdateCustomerBalanceWith(ctx context.Context, updateCustBalanc
 		tx.Rollback()
 		log.WithFields(log.Fields{"err": err}).Warn("")
 		return nil, err
+	}
+
+	contexErr := ctx.Err()
+	if contexErr != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": contexErr}).Warn("")
+		return nil, contexErr
 	}
 
 	err = tx.Commit()
@@ -463,6 +512,13 @@ func (s *server) CreateSupplierWith(ctx context.Context, createSuppReq *pb.Creat
 		return nil, err
 	}
 
+	contexErr := ctx.Err()
+	if contexErr != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": contexErr}).Warn("")
+		return nil, contexErr
+	}
+
 	err = tx.Commit()
 	if err != nil {
 		log.WithFields(log.Fields{"err": err}).Warn("")
@@ -486,6 +542,13 @@ func (s *server) UpdateSupplierWith(ctx context.Context, createSuppReq *pb.Suppl
 		tx.Rollback()
 		log.WithFields(log.Fields{"err": err}).Warn("")
 		return nil, err
+	}
+
+	contexErr := ctx.Err()
+	if contexErr != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": contexErr}).Warn("")
+		return nil, contexErr
 	}
 
 	err = tx.Commit()
@@ -519,6 +582,13 @@ func (s *server) UpdateSupplierBalanceWith(ctx context.Context, createSuppReq *p
 		tx.Rollback()
 		log.WithFields(log.Fields{"err": err, "rowsAffected":rowsAffected}).Warn("")
 		return nil, err
+	}
+
+	contexErr := ctx.Err()
+	if contexErr != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": contexErr}).Warn("")
+		return nil, contexErr
 	}
 
 	err = tx.Commit()
@@ -604,6 +674,13 @@ func (s *server) CreateStaffWith(ctx context.Context, staffReq *pb.StaffRequest)
 
 	staffReq.StaffId = staffSerialKey
 
+	contexErr := ctx.Err()
+	if contexErr != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": contexErr}).Warn("")
+		return nil, contexErr
+	}
+
 	err = tx.Commit()
 	if err != nil {
 		log.WithFields(log.Fields{"err": err}).Warn("")
@@ -626,6 +703,13 @@ func (s *server) UpdateStaffWith(ctx context.Context, staffReq *pb.StaffRequest)
 		tx.Rollback()
 		log.WithFields(log.Fields{"err": err}).Warn("")
 		return nil, err
+	}
+
+	contexErr := ctx.Err()
+	if contexErr != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": contexErr}).Warn("")
+		return nil, contexErr
 	}
 
 	err = tx.Commit()
@@ -692,14 +776,13 @@ func (s *server) UpdateStream(stream pb.RentautomationService_UpdateStreamServer
 func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrderRequest) (*pb.CreateOrderRequest, error) {
 
 	log.WithFields(log.Fields{
-		"creat_order_req": creatOrdReq,
+		"creat_order_req": creatOrdReq.Order,
 	}).Info("CreateOrderWith rpc method called")
 
 	authorizeError := isAuthorized(ctx)
 	if authorizeError != nil {
 		return nil, authorizeError
 	}
-
 
 	//log.WithFields(log.Fields{"payment transaction begin": 1, }).Info("")
 	//time.Sleep(1 * time.Second)
@@ -968,6 +1051,13 @@ func (s *server) UpdateOrderWith(ctx context.Context, orderReq *pb.OrderRequest)
 		tx.Rollback()
 		log.WithFields(log.Fields{"err": err}).Warn("")
 		return nil, err
+	}
+
+	contexErr := ctx.Err()
+	if contexErr != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": contexErr}).Warn("")
+		return nil, contexErr
 	}
 
 	err = tx.Commit()
