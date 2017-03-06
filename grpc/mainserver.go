@@ -700,6 +700,7 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 		return nil, authorizeError
 	}
 
+
 	//log.WithFields(log.Fields{"payment transaction begin": 1, }).Info("")
 	//time.Sleep(1 * time.Second)
 
@@ -715,6 +716,7 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 
 	creatOrdReq.Payment.PaymentId = paymentSerial
 	creatOrdReq.Order.PaymentId = paymentSerial
+
 
 	//log.WithFields(log.Fields{"order transaction begin": 1, }).Info("")
 	//time.Sleep(6 * time.Second)
@@ -732,7 +734,6 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 	}
 
 
-
 	//log.WithFields(log.Fields{"transaction transaction begin": 1, }).Info("")
 	//time.Sleep(6 * time.Second)
 	// transaction
@@ -745,6 +746,7 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 		}
 		creatOrdReq.Transaction.TransactionId = transactionSerial
 	}
+
 
 	//log.WithFields(log.Fields{"account transaction begin": 1, }).Info("")
 	//time.Sleep(6 * time.Second)
@@ -767,7 +769,7 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 		model.UpdateCustomerBalance(tx, creatOrdReq.Order.CustomerId, acountReq.Balance)
 
 		// product amount
-		_, error := model.DecreaseProductsInStock(db, creatOrdReq.OrderDetails)
+		_, error := model.DecreaseProductsInStock(db, tx, creatOrdReq.OrderDetails)
 		if error != nil {
 			return nil, error
 		}
@@ -784,7 +786,7 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 		model.UpdateCustomerBalance(tx, creatOrdReq.Order.CustomerId, acountReq.Balance)
 
 		// product amount
-		_, error := model.IncreaseProductsInStock(db, creatOrdReq.OrderDetails)
+		_, error := model.IncreaseProductsInStock(db, tx, creatOrdReq.OrderDetails)
 		if error != nil {
 			return nil, error
 		}
@@ -801,7 +803,7 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 		model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
 
 		// product amount
-		_, error := model.IncreaseProductsInStock(db, creatOrdReq.OrderDetails)
+		_, error := model.IncreaseProductsInStock(db, tx, creatOrdReq.OrderDetails)
 		if error != nil {
 			return nil, error
 		}
@@ -818,7 +820,7 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 		model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
 
 		// product amount
-		_, error := model.DecreaseProductsInStock(db, creatOrdReq.OrderDetails)
+		_, error := model.DecreaseProductsInStock(db, tx, creatOrdReq.OrderDetails)
 		if error != nil {
 			return nil, error
 		}
@@ -835,7 +837,7 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 		model.UpdateCustomerBalance(tx, creatOrdReq.Order.CustomerId, acountReq.Balance)
 
 		// product amount
-		_, error := model.IncreaseProductsInStock(db, creatOrdReq.OrderDetails)
+		_, error := model.IncreaseProductsInStock(db, tx, creatOrdReq.OrderDetails)
 		if error != nil {
 			return nil, error
 		}
@@ -855,7 +857,7 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 		model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
 
 		// product amount
-		_, error := model.DecreaseProductsInStock(db, creatOrdReq.OrderDetails)
+		_, error := model.DecreaseProductsInStock(db, tx, creatOrdReq.OrderDetails)
 		if error != nil {
 			return nil, error
 		}
@@ -932,6 +934,13 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 		}
 
 		orderDetailReq.OrderDetailId = orderDetailSerial
+	}
+
+	contexErr := ctx.Err()
+	if contexErr != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": contexErr}).Warn("")
+		return nil, contexErr
 	}
 
 	err = tx.Commit()

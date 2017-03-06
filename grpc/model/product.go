@@ -110,7 +110,7 @@ func StoreProduct(tx *sqlx.Tx, product *pb.ProductRequest) (uint64, error) {
 	return lastInsertId, nil
 }
 
-func IncreaseProductsInStock(db *sqlx.DB, orderDetailReqs []*pb.OrderDetailRequest)  (uint64, error)  {
+func IncreaseProductsInStock(db *sqlx.DB, tx *sqlx.Tx, orderDetailReqs []*pb.OrderDetailRequest)  (uint64, error)  {
 
 	productIds := make([]uint64, 0)
 	updateValues := make(map[uint64]float64)
@@ -134,22 +134,16 @@ func IncreaseProductsInStock(db *sqlx.DB, orderDetailReqs []*pb.OrderDetailReque
 		forUpdatesInDatabase[product.ProductId] = product.UnitsInStock
 	}
 
-	tx := db.MustBegin()
 	rowsAffected, err := updateProductsInStock(tx, forUpdatesInDatabase)
 	if err != nil {
 		log.WithFields(log.Fields{"err": err}).Warn("")
 		return 0, err
 	}
 
-	err = tx.Commit()
-	if err != nil {
-		return ErrorFunc(err)
-	}
-
 	return rowsAffected, nil
 }
 
-func DecreaseProductsInStock(db *sqlx.DB, orderDetailReqs []*pb.OrderDetailRequest) (uint64, error) {
+func DecreaseProductsInStock(db *sqlx.DB, tx *sqlx.Tx, orderDetailReqs []*pb.OrderDetailRequest) (uint64, error) {
 
 	productIds := make([]uint64, 0)
 	updateValues := make(map[uint64]float64)
@@ -173,17 +167,11 @@ func DecreaseProductsInStock(db *sqlx.DB, orderDetailReqs []*pb.OrderDetailReque
 		forUpdatesInDatabase[product.ProductId] = product.UnitsInStock
 	}
 
-	tx := db.MustBegin()
 	rowsAffected, err := updateProductsInStock(tx, forUpdatesInDatabase)
 	if err != nil {
 		tx.Rollback()
 		log.WithFields(log.Fields{"err": err}).Warn("")
 		return 0, err
-	}
-
-	err = tx.Commit()
-	if err != nil {
-		return ErrorFunc(err)
 	}
 
 	return rowsAffected, nil
