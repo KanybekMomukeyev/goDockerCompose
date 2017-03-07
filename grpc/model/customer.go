@@ -35,6 +35,8 @@ func CreateCustomerIfNotExsists(db *sqlx.DB) {
 	// for some migrations
 	//db.MustExec(schemaCustomerDelete)
 	db.MustExec(schemaCreateCustomer)
+	//db.MustExec("ALTER TABLE customers DROP COLUMN IF EXISTS staff_id")
+	db.MustExec("ALTER TABLE customers ADD COLUMN IF NOT EXISTS staff_id BIGINT DEFAULT 0")
 }
 
 func StoreCustomer(tx *sqlx.Tx, customer *pb.ExampleRequest) (uint64, error)  {
@@ -61,12 +63,13 @@ func CheckErr(err error) {
 func StoreRealCustomer(tx *sqlx.Tx, customerRequest *pb.CustomerRequest) (uint64, error)  {
 
 	var lastInsertId uint64
-	err := tx.QueryRow("INSERT INTO customers(customer_image_path, first_name, second_name, phone_number, address) VALUES($1, $2, $3, $4, $5) returning customer_id;",
+	err := tx.QueryRow("INSERT INTO customers(customer_image_path, first_name, second_name, phone_number, address, staff_id) VALUES($1, $2, $3, $4, $5, $6) returning customer_id;",
 		customerRequest.CustomerImagePath,
 		customerRequest.FirstName,
 		customerRequest.SecondName,
 		customerRequest.PhoneNumber,
-		customerRequest.Address).Scan(&lastInsertId)
+		customerRequest.Address,
+		customerRequest.StaffId).Scan(&lastInsertId)
 
 	if err != nil {
 		return ErrorFunc(err)
@@ -81,7 +84,7 @@ func StoreRealCustomer(tx *sqlx.Tx, customerRequest *pb.CustomerRequest) (uint64
 func UpdateRealCustomer(tx *sqlx.Tx, customerReq *pb.CustomerRequest) (uint64, error)  {
 
 	stmt, err :=tx.Prepare("UPDATE customers SET customer_image_path=$1, first_name=$2, second_name=$3, " +
-		"phone_number=$4, address=$5 WHERE customer_id=$6")
+		"phone_number=$4, address=$5, staff_id=$6 WHERE customer_id=$7")
 	if err != nil {
 		return ErrorFunc(err)
 	}
@@ -91,6 +94,7 @@ func UpdateRealCustomer(tx *sqlx.Tx, customerReq *pb.CustomerRequest) (uint64, e
 		customerReq.SecondName,
 		customerReq.PhoneNumber,
 		customerReq.Address,
+		customerReq.StaffId,
 		customerReq.CustomerId)
 	if err != nil {
 		return ErrorFunc(err)
@@ -116,22 +120,25 @@ func AllRealCustomers(db *sqlx.DB) ([]*pb.CustomerRequest, error) {
 		return nil, pingError
 	}
 
-	rows, err := db.Queryx("SELECT customer_id, customer_image_path, first_name, second_name, phone_number, address FROM customers ORDER BY customer_id ASC")
+	rows, err := db.Queryx("SELECT customer_id, customer_image_path, first_name, second_name, phone_number, address, staff_id FROM customers ORDER BY customer_id ASC")
 	if err != nil {
-		print("error")
+		log.WithFields(log.Fields{"error": err, }).Warn("")
+		return nil, err
 	}
 
 	realCustomers := make([]*pb.CustomerRequest, 0)
 	for rows.Next() {
 		customer := new(pb.CustomerRequest)
-		err := rows.Scan(&customer.CustomerId, &customer.CustomerImagePath, &customer.FirstName, &customer.SecondName, &customer.PhoneNumber, &customer.Address)
+		err := rows.Scan(&customer.CustomerId, &customer.CustomerImagePath, &customer.FirstName, &customer.SecondName, &customer.PhoneNumber, &customer.Address, &customer.StaffId)
 		if err != nil {
+			log.WithFields(log.Fields{"error": err, }).Warn("")
 			return nil, err
 		}
 		realCustomers = append(realCustomers, customer)
 	}
 
 	if err = rows.Err(); err != nil {
+		log.WithFields(log.Fields{"error": err, }).Warn("")
 		return nil, err
 	}
 

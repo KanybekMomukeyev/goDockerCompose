@@ -182,6 +182,7 @@ message CustomerRequest {
     string secondName = 4;
     string phoneNumber = 5;
     string address = 6;
+    uint64 staffId = 7;
 }
 
 message CustomerFilter {

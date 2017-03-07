@@ -241,6 +241,7 @@ func AllOrdersForRecentFilter(db *sqlx.DB, orderFilter *pb.OrderFilter) ([]*pb.O
 			&order.IsPaid, &order.IsEdited)
 
 		if err != nil {
+			log.WithFields(log.Fields{"error": err, }).Warn("")
 			return nil, err
 		}
 		orders = append(orders, order)
