@@ -478,6 +478,10 @@ func (s *server) AllCustomersForInitial(ctx context.Context, custFilter *pb.Cust
 	return allCustomersResponse, nil
 }
 
+func (s *server) CheckCustomersForUpdate(ctx context.Context, custFilter *pb.CustomerFilter) (*pb.AllCustomersResponse, error) {
+	return nil, nil
+}
+
 // ----------------------------  -------------------------------- //
 func (s *server) CreateSupplierWith(ctx context.Context, createSuppReq *pb.CreateSupplierRequest) (*pb.CreateSupplierRequest, error) {
 	authorizeError := isAuthorized(ctx)

@@ -20,6 +20,7 @@ service RentautomationService {
     rpc UpdateCustomerWith (CustomerRequest) returns (CustomerRequest) {}
     rpc UpdateCustomerBalanceWith (CreateCustomerRequest) returns (CreateCustomerRequest) {}
     rpc AllCustomersForInitial (CustomerFilter) returns (AllCustomersResponse) {}
+    rpc CheckCustomersForUpdate (CustomerFilter) returns (AllCustomersResponse) {}
 
     rpc CreateSupplierWith (CreateSupplierRequest) returns (CreateSupplierRequest) {}
     rpc UpdateSupplierWith (SupplierRequest) returns (SupplierRequest) {}
@@ -183,10 +184,12 @@ message CustomerRequest {
     string phoneNumber = 5;
     string address = 6;
     uint64 staffId = 7;
+    uint64 updatedAt = 8;
 }
 
 message CustomerFilter {
     string customerKeyword = 1;
+    uint64 customerUpdatedAt = 2;
 }
 
 message SupplierRequest {
