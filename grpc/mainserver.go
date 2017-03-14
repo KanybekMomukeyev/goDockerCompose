@@ -196,7 +196,15 @@ func (s *server) CheckCategoriesForUpdate(ctx context.Context, catFilter *pb.Cat
 	if authorizeError != nil {
 		return nil, authorizeError
 	}
-	return nil, nil
+
+	categories, error := model.AllUpdatedCategories(db, catFilter)
+	if error != nil {
+		return nil, error
+	}
+	allCategoryResponse := new(pb.AllCategoryResponse)
+	allCategoryResponse.CategoryRequest = categories
+
+	return allCategoryResponse, nil
 }
 
 // ---------------------------- ADDITTION -------------------------------- //

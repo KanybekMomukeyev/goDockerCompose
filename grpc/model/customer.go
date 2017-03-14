@@ -18,7 +18,9 @@ CREATE TABLE IF NOT EXISTS customers (
     first_name varchar (400),
     second_name varchar (400),
     phone_number varchar (400),
-    address varchar (400)
+    address varchar (400),
+    staff_id BIGINT,
+    updated_at BIGINT
 );
 `
 
@@ -32,7 +34,6 @@ type Customer struct {
 }
 
 func CreateCustomerIfNotExsists(db *sqlx.DB) {
-	// for some migrations
 	//db.MustExec(schemaCustomerDelete)
 	db.MustExec(schemaCreateCustomer)
 	//db.MustExec("ALTER TABLE customers DROP COLUMN IF EXISTS staff_id")
