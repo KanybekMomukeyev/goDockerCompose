@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dcbd48d1-1be6-4e9c-b200-ded03459556f" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/grpc/mainserver.go" afterPath="$PROJECT_DIR$/grpc/mainserver.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/grpc/model/staff.go" afterPath="$PROJECT_DIR$/grpc/model/staff.go" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/grpc/model/database.go" afterPath="$PROJECT_DIR$/grpc/model/database.go" />
     </list>
     <ignored path="goDockerCompose.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -46,13 +45,26 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="mainserver.go" pinned="false" current-in-tab="true">
+      <file leaf-file-name="mainserver.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/grpc/mainserver.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="277">
+            <state relative-caret-position="2082">
               <caret line="861" column="36" selection-start-line="861" selection-start-column="17" selection-end-line="861" selection-end-column="36" />
               <folding>
                 <element signature="e#14#406#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="database.go" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/grpc/model/database.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="437">
+              <caret line="23" column="8" selection-start-line="23" selection-start-column="8" selection-end-line="23" selection-end-column="8" />
+              <folding>
+                <element signature="e#15#122#0" expanded="true" />
+                <marker date="1489486562000" expanded="true" signature="594:902" ph="/.../" />
               </folding>
             </state>
           </provider>
@@ -134,7 +146,6 @@
         <option value="$PROJECT_DIR$/grpc/multithread/pipeline_ex1.go" />
         <option value="$PROJECT_DIR$/grpc/model/order_detail.go" />
         <option value="$PROJECT_DIR$/grpc/model/order.go" />
-        <option value="$PROJECT_DIR$/grpc/model/database.go" />
         <option value="$PROJECT_DIR$/grpc/proto/customer.proto" />
         <option value="$PROJECT_DIR$/grpc/model/customer.go" />
         <option value="$PROJECT_DIR$/grpc/model/category.go" />
@@ -142,6 +153,7 @@
         <option value="$PROJECT_DIR$/grpc/model/supplier.go" />
         <option value="$PROJECT_DIR$/grpc/model/staff.go" />
         <option value="$PROJECT_DIR$/grpc/mainserver.go" />
+        <option value="$PROJECT_DIR$/grpc/model/database.go" />
       </list>
     </option>
   </component>
@@ -856,7 +868,7 @@
       <workItem from="1485837122923" duration="46803000" />
       <workItem from="1486701014480" duration="5634000" />
       <workItem from="1486966075363" duration="88086000" />
-      <workItem from="1489227042175" duration="13652000" />
+      <workItem from="1489227042175" duration="13863000" />
     </task>
     <servers />
   </component>
@@ -875,7 +887,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="351391000" />
+    <option name="totallyTimeSpent" value="351602000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -906,7 +918,7 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.4" sideWeight="0.46920583" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.46920583" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1231,17 +1243,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/grpc/model/database.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="437">
-          <caret line="23" column="10" selection-start-line="23" selection-start-column="10" selection-end-line="23" selection-end-column="10" />
-          <folding>
-            <element signature="e#15#122#0" expanded="true" />
-            <marker date="1489385230000" expanded="true" signature="596:902" ph="/.../" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/grpc/model/order_detail.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1216">
@@ -1324,10 +1325,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/grpc/mainserver.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="277">
+        <state relative-caret-position="2082">
           <caret line="861" column="36" selection-start-line="861" selection-start-column="17" selection-end-line="861" selection-end-column="36" />
           <folding>
             <element signature="e#14#406#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/grpc/model/database.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="437">
+          <caret line="23" column="8" selection-start-line="23" selection-start-column="8" selection-end-line="23" selection-end-column="8" />
+          <folding>
+            <element signature="e#15#122#0" expanded="true" />
+            <marker date="1489486562000" expanded="true" signature="594:902" ph="/.../" />
           </folding>
         </state>
       </provider>
