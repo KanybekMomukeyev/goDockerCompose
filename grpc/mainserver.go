@@ -728,7 +728,35 @@ func (s *server) CheckSuppliersForUpdate(ctx context.Context, suppFilter *pb.Sup
 		return nil, authorizeError
 	}
 
-	return nil, nil
+	createSupplierRequests := make([]*pb.CreateSupplierRequest, 0)
+	suppliers, _ := model.AllSuppliersForUpdate(db, suppFilter)
+
+	for _, supplierReq := range suppliers {
+
+		transactionReq, err := model.RecentTransactionForSupplier(db, supplierReq)
+		if err != nil {
+			break
+			return nil, err
+		}
+
+		accountReq, err := model.AccountForSupplier(db, supplierReq.SupplierId)
+		if err != nil {
+			break
+			return nil, err
+		}
+
+		createSupplierRequest := new(pb.CreateSupplierRequest)
+		createSupplierRequest.Supplier = supplierReq
+		createSupplierRequest.Transaction = transactionReq
+		createSupplierRequest.Account = accountReq
+
+		createSupplierRequests = append(createSupplierRequests, createSupplierRequest)
+	}
+
+	allSuppliersResponse := new(pb.AllSuppliersResponse)
+	allSuppliersResponse.SupplierRequest = createSupplierRequests
+
+	return allSuppliersResponse, nil
 }
 
 func (s *server) AllTransactionsForInitial(ctx context.Context, transFilter *pb.TransactionFilter) (*pb.AllTransactionResponse, error) {
