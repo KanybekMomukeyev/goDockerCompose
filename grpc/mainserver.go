@@ -866,7 +866,14 @@ func (s *server) CheckStaffForUpdate(ctx context.Context, staffFilter *pb.StaffF
 		return nil, authorizeError
 	}
 
-	return nil, nil
+	staff, error := model.AllStaffForUpdate(db, staffFilter)
+	if error != nil {
+		return nil, error
+	}
+	allStaffResponse := new(pb.AllStaffResponse)
+	allStaffResponse.StaffRequest = staff
+
+	return allStaffResponse, nil
 }
 
 func (s *server) SignInWith(ctx context.Context, signInReq *pb.SignInRequest) (*pb.StaffRequest, error) {

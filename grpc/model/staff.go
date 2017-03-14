@@ -21,7 +21,8 @@ CREATE TABLE IF NOT EXISTS staff (
     email VARCHAR (300) UNIQUE,
     password VARCHAR (300),
     phone_number VARCHAR (300),
-    address VARCHAR (300)
+    address VARCHAR (300),
+    staff_updated_at BIGINT
 );
 `
 //UNIQUE  set on email!!!!
@@ -39,6 +40,7 @@ type Staff struct {
 	password string `db:"password"`
 	phoneNumber string `db:"phone_number"`
 	address string `db:"address"`
+	staffUpdatedAt uint64 `db:"staff_updated_at"`
 }
 
 func CreateStaffIfNotExsists(db *sqlx.DB) {
@@ -46,14 +48,15 @@ func CreateStaffIfNotExsists(db *sqlx.DB) {
 	db.MustExec(schemaCreateStaff)
 	db.MustExec(schemaCreateIndexForStaff1)
 	db.MustExec(schemaCreateIndexForStaff2)
+	db.MustExec("ALTER TABLE staff ADD COLUMN IF NOT EXISTS staff_updated_at BIGINT DEFAULT 0")
 }
 
 func StoreStaff(tx *sqlx.Tx, staff *pb.StaffRequest) (uint64, error)  {
 
 	var lastInsertId uint64
 	err := tx.QueryRow("INSERT INTO staff " +
-		"(role_id, staff_image_path, first_name, second_name, email, password, phone_number, address) " +
-		"VALUES($1, $2, $3, $4, $5, $6, $7, $8) returning staff_id;",
+		"(role_id, staff_image_path, first_name, second_name, email, password, phone_number, address, staff_updated_at) " +
+		"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) returning staff_id;",
 		staff.RoleId,
 		staff.StaffImagePath,
 		staff.FirstName,
@@ -61,7 +64,8 @@ func StoreStaff(tx *sqlx.Tx, staff *pb.StaffRequest) (uint64, error)  {
 		staff.Email,
 		staff.Password,
 		staff.PhoneNumber,
-		staff.Address).Scan(&lastInsertId)
+		staff.Address,
+		staff.StaffUpdatedAt).Scan(&lastInsertId)
 
 	if err != nil {
 		return ErrorFunc(err)
@@ -76,7 +80,7 @@ func StoreStaff(tx *sqlx.Tx, staff *pb.StaffRequest) (uint64, error)  {
 func UpdateStaff(tx *sqlx.Tx, staff *pb.StaffRequest) (uint64, error)  {
 
 	stmt, err :=tx.Prepare("UPDATE staff SET role_id=$1, staff_image_path=$2, first_name=$3, second_name=$4, " +
-		"email=$5, password=$6, phone_number=$7, address=$8 WHERE staff_id=$9")
+		"email=$5, password=$6, phone_number=$7, address=$8, staff_updated_at=$9 WHERE staff_id=$10")
 	if err != nil {
 		return ErrorFunc(err)
 	}
@@ -89,6 +93,7 @@ func UpdateStaff(tx *sqlx.Tx, staff *pb.StaffRequest) (uint64, error)  {
 		staff.Password,
 		staff.PhoneNumber,
 		staff.Address,
+		staff.StaffUpdatedAt,
 		staff.StaffId)
 
 	if err != nil {
@@ -165,33 +170,33 @@ func AllStaff(db *sqlx.DB) ([]*pb.StaffRequest, error) {
 	return staff, nil
 }
 
-func AllStaffAuto(db *sqlx.DB) ([]*pb.StaffRequest, error) {
+func AllStaffForUpdate(db *sqlx.DB, filter *pb.StaffFilter) ([]*pb.StaffRequest, error) {
 
-	staff := []*Staff{}
-	savedStaff := []*pb.StaffRequest{}
+	pingError := db.Ping()
 
-	err := db.Select(&staff, "SELECT staff_id, role_id, staff_image_path, first_name, second_name, email, password, phone_number, address FROM staff ORDER BY first_name ASC")
+	if pingError != nil {
+		log.Fatalln(pingError)
+		return nil, pingError
+	}
+
+	rows, err := db.Queryx("SELECT staff_id, role_id, staff_image_path, first_name, second_name, email, password, phone_number, address FROM staff WHERE staff_updated_at >= $1 LIMIT $2", filter.StaffUpdatedAt, 1000)
 	if err != nil {
 		print("error")
-		panic(err)
 	}
 
-	for _, employee := range staff {
-
-		staffRequest := &pb.StaffRequest {
-			StaffId:    employee.staffId,
-			RoleId:  employee.roleId,
-			StaffImagePath: employee.staffImagePath,
-			FirstName: employee.firstName,
-			SecondName: employee.secondName,
-			Email: employee.email,
-			Password: employee.password,
-			PhoneNumber: employee.phoneNumber,
-			Address: employee.address,
+	staff := make([]*pb.StaffRequest, 0)
+	for rows.Next() {
+		employee := new(pb.StaffRequest)
+		err := rows.Scan(&employee.StaffId, &employee.RoleId, &employee.StaffImagePath, &employee.FirstName, &employee.SecondName, &employee.Email, &employee.Password, &employee.PhoneNumber, &employee.Address)
+		if err != nil {
+			return nil, err
 		}
-
-		savedStaff = append(savedStaff, staffRequest)
+		staff = append(staff, employee)
 	}
 
-	return savedStaff, nil
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return staff, nil
 }
