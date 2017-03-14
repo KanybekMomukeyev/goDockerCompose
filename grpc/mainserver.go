@@ -323,7 +323,29 @@ func (s *server) CheckProductsForUpdate(ctx context.Context, prFilter *pb.Produc
 	if authorizeError != nil {
 		return nil, authorizeError
 	}
-	return nil, nil
+
+	createProdRequests := make([]*pb.CreateProductRequest, 0)
+	products, _ := model.AllProductsForUpdate(db, prFilter)
+
+	for _, productReq := range products {
+
+		orderDetReq, err := model.RecentOrderDetailForProduct(db, productReq)
+		if err != nil {
+			break
+			return nil, err
+		}
+
+		createProductReq := new(pb.CreateProductRequest)
+		createProductReq.OrderDetail = orderDetReq
+		createProductReq.Product = productReq
+
+		createProdRequests = append(createProdRequests, createProductReq)
+	}
+
+	allProdResponse := new(pb.AllProductsResponse)
+	allProdResponse.ProductRequest = createProdRequests
+
+	return allProdResponse,nil
 }
 
 func (s *server) AllOrderDetails(ctx context.Context, oDetFilter *pb.OrderDetailFilter) (*pb.AllOrderDetailResponse, error) {

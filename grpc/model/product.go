@@ -21,7 +21,8 @@ CREATE TABLE IF NOT EXISTS products (
     quantity_per_unit VARCHAR (300),
     sale_unit_price REAL,
     income_unit_price REAL,
-    units_in_stock REAL
+    units_in_stock REAL,
+    product_updated_at BIGINT
 );
 `
 
@@ -40,6 +41,7 @@ type Product struct {
 	saleUnitPrice float32 `db:"sale_unit_price"`
 	incomeUnitPrice float32 `db:"income_unit_price"`
 	unitsInStock float32 `db:"units_in_stock"`
+	productUpdatedAt uint64 `db:"product_updated_at"`
 }
 
 func CreateProductIfNotExsists(db *sqlx.DB) {
@@ -48,6 +50,7 @@ func CreateProductIfNotExsists(db *sqlx.DB) {
 	db.MustExec(schemaCreateIndexForProduct1)
 	db.MustExec(schemaCreateIndexForProduct2)
 	db.MustExec(schemaCreateIndexForProduct3)
+	db.MustExec("ALTER TABLE products ADD COLUMN IF NOT EXISTS product_updated_at BIGINT DEFAULT 0")
 }
 
 
@@ -55,7 +58,8 @@ func UpdateProduct(tx *sqlx.Tx, product *pb.ProductRequest) (uint64, error)  {
 
 	stmt, err :=tx.Prepare("UPDATE products SET product_image_path=$1, product_name=$2, supplier_id=$3, " +
 		"category_id=$4, barcode=$5, quantity_per_unit=$6, sale_unit_price=$7, " +
-		"income_unit_price=$8, units_in_stock=$9 WHERE product_id=$10")
+		"income_unit_price=$8, units_in_stock=$9, product_updated_at=$10 WHERE product_id=$11")
+
 	if err != nil {
 		return ErrorFunc(err)
 	}
@@ -69,7 +73,9 @@ func UpdateProduct(tx *sqlx.Tx, product *pb.ProductRequest) (uint64, error)  {
 		product.SaleUnitPrice,
 		product.IncomeUnitPrice,
 		product.UnitsInStock,
+		product.ProductUpdatedAt,
 		product.ProductId)
+
 	if err != nil {
 		return ErrorFunc(err)
 	}
@@ -88,8 +94,8 @@ func StoreProduct(tx *sqlx.Tx, product *pb.ProductRequest) (uint64, error) {
 	var lastInsertId uint64
 	err := tx.QueryRow("INSERT INTO products " +
 		"(product_image_path, product_name, supplier_id, category_id, barcode," +
-		" quantity_per_unit, sale_unit_price, income_unit_price, units_in_stock) " +
-		"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) returning product_id;",
+		" quantity_per_unit, sale_unit_price, income_unit_price, units_in_stock, product_updated_at) " +
+		"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning product_id;",
 		product.ProductImagePath,
 		product.ProductName,
 		product.SupplierId,
@@ -98,7 +104,8 @@ func StoreProduct(tx *sqlx.Tx, product *pb.ProductRequest) (uint64, error) {
 		product.QuantityPerUnit,
 		product.SaleUnitPrice,
 		product.IncomeUnitPrice,
-		product.UnitsInStock).Scan(&lastInsertId)
+		product.UnitsInStock,
+		product.ProductUpdatedAt).Scan(&lastInsertId)
 
 	if err != nil {
 		return ErrorFunc(err)
@@ -265,6 +272,45 @@ func AllProducts(db *sqlx.DB) ([]*pb.ProductRequest, error) {
 	rows, err := db.Queryx("SELECT product_id, product_image_path, product_name, supplier_id, " +
 		"category_id, barcode, quantity_per_unit, sale_unit_price, " +
 		"income_unit_price, units_in_stock FROM products ORDER BY product_id DESC")
+
+	if err != nil {
+		print("error")
+	}
+
+	//defer rows.Close()
+
+	products := make([]*pb.ProductRequest, 0)
+	for rows.Next() {
+		product := new(pb.ProductRequest)
+		err := rows.Scan(&product.ProductId, &product.ProductImagePath, &product.ProductName,
+			&product.SupplierId, &product.CategoryId, &product.Barcode, &product.QuantityPerUnit,
+			&product.SaleUnitPrice, &product.IncomeUnitPrice, &product.UnitsInStock)
+
+		if err != nil {
+			return nil, err
+		}
+		products = append(products, product)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return products, nil
+}
+
+func AllProductsForUpdate(db *sqlx.DB, productFilter *pb.ProductFilter) ([]*pb.ProductRequest, error) {
+
+	pingError := db.Ping()
+
+	if pingError != nil {
+		log.Fatalln(pingError)
+		return nil, pingError
+	}
+
+	rows, err := db.Queryx("SELECT product_id, product_image_path, product_name, supplier_id, " +
+		"category_id, barcode, quantity_per_unit, sale_unit_price, " +
+		"income_unit_price, units_in_stock FROM products WHERE product_updated_at >= $1 LIMIT $2", productFilter.ProductUpdatedAt, 1000)
 
 	if err != nil {
 		print("error")
