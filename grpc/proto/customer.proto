@@ -9,11 +9,14 @@ service RentautomationService {
 
     rpc CreateCategory (CategoryRequest) returns (CategoryRequest) {}
     rpc UpdateCategory (CategoryRequest) returns (CategoryRequest) {}
+    rpc AllCategoriesForInitial (CategoryFilter) returns (AllCategoryResponse) {}
+    rpc CheckCategoriesForUpdate (CategoryFilter) returns (AllCategoryResponse) {}
 
     rpc CreateProductWith (CreateProductRequest) returns (CreateProductRequest) {}
     rpc UpdateProductWith (CreateProductRequest) returns (CreateProductRequest) {}
     rpc AllProductsForInitial (ProductFilter) returns (AllProductsResponse) {}
-    rpc AllCategoriesForInitial(CategoryFilter) returns (AllCategoryResponse) {}
+    rpc CheckProductsForUpdate (ProductFilter) returns (AllProductsResponse) {}
+
     rpc AllOrderDetails(OrderDetailFilter) returns (AllOrderDetailResponse) {}
 
     rpc CreateCustomerWith (CreateCustomerRequest) returns (CreateCustomerRequest) {}
@@ -26,12 +29,15 @@ service RentautomationService {
     rpc UpdateSupplierWith (SupplierRequest) returns (SupplierRequest) {}
     rpc UpdateSupplierBalanceWith (CreateSupplierRequest) returns (CreateSupplierRequest) {}
     rpc AllSuppliersForInitial (SupplierFilter) returns (AllSuppliersResponse) {}
+    rpc CheckSuppliersForUpdate (SupplierFilter) returns (AllSuppliersResponse) {}
 
     rpc AllTransactionsForInitial (TransactionFilter) returns (AllTransactionResponse) {}
 
     rpc CreateStaffWith (StaffRequest) returns (StaffRequest) {}
     rpc UpdateStaffWith (StaffRequest) returns (StaffRequest) {}
     rpc AllStaffForInitial (StaffFilter) returns (AllStaffResponse) {}
+    rpc CheckStaffForUpdate (StaffFilter) returns (AllStaffResponse) {}
+
     rpc SignInWith (SignInRequest) returns (StaffRequest) {}
 
     rpc CreateOrderWith (CreateOrderRequest) returns (CreateOrderRequest) {}
@@ -139,10 +145,12 @@ message StaffRequest {
     string password = 7;
     string phoneNumber = 8;
     string address = 9;
+    uint64 staffUpdatedAt = 10;
 }
 
 message StaffFilter {
     string staffKeyword = 1;
+    uint64 staffUpdatedAt = 2;
 }
 
 message RoleRequest {
@@ -161,19 +169,23 @@ message ProductRequest {
     double saleUnitPrice = 8;
     double incomeUnitPrice = 9;
     double unitsInStock = 10;
+    uint64 productUpdatedAt = 11;
 }
 
 message ProductFilter {
     string productKeyword = 1;
+    uint64 productUpdatedAt = 2;
 }
 
 message CategoryRequest {
     uint64 categoryId = 1;
     string categoryName = 2;
+    uint64 categoryUpdatedAt = 3;
 }
 
 message CategoryFilter {
     string categoryKeyword = 1;
+    uint64 categoryUpdatedAt = 2;
 }
 
 message CustomerRequest {
@@ -184,7 +196,7 @@ message CustomerRequest {
     string phoneNumber = 5;
     string address = 6;
     uint64 staffId = 7;
-    uint64 updatedAt = 8;
+    uint64 customerUpdatedAt = 8;
 }
 
 message CustomerFilter {
@@ -199,10 +211,12 @@ message SupplierRequest {
     string contactFname = 4;
     string phoneNumber = 5;
     string address = 6;
+    uint64 supplierUpdatedAt = 7;
 }
 
 message SupplierFilter {
     string supplierKeyword = 1;
+    uint64 supplierUpdatedAt = 2;
 }
 
 message AccountRequest {

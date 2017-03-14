@@ -175,6 +175,30 @@ func (s *server) UpdateCategory(ctx context.Context, categoryReq *pb.CategoryReq
 	return categoryReq, nil
 }
 
+func (s *server) AllCategoriesForInitial(ctx context.Context, catFilter *pb.CategoryFilter) (*pb.AllCategoryResponse, error) {
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
+
+	categories, error := model.AllCategory(db)
+	if error != nil {
+		return nil, error
+	}
+	allCategoryResponse := new(pb.AllCategoryResponse)
+	allCategoryResponse.CategoryRequest = categories
+
+	return allCategoryResponse, nil
+}
+
+func (s *server) CheckCategoriesForUpdate(ctx context.Context, catFilter *pb.CategoryFilter) (*pb.AllCategoryResponse, error) {
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
+	return nil, nil
+}
+
 // ---------------------------- ADDITTION -------------------------------- //
 func (s *server) CreateProductWith(ctx context.Context, createPrReq *pb.CreateProductRequest) (*pb.CreateProductRequest, error) {
 	authorizeError := isAuthorized(ctx)
@@ -286,20 +310,12 @@ func (s *server) AllProductsForInitial(ctx context.Context, prFilter *pb.Product
 	return allProdResponse,nil
 }
 
-func (s *server) AllCategoriesForInitial(ctx context.Context, catFilter *pb.CategoryFilter) (*pb.AllCategoryResponse, error) {
+func (s *server) CheckProductsForUpdate(ctx context.Context, prFilter *pb.ProductFilter) (*pb.AllProductsResponse, error) {
 	authorizeError := isAuthorized(ctx)
 	if authorizeError != nil {
 		return nil, authorizeError
 	}
-
-	categories, error := model.AllCategory(db)
-	if error != nil {
-		return nil, error
-	}
-	allCategoryResponse := new(pb.AllCategoryResponse)
-	allCategoryResponse.CategoryRequest = categories
-
-	return allCategoryResponse, nil
+	return nil, nil
 }
 
 func (s *server) AllOrderDetails(ctx context.Context, oDetFilter *pb.OrderDetailFilter) (*pb.AllOrderDetailResponse, error) {
@@ -479,7 +495,40 @@ func (s *server) AllCustomersForInitial(ctx context.Context, custFilter *pb.Cust
 }
 
 func (s *server) CheckCustomersForUpdate(ctx context.Context, custFilter *pb.CustomerFilter) (*pb.AllCustomersResponse, error) {
-	return nil, nil
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
+
+	createCustomerRequests := make([]*pb.CreateCustomerRequest, 0)
+	customers, _ := model.AllUpdatedCustomers(db, custFilter)
+
+	for _, customerReq := range customers {
+
+		transactionReq, err := model.RecentTransactionForCustomer(db, customerReq)
+		if err != nil {
+			break
+			return nil, err
+		}
+
+		accountReq, err := model.AccountForCustomer(db, customerReq.CustomerId)
+		if err != nil {
+			break
+			return nil, err
+		}
+
+		createCustomerRequest := new(pb.CreateCustomerRequest)
+		createCustomerRequest.Customer = customerReq
+		createCustomerRequest.Transaction = transactionReq
+		createCustomerRequest.Account = accountReq
+
+		createCustomerRequests = append(createCustomerRequests, createCustomerRequest)
+	}
+
+	allCustomersResponse := new(pb.AllCustomersResponse)
+	allCustomersResponse.CustomerRequest = createCustomerRequests
+
+	return allCustomersResponse, nil
 }
 
 // ----------------------------  -------------------------------- //
@@ -642,6 +691,16 @@ func (s *server) AllSuppliersForInitial(ctx context.Context, suppFilter *pb.Supp
 	return allSuppliersResponse, nil
 }
 
+func (s *server) CheckSuppliersForUpdate(ctx context.Context, suppFilter *pb.SupplierFilter) (*pb.AllSuppliersResponse, error) {
+
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
+
+	return nil, nil
+}
+
 func (s *server) AllTransactionsForInitial(ctx context.Context, transFilter *pb.TransactionFilter) (*pb.AllTransactionResponse, error) {
 
 	authorizeError := isAuthorized(ctx)
@@ -740,6 +799,16 @@ func (s *server) AllStaffForInitial(ctx context.Context, staffFilter *pb.StaffFi
 	allStaffResponse.StaffRequest = staff
 
 	return allStaffResponse, nil
+}
+
+func (s *server) CheckStaffForUpdate(ctx context.Context, staffFilter *pb.StaffFilter) (*pb.AllStaffResponse, error) {
+
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
+
+	return nil, nil
 }
 
 func (s *server) SignInWith(ctx context.Context, signInReq *pb.SignInRequest) (*pb.StaffRequest, error) {

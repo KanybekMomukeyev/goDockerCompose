@@ -65,7 +65,7 @@ func StoreRealCustomer(tx *sqlx.Tx, customerRequest *pb.CustomerRequest) (uint64
 		customerRequest.PhoneNumber,
 		customerRequest.Address,
 		customerRequest.StaffId,
-		customerRequest.UpdatedAt).Scan(&lastInsertId)
+		customerRequest.CustomerUpdatedAt).Scan(&lastInsertId)
 
 	if err != nil {
 		return ErrorFunc(err)
@@ -91,7 +91,7 @@ func UpdateRealCustomer(tx *sqlx.Tx, customerReq *pb.CustomerRequest) (uint64, e
 		customerReq.PhoneNumber,
 		customerReq.Address,
 		customerReq.StaffId,
-		customerReq.UpdatedAt,
+		customerReq.CustomerUpdatedAt,
 		customerReq.CustomerId)
 	if err != nil {
 		return ErrorFunc(err)
@@ -126,7 +126,7 @@ func AllRealCustomers(db *sqlx.DB) ([]*pb.CustomerRequest, error) {
 	realCustomers := make([]*pb.CustomerRequest, 0)
 	for rows.Next() {
 		customer := new(pb.CustomerRequest)
-		err := rows.Scan(&customer.CustomerId, &customer.CustomerImagePath, &customer.FirstName, &customer.SecondName, &customer.PhoneNumber, &customer.Address, &customer.StaffId, &customer.UpdatedAt)
+		err := rows.Scan(&customer.CustomerId, &customer.CustomerImagePath, &customer.FirstName, &customer.SecondName, &customer.PhoneNumber, &customer.Address, &customer.StaffId, &customer.CustomerUpdatedAt)
 		if err != nil {
 			log.WithFields(log.Fields{"error": err, }).Warn("")
 			return nil, err
@@ -142,9 +142,29 @@ func AllRealCustomers(db *sqlx.DB) ([]*pb.CustomerRequest, error) {
 	return realCustomers, nil
 }
 
+func AllUpdatedCustomers(db *sqlx.DB, custFilter *pb.CustomerFilter) ([]*pb.CustomerRequest, error)  {
 
+	rows, err := db.Queryx("SELECT customer_id, customer_image_path, first_name, second_name, phone_number, address, staff_id, updated_at FROM customers WHERE updated_at >= $1 LIMIT $2", custFilter.CustomerUpdatedAt, 1000)
+	if err != nil {
+		log.WithFields(log.Fields{"error": err, }).Warn("")
+		return nil, err
+	}
 
+	realCustomers := make([]*pb.CustomerRequest, 0)
+	for rows.Next() {
+		customer := new(pb.CustomerRequest)
+		err := rows.Scan(&customer.CustomerId, &customer.CustomerImagePath, &customer.FirstName, &customer.SecondName, &customer.PhoneNumber, &customer.Address, &customer.StaffId, &customer.CustomerUpdatedAt)
+		if err != nil {
+			log.WithFields(log.Fields{"error": err, }).Warn("")
+			return nil, err
+		}
+		realCustomers = append(realCustomers, customer)
+	}
 
+	if err = rows.Err(); err != nil {
+		log.WithFields(log.Fields{"error": err, }).Warn("")
+		return nil, err
+	}
 
-
-
+	return realCustomers, nil
+}
