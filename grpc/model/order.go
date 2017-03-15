@@ -27,7 +27,8 @@ CREATE TABLE IF NOT EXISTS orders (
     comment varchar (400),
     is_deleted INTEGER,
     is_paid INTEGER,
-    is_editted INTEGER
+    is_editted INTEGER,
+    order_updated_at BIGINT
 );
 `
 
@@ -54,6 +55,7 @@ type Order struct {
 	isDeleted uint32 `db:"is_deleted"`
 	isPaid uint32 `db:"is_paid"`
 	isEdited uint32 `db:"is_editted"`
+	orderUpdatedAt uint64 `db:"order_updated_at"`
 }
 
 func CreateOrderIfNotExsists(db *sqlx.DB) {
@@ -63,6 +65,7 @@ func CreateOrderIfNotExsists(db *sqlx.DB) {
 	db.MustExec(schemaCreateIndexForOrder2)
 	db.MustExec(schemaCreateIndexForOrder3)
 	db.MustExec(schemaCreateIndexForOrder4)
+	db.MustExec("ALTER TABLE orders ADD COLUMN IF NOT EXISTS order_updated_at BIGINT DEFAULT 0")
 }
 
 func StoreOrder(tx *sqlx.Tx, order *pb.OrderRequest) (uint64, error)  {
@@ -70,8 +73,8 @@ func StoreOrder(tx *sqlx.Tx, order *pb.OrderRequest) (uint64, error)  {
 	var lastInsertId uint64
 	err := tx.QueryRow("INSERT INTO orders " +
 		"(order_document, money_movement, billing_no, staff_id, customer_id," +
-		" supplier_id, order_date, payment_id, error_msg, comment, is_deleted, is_paid, is_editted) " +
-		"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning order_id;",
+		" supplier_id, order_date, payment_id, error_msg, comment, is_deleted, is_paid, is_editted, order_updated_at) " +
+		"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) returning order_id;",
 		order.OrderDocument,
 		order.MoneyMovementType,
 		order.BillingNo,
@@ -84,7 +87,8 @@ func StoreOrder(tx *sqlx.Tx, order *pb.OrderRequest) (uint64, error)  {
 		order.Comment,
 		order.IsDeleted,
 		order.IsPaid,
-		order.IsEdited).Scan(&lastInsertId)
+		order.IsEdited,
+		order.OrderUpdatedAt).Scan(&lastInsertId)
 
 	if err != nil {
 		return ErrorFunc(err)
@@ -100,7 +104,7 @@ func UpdateOrder(tx *sqlx.Tx, order *pb.OrderRequest) (uint64, error)  {
 
 	stmt, err :=tx.Prepare("UPDATE orders SET order_document=$1, money_movement=$2, billing_no=$3, " +
 		"staff_id=$4, customer_id=$5, supplier_id=$6, order_date=$7, payment_id=$8, " +
-		"error_msg=$9, comment=$10, is_deleted=$11, is_paid=$12, is_editted=$13 WHERE order_id=$14")
+		"error_msg=$9, comment=$10, is_deleted=$11, is_paid=$12, is_editted=$13, order_updated_at=$14 WHERE order_id=$15")
 	if err != nil {
 		return ErrorFunc(err)
 	}
@@ -118,6 +122,7 @@ func UpdateOrder(tx *sqlx.Tx, order *pb.OrderRequest) (uint64, error)  {
 		order.IsDeleted,
 		order.IsPaid,
 		order.IsEdited,
+		order.OrderUpdatedAt,
 		order.OrderId)
 
 	if err != nil {
@@ -225,7 +230,7 @@ func AllOrdersForRecentFilter(db *sqlx.DB, orderFilter *pb.OrderFilter) ([]*pb.O
 	rows, err := db.Queryx("SELECT order_id, order_document, money_movement, billing_no, " +
 		"staff_id, customer_id, supplier_id, order_date, " +
 		"payment_id, error_msg, comment, is_deleted, is_paid," +
-		" is_editted FROM orders WHERE order_date>$1 ORDER BY order_date DESC LIMIT $2", orderFilter.OrderDate, orderFilter.Limit)
+		" is_editted FROM orders WHERE order_updated_at >= $1 ORDER BY order_date DESC LIMIT $2", orderFilter.OrderDate, orderFilter.Limit)
 
 	if err != nil {
 		print("error")

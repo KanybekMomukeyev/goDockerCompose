@@ -247,6 +247,7 @@ message OrderRequest {
     uint32 isDeleted = 12;
     uint32 isPaid = 13;
     uint32 isEdited = 14;
+    uint64 orderUpdatedAt = 15;
 }
 
 message OrderFilter {
