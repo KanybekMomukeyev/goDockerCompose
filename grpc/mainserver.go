@@ -1140,6 +1140,10 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 
 	} else if creatOrdReq.Order.OrderDocument == 11000 {
 		orderDocument = ".moneyGoneEdited"
+	} else if creatOrdReq.Order.OrderDocument == 12000 {
+		orderDocument = "customerMadePreOrder"
+	} else if creatOrdReq.Order.OrderDocument == 13000 {
+		orderDocument = "stokTaking"
 	}
 
 	// orderDetails
@@ -1234,21 +1238,24 @@ func (s *server) AllOrdersForInitial(ctx context.Context, orderFilter *pb.OrderF
 		createOrderRequest.Payment = payment
 
 		if order.CustomerId == 0 && order.SupplierId == 0 {
-
 		} else {
-			transaction, error := model.TransactionForOrder(db, order)
-			if error != nil {
-				break
-				return nil, err
-			}
-			createOrderRequest.Transaction = transaction
+			if createOrderRequest.Order.OrderDocument != 12000 {
 
-			//account, error := model.AccountForOrder(db, order)
-			//if error != nil {
-			//	break
-			//	return nil, err
-			//}
-			//createOrderRequest.Account = account
+				transaction, error := model.TransactionForOrder(db, order)
+				if error != nil {
+					break
+					log.WithFields(log.Fields{"error": error}).Warn("")
+					return nil, err
+				}
+				createOrderRequest.Transaction = transaction
+
+				//account, error := model.AccountForOrder(db, order)
+				//if error != nil {
+				//	break
+				//	return nil, err
+				//}
+				//createOrderRequest.Account = account
+			}
 		}
 
 		orderDetails, error := model.AllOrderDetailsForOrder(db, order)
@@ -1295,21 +1302,23 @@ func (s *server) AllOrdersForRecent(ctx context.Context, orderFilter *pb.OrderFi
 		createOrderRequest.Payment = payment
 
 		if order.CustomerId == 0 && order.SupplierId == 0 {
-
 		} else {
-			transaction, error := model.TransactionForOrder(db, order)
-			if error != nil {
-				break
-				return nil, err
-			}
-			createOrderRequest.Transaction = transaction
+			if createOrderRequest.Order.OrderDocument != 12000 {
 
-			//account, error := model.AccountForOrder(db, order)
-			//if error != nil {
-			//	break
-			//	return nil, err
-			//}
-			//createOrderRequest.Account = account
+				transaction, error := model.TransactionForOrder(db, order)
+				if error != nil {
+					break
+					return nil, err
+				}
+				createOrderRequest.Transaction = transaction
+
+				//account, error := model.AccountForOrder(db, order)
+				//if error != nil {
+				//	break
+				//	return nil, err
+				//}
+				//createOrderRequest.Account = account
+			}
 		}
 
 		orderDetails, error := model.AllOrderDetailsForOrder(db, order)
