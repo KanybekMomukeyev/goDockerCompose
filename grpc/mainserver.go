@@ -922,260 +922,273 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 		return nil, authorizeError
 	}
 
-	//log.WithFields(log.Fields{"payment transaction begin": 1, }).Info("")
-	//time.Sleep(1 * time.Second)
+	ordReq := new(OrdReq)
+	ordReq.createOrdReq = creatOrdReq
+	ordReq.ctx = ctx
 
-	// payment
-	tx := db.MustBegin()
+	inputChannel <- ordReq
 
-	paymentSerial, err := model.StorePayment(tx, creatOrdReq.Payment)
-	if err != nil {
-		tx.Rollback()
-		log.WithFields(log.Fields{"err": err}).Warn("")
-		return nil, err
+	select {
+	case msg1 := <-outputChannel:
+		return msg1, nil
+	case error := <-errorChannel:
+		return nil, error
 	}
 
-	creatOrdReq.Payment.PaymentId = paymentSerial
-	creatOrdReq.Order.PaymentId = paymentSerial
-
-
-	//log.WithFields(log.Fields{"order transaction begin": 1, }).Info("")
-	//time.Sleep(6 * time.Second)
-	// order
-	orderSerial, err := model.StoreOrder(tx, creatOrdReq.Order)
-	if err != nil {
-		tx.Rollback()
-		log.WithFields(log.Fields{"err": err}).Warn("")
-		return nil, err
-	}
-
-	creatOrdReq.Order.OrderId = orderSerial
-	if creatOrdReq.Transaction != nil {
-		creatOrdReq.Transaction.OrderId = orderSerial
-	}
-
-
-	//log.WithFields(log.Fields{"transaction transaction begin": 1, }).Info("")
-	//time.Sleep(6 * time.Second)
-	// transaction
-	if creatOrdReq.Transaction != nil {
-		transactionSerial, err := model.StoreTransaction(tx, creatOrdReq.Transaction)
-		if err != nil {
-			tx.Rollback()
-			log.WithFields(log.Fields{"err": err}).Warn("")
-			return nil, err
-		}
-		creatOrdReq.Transaction.TransactionId = transactionSerial
-	}
-
-
-	//log.WithFields(log.Fields{"account transaction begin": 1, }).Info("")
-	//time.Sleep(6 * time.Second)
-
-	// order document, to update customer/supplier balance
-	// also update product amount in stock
-	var orderDocument string = ""
-	if creatOrdReq.Order.OrderDocument == 0 {
-		orderDocument = ".none"
-
-	} else if creatOrdReq.Order.OrderDocument == 1000 {
-		orderDocument = ".productOrderSaledToCustomer"
-
-		// customer balance
-		acountReq, err := model.AccountForCustomer(db, creatOrdReq.Order.CustomerId)
-		if err != nil {
-			return nil, err
-		}
-		acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
-		model.UpdateCustomerBalance(tx, creatOrdReq.Order.CustomerId, acountReq.Balance)
-
-		// product amount
-		_, error := model.DecreaseProductsInStock(db, tx, creatOrdReq.OrderDetails)
-		if error != nil {
-			return nil, error
-		}
-
-	} else if creatOrdReq.Order.OrderDocument == 2000 {
-		orderDocument = ".productOrderSaleEditedToCustomer"
-
-		// customer balance
-		acountReq, err := model.AccountForCustomer(db, creatOrdReq.Order.CustomerId)
-		if err != nil {
-			return nil, err
-		}
-		acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
-		model.UpdateCustomerBalance(tx, creatOrdReq.Order.CustomerId, acountReq.Balance)
-
-		// product amount
-		_, error := model.IncreaseProductsInStock(db, tx, creatOrdReq.OrderDetails)
-		if error != nil {
-			return nil, error
-		}
-
-	} else if creatOrdReq.Order.OrderDocument == 3000 {
-		orderDocument = ".productOrderReceivedFromSupplier"
-
-		// supplier balance
-		acountReq, err := model.AccountForSupplier(db, creatOrdReq.Order.SupplierId)
-		if err != nil {
-			return nil, err
-		}
-		acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
-		model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
-
-		// product amount
-		_, error := model.IncreaseProductsInStock(db, tx, creatOrdReq.OrderDetails)
-		if error != nil {
-			return nil, error
-		}
-
-	} else if creatOrdReq.Order.OrderDocument == 4000 {
-		orderDocument = ".productOrderReceiveEditedFromSupplier"
-
-		// supplier balance
-		acountReq, err := model.AccountForSupplier(db, creatOrdReq.Order.SupplierId)
-		if err != nil {
-			return nil, err
-		}
-		acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
-		model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
-
-		// product amount
-		_, error := model.DecreaseProductsInStock(db, tx, creatOrdReq.OrderDetails)
-		if error != nil {
-			return nil, error
-		}
-
-	} else if creatOrdReq.Order.OrderDocument == 5000 {
-		orderDocument = ".productReturnedFromCustomer"
-
-		// customer balance
-		acountReq, err := model.AccountForCustomer(db, creatOrdReq.Order.CustomerId)
-		if err != nil {
-			return nil, err
-		}
-		acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
-		model.UpdateCustomerBalance(tx, creatOrdReq.Order.CustomerId, acountReq.Balance)
-
-		// product amount
-		_, error := model.IncreaseProductsInStock(db, tx, creatOrdReq.OrderDetails)
-		if error != nil {
-			return nil, error
-		}
-
-	} else if creatOrdReq.Order.OrderDocument == 6000 {
-		orderDocument = ".productReturneEditedFromCustomer"
-
-	} else if creatOrdReq.Order.OrderDocument == 5500 {
-		orderDocument = ".productReturnedToSupplier"
-
-		// supplier balance
-		acountReq, err := model.AccountForSupplier(db, creatOrdReq.Order.SupplierId)
-		if err != nil {
-			return nil, err
-		}
-		acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
-		model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
-
-		// product amount
-		_, error := model.DecreaseProductsInStock(db, tx, creatOrdReq.OrderDetails)
-		if error != nil {
-			return nil, error
-		}
-
-	} else if creatOrdReq.Order.OrderDocument == 6600 {
-		orderDocument = ".productReturneEditedToSupplier"
-
-	} else if creatOrdReq.Order.OrderDocument == 7000 {
-		orderDocument = ".moneyReceived"
-
-		if creatOrdReq.Order.CustomerId > 0 {
-
-			// customer balance
-			acountReq, err := model.AccountForCustomer(db, creatOrdReq.Order.CustomerId)
-			if err != nil {
-				return nil, err
-			}
-			acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
-			model.UpdateCustomerBalance(tx, creatOrdReq.Order.CustomerId, acountReq.Balance)
-
-		} else if creatOrdReq.Order.SupplierId > 0 {
-
-			// supplier balance
-			acountReq, err := model.AccountForSupplier(db, creatOrdReq.Order.SupplierId)
-			if err != nil {
-				return nil, err
-			}
-			acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
-			model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
-		}
-
-
-	} else if creatOrdReq.Order.OrderDocument == 8000 {
-		orderDocument = ".moneyReceiveEdited"
-
-
-	} else if creatOrdReq.Order.OrderDocument == 10000 {
-		orderDocument = ".moneyGone"
-
-		if creatOrdReq.Order.CustomerId > 0 {
-			// customer balance
-			acountReq, err := model.AccountForCustomer(db, creatOrdReq.Order.CustomerId)
-			if err != nil {
-				return nil, err
-			}
-			acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
-			model.UpdateCustomerBalance(tx, creatOrdReq.Order.CustomerId, acountReq.Balance)
-
-		} else if creatOrdReq.Order.SupplierId > 0 {
-			// supplier balance
-			acountReq, err := model.AccountForSupplier(db, creatOrdReq.Order.SupplierId)
-			if err != nil {
-				return nil, err
-			}
-			acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
-			model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
-		}
-
-
-	} else if creatOrdReq.Order.OrderDocument == 11000 {
-		orderDocument = ".moneyGoneEdited"
-	} else if creatOrdReq.Order.OrderDocument == 12000 {
-		orderDocument = "customerMadePreOrder"
-	} else if creatOrdReq.Order.OrderDocument == 13000 {
-		orderDocument = "stokTaking"
-	}
-
-	// orderDetails
-	for _, orderDetailReq := range creatOrdReq.OrderDetails {
-		orderDetailReq.OrderId = orderSerial
-
-		orderDetailSerial, err := model.StoreOrderDetails(tx, orderDetailReq)
-		if err != nil {
-			tx.Rollback()
-			log.WithFields(log.Fields{"err": err}).Warn("")
-			break
-			return nil, err
-		}
-
-		orderDetailReq.OrderDetailId = orderDetailSerial
-	}
-
-	contexErr := ctx.Err()
-	if contexErr != nil {
-		tx.Rollback()
-		log.WithFields(log.Fields{"err": contexErr}).Warn("")
-		return nil, contexErr
-	}
-
-	err = tx.Commit()
-	if err != nil {
-		log.WithFields(log.Fields{"err": err}).Warn("")
-		return nil, err
-	}
-
-	log.WithFields(log.Fields{"orderDocument": orderDocument}).Info("")
-	return creatOrdReq, nil
+	////log.WithFields(log.Fields{"payment transaction begin": 1, }).Info("")
+	////time.Sleep(1 * time.Second)
+	//
+	//// payment
+	//tx := db.MustBegin()
+	//
+	//paymentSerial, err := model.StorePayment(tx, creatOrdReq.Payment)
+	//if err != nil {
+	//	tx.Rollback()
+	//	log.WithFields(log.Fields{"err": err}).Warn("")
+	//	return nil, err
+	//}
+	//
+	//creatOrdReq.Payment.PaymentId = paymentSerial
+	//creatOrdReq.Order.PaymentId = paymentSerial
+	//
+	//
+	////log.WithFields(log.Fields{"order transaction begin": 1, }).Info("")
+	////time.Sleep(6 * time.Second)
+	//// order
+	//orderSerial, err := model.StoreOrder(tx, creatOrdReq.Order)
+	//if err != nil {
+	//	tx.Rollback()
+	//	log.WithFields(log.Fields{"err": err}).Warn("")
+	//	return nil, err
+	//}
+	//
+	//creatOrdReq.Order.OrderId = orderSerial
+	//if creatOrdReq.Transaction != nil {
+	//	creatOrdReq.Transaction.OrderId = orderSerial
+	//}
+	//
+	//
+	////log.WithFields(log.Fields{"transaction transaction begin": 1, }).Info("")
+	////time.Sleep(6 * time.Second)
+	//// transaction
+	//if creatOrdReq.Transaction != nil {
+	//	transactionSerial, err := model.StoreTransaction(tx, creatOrdReq.Transaction)
+	//	if err != nil {
+	//		tx.Rollback()
+	//		log.WithFields(log.Fields{"err": err}).Warn("")
+	//		return nil, err
+	//	}
+	//	creatOrdReq.Transaction.TransactionId = transactionSerial
+	//}
+	//
+	//
+	////log.WithFields(log.Fields{"account transaction begin": 1, }).Info("")
+	////time.Sleep(6 * time.Second)
+	//
+	//// order document, to update customer/supplier balance
+	//// also update product amount in stock
+	//var orderDocument string = ""
+	//if creatOrdReq.Order.OrderDocument == 0 {
+	//	orderDocument = ".none"
+	//
+	//} else if creatOrdReq.Order.OrderDocument == 1000 {
+	//	orderDocument = ".productOrderSaledToCustomer"
+	//
+	//	// customer balance
+	//	acountReq, err := model.AccountForCustomer(db, creatOrdReq.Order.CustomerId)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//	acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
+	//	model.UpdateCustomerBalance(tx, creatOrdReq.Order.CustomerId, acountReq.Balance)
+	//
+	//	// product amount
+	//	_, error := model.DecreaseProductsInStock(db, tx, creatOrdReq.OrderDetails)
+	//	if error != nil {
+	//		return nil, error
+	//	}
+	//
+	//} else if creatOrdReq.Order.OrderDocument == 2000 {
+	//	orderDocument = ".productOrderSaleEditedToCustomer"
+	//
+	//	// customer balance
+	//	acountReq, err := model.AccountForCustomer(db, creatOrdReq.Order.CustomerId)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//	acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
+	//	model.UpdateCustomerBalance(tx, creatOrdReq.Order.CustomerId, acountReq.Balance)
+	//
+	//	// product amount
+	//	_, error := model.IncreaseProductsInStock(db, tx, creatOrdReq.OrderDetails)
+	//	if error != nil {
+	//		return nil, error
+	//	}
+	//
+	//} else if creatOrdReq.Order.OrderDocument == 3000 {
+	//	orderDocument = ".productOrderReceivedFromSupplier"
+	//
+	//	// supplier balance
+	//	acountReq, err := model.AccountForSupplier(db, creatOrdReq.Order.SupplierId)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//	acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
+	//	model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
+	//
+	//	// product amount
+	//	_, error := model.IncreaseProductsInStock(db, tx, creatOrdReq.OrderDetails)
+	//	if error != nil {
+	//		return nil, error
+	//	}
+	//
+	//} else if creatOrdReq.Order.OrderDocument == 4000 {
+	//	orderDocument = ".productOrderReceiveEditedFromSupplier"
+	//
+	//	// supplier balance
+	//	acountReq, err := model.AccountForSupplier(db, creatOrdReq.Order.SupplierId)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//	acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
+	//	model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
+	//
+	//	// product amount
+	//	_, error := model.DecreaseProductsInStock(db, tx, creatOrdReq.OrderDetails)
+	//	if error != nil {
+	//		return nil, error
+	//	}
+	//
+	//} else if creatOrdReq.Order.OrderDocument == 5000 {
+	//	orderDocument = ".productReturnedFromCustomer"
+	//
+	//	// customer balance
+	//	acountReq, err := model.AccountForCustomer(db, creatOrdReq.Order.CustomerId)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//	acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
+	//	model.UpdateCustomerBalance(tx, creatOrdReq.Order.CustomerId, acountReq.Balance)
+	//
+	//	// product amount
+	//	_, error := model.IncreaseProductsInStock(db, tx, creatOrdReq.OrderDetails)
+	//	if error != nil {
+	//		return nil, error
+	//	}
+	//
+	//} else if creatOrdReq.Order.OrderDocument == 6000 {
+	//	orderDocument = ".productReturneEditedFromCustomer"
+	//
+	//} else if creatOrdReq.Order.OrderDocument == 5500 {
+	//	orderDocument = ".productReturnedToSupplier"
+	//
+	//	// supplier balance
+	//	acountReq, err := model.AccountForSupplier(db, creatOrdReq.Order.SupplierId)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//	acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
+	//	model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
+	//
+	//	// product amount
+	//	_, error := model.DecreaseProductsInStock(db, tx, creatOrdReq.OrderDetails)
+	//	if error != nil {
+	//		return nil, error
+	//	}
+	//
+	//} else if creatOrdReq.Order.OrderDocument == 6600 {
+	//	orderDocument = ".productReturneEditedToSupplier"
+	//
+	//} else if creatOrdReq.Order.OrderDocument == 7000 {
+	//	orderDocument = ".moneyReceived"
+	//
+	//	if creatOrdReq.Order.CustomerId > 0 {
+	//
+	//		// customer balance
+	//		acountReq, err := model.AccountForCustomer(db, creatOrdReq.Order.CustomerId)
+	//		if err != nil {
+	//			return nil, err
+	//		}
+	//		acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
+	//		model.UpdateCustomerBalance(tx, creatOrdReq.Order.CustomerId, acountReq.Balance)
+	//
+	//	} else if creatOrdReq.Order.SupplierId > 0 {
+	//
+	//		// supplier balance
+	//		acountReq, err := model.AccountForSupplier(db, creatOrdReq.Order.SupplierId)
+	//		if err != nil {
+	//			return nil, err
+	//		}
+	//		acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
+	//		model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
+	//	}
+	//
+	//
+	//} else if creatOrdReq.Order.OrderDocument == 8000 {
+	//	orderDocument = ".moneyReceiveEdited"
+	//
+	//
+	//} else if creatOrdReq.Order.OrderDocument == 10000 {
+	//	orderDocument = ".moneyGone"
+	//
+	//	if creatOrdReq.Order.CustomerId > 0 {
+	//		// customer balance
+	//		acountReq, err := model.AccountForCustomer(db, creatOrdReq.Order.CustomerId)
+	//		if err != nil {
+	//			return nil, err
+	//		}
+	//		acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
+	//		model.UpdateCustomerBalance(tx, creatOrdReq.Order.CustomerId, acountReq.Balance)
+	//
+	//	} else if creatOrdReq.Order.SupplierId > 0 {
+	//		// supplier balance
+	//		acountReq, err := model.AccountForSupplier(db, creatOrdReq.Order.SupplierId)
+	//		if err != nil {
+	//			return nil, err
+	//		}
+	//		acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
+	//		model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
+	//	}
+	//
+	//
+	//} else if creatOrdReq.Order.OrderDocument == 11000 {
+	//	orderDocument = ".moneyGoneEdited"
+	//} else if creatOrdReq.Order.OrderDocument == 12000 {
+	//	orderDocument = "customerMadePreOrder"
+	//} else if creatOrdReq.Order.OrderDocument == 13000 {
+	//	orderDocument = "stokTaking"
+	//}
+	//
+	//// orderDetails
+	//for _, orderDetailReq := range creatOrdReq.OrderDetails {
+	//	orderDetailReq.OrderId = orderSerial
+	//
+	//	orderDetailSerial, err := model.StoreOrderDetails(tx, orderDetailReq)
+	//	if err != nil {
+	//		tx.Rollback()
+	//		log.WithFields(log.Fields{"err": err}).Warn("")
+	//		break
+	//		return nil, err
+	//	}
+	//
+	//	orderDetailReq.OrderDetailId = orderDetailSerial
+	//}
+	//
+	//contexErr := ctx.Err()
+	//if contexErr != nil {
+	//	tx.Rollback()
+	//	log.WithFields(log.Fields{"err": contexErr}).Warn("")
+	//	return nil, contexErr
+	//}
+	//
+	//err = tx.Commit()
+	//if err != nil {
+	//	log.WithFields(log.Fields{"err": err}).Warn("")
+	//	return nil, err
+	//}
+	//
+	//log.WithFields(log.Fields{"orderDocument": orderDocument}).Info("")
+	//return creatOrdReq, nil
 }
 
 func (s *server) UpdateOrderWith(ctx context.Context, orderReq *pb.OrderRequest) (*pb.OrderRequest, error) {
@@ -1338,6 +1351,271 @@ func (s *server) AllOrdersForRecent(ctx context.Context, orderFilter *pb.OrderFi
 	return allOrderResponse, nil
 }
 
+type OrdReq struct {
+	createOrdReq *pb.CreateOrderRequest
+	ctx context.Context
+}
+var inputChannel chan *OrdReq
+var outputChannel chan *pb.CreateOrderRequest
+var errorChannel chan error
+
+func dbwriter() {
+	for creatOrdReq_ := range inputChannel {
+
+		creatOrdReq := creatOrdReq_.createOrdReq
+		ctx := creatOrdReq_.ctx
+
+		// payment
+		tx := db.MustBegin()
+
+		paymentSerial, err := model.StorePayment(tx, creatOrdReq.Payment)
+		if err != nil {
+			tx.Rollback()
+			log.WithFields(log.Fields{"err": err}).Warn("")
+			errorChannel <- err
+		}
+
+		creatOrdReq.Payment.PaymentId = paymentSerial
+		creatOrdReq.Order.PaymentId = paymentSerial
+
+		orderSerial, err := model.StoreOrder(tx, creatOrdReq.Order)
+		if err != nil {
+			tx.Rollback()
+			log.WithFields(log.Fields{"err": err}).Warn("")
+			errorChannel <- err
+		}
+
+		creatOrdReq.Order.OrderId = orderSerial
+		if creatOrdReq.Transaction != nil {
+			creatOrdReq.Transaction.OrderId = orderSerial
+		}
+
+
+		//log.WithFields(log.Fields{"transaction transaction begin": 1, }).Info("")
+		//time.Sleep(6 * time.Second)
+		// transaction
+		if creatOrdReq.Transaction != nil {
+			transactionSerial, err := model.StoreTransaction(tx, creatOrdReq.Transaction)
+			if err != nil {
+				tx.Rollback()
+				log.WithFields(log.Fields{"err": err}).Warn("")
+				errorChannel <- err
+			}
+			creatOrdReq.Transaction.TransactionId = transactionSerial
+		}
+
+
+		//log.WithFields(log.Fields{"account transaction begin": 1, }).Info("")
+		//time.Sleep(6 * time.Second)
+
+		// order document, to update customer/supplier balance
+		// also update product amount in stock
+		var orderDocument string = ""
+		if creatOrdReq.Order.OrderDocument == 0 {
+			orderDocument = ".none"
+
+		} else if creatOrdReq.Order.OrderDocument == 1000 {
+			orderDocument = ".productOrderSaledToCustomer"
+
+			// customer balance
+			acountReq, err := model.AccountForCustomer(db, creatOrdReq.Order.CustomerId)
+			if err != nil {
+				errorChannel <- err
+			}
+			acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
+			model.UpdateCustomerBalance(tx, creatOrdReq.Order.CustomerId, acountReq.Balance)
+
+			// product amount
+			_, error := model.DecreaseProductsInStock(db, tx, creatOrdReq.OrderDetails)
+			if error != nil {
+				errorChannel <- err
+			}
+
+		} else if creatOrdReq.Order.OrderDocument == 2000 {
+			orderDocument = ".productOrderSaleEditedToCustomer"
+
+			// customer balance
+			acountReq, err := model.AccountForCustomer(db, creatOrdReq.Order.CustomerId)
+			if err != nil {
+				errorChannel <- err
+			}
+			acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
+			model.UpdateCustomerBalance(tx, creatOrdReq.Order.CustomerId, acountReq.Balance)
+
+			// product amount
+			_, error := model.IncreaseProductsInStock(db, tx, creatOrdReq.OrderDetails)
+			if error != nil {
+				errorChannel <- err
+			}
+
+		} else if creatOrdReq.Order.OrderDocument == 3000 {
+			orderDocument = ".productOrderReceivedFromSupplier"
+
+			// supplier balance
+			acountReq, err := model.AccountForSupplier(db, creatOrdReq.Order.SupplierId)
+			if err != nil {
+				errorChannel <- err
+			}
+			acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
+			model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
+
+			// product amount
+			_, error := model.IncreaseProductsInStock(db, tx, creatOrdReq.OrderDetails)
+			if error != nil {
+				errorChannel <- err
+			}
+
+		} else if creatOrdReq.Order.OrderDocument == 4000 {
+			orderDocument = ".productOrderReceiveEditedFromSupplier"
+
+			// supplier balance
+			acountReq, err := model.AccountForSupplier(db, creatOrdReq.Order.SupplierId)
+			if err != nil {
+				errorChannel <- err
+			}
+			acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
+			model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
+
+			// product amount
+			_, error := model.DecreaseProductsInStock(db, tx, creatOrdReq.OrderDetails)
+			if error != nil {
+				errorChannel <- err
+			}
+
+		} else if creatOrdReq.Order.OrderDocument == 5000 {
+			orderDocument = ".productReturnedFromCustomer"
+
+			// customer balance
+			acountReq, err := model.AccountForCustomer(db, creatOrdReq.Order.CustomerId)
+			if err != nil {
+				errorChannel <- err
+			}
+			acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
+			model.UpdateCustomerBalance(tx, creatOrdReq.Order.CustomerId, acountReq.Balance)
+
+			// product amount
+			_, error := model.IncreaseProductsInStock(db, tx, creatOrdReq.OrderDetails)
+			if error != nil {
+				errorChannel <- err
+			}
+
+		} else if creatOrdReq.Order.OrderDocument == 6000 {
+			orderDocument = ".productReturneEditedFromCustomer"
+
+		} else if creatOrdReq.Order.OrderDocument == 5500 {
+			orderDocument = ".productReturnedToSupplier"
+
+			// supplier balance
+			acountReq, err := model.AccountForSupplier(db, creatOrdReq.Order.SupplierId)
+			if err != nil {
+				errorChannel <- err
+			}
+			acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
+			model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
+
+			// product amount
+			_, error := model.DecreaseProductsInStock(db, tx, creatOrdReq.OrderDetails)
+			if error != nil {
+				errorChannel <- err
+			}
+
+		} else if creatOrdReq.Order.OrderDocument == 6600 {
+			orderDocument = ".productReturneEditedToSupplier"
+
+		} else if creatOrdReq.Order.OrderDocument == 7000 {
+			orderDocument = ".moneyReceived"
+
+			if creatOrdReq.Order.CustomerId > 0 {
+
+				// customer balance
+				acountReq, err := model.AccountForCustomer(db, creatOrdReq.Order.CustomerId)
+				if err != nil {
+					errorChannel <- err
+				}
+				acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
+				model.UpdateCustomerBalance(tx, creatOrdReq.Order.CustomerId, acountReq.Balance)
+
+			} else if creatOrdReq.Order.SupplierId > 0 {
+
+				// supplier balance
+				acountReq, err := model.AccountForSupplier(db, creatOrdReq.Order.SupplierId)
+				if err != nil {
+					errorChannel <- err
+				}
+				acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
+				model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
+			}
+
+
+		} else if creatOrdReq.Order.OrderDocument == 8000 {
+			orderDocument = ".moneyReceiveEdited"
+
+
+		} else if creatOrdReq.Order.OrderDocument == 10000 {
+			orderDocument = ".moneyGone"
+
+			if creatOrdReq.Order.CustomerId > 0 {
+				// customer balance
+				acountReq, err := model.AccountForCustomer(db, creatOrdReq.Order.CustomerId)
+				if err != nil {
+					errorChannel <- err
+				}
+				acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
+				model.UpdateCustomerBalance(tx, creatOrdReq.Order.CustomerId, acountReq.Balance)
+
+			} else if creatOrdReq.Order.SupplierId > 0 {
+				// supplier balance
+				acountReq, err := model.AccountForSupplier(db, creatOrdReq.Order.SupplierId)
+				if err != nil {
+					errorChannel <- err
+				}
+				acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
+				model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
+			}
+
+
+		} else if creatOrdReq.Order.OrderDocument == 11000 {
+			orderDocument = ".moneyGoneEdited"
+		} else if creatOrdReq.Order.OrderDocument == 12000 {
+			orderDocument = "customerMadePreOrder"
+		} else if creatOrdReq.Order.OrderDocument == 13000 {
+			orderDocument = "stokTaking"
+		}
+
+		// orderDetails
+		for _, orderDetailReq := range creatOrdReq.OrderDetails {
+			orderDetailReq.OrderId = orderSerial
+
+			orderDetailSerial, err := model.StoreOrderDetails(tx, orderDetailReq)
+			if err != nil {
+				tx.Rollback()
+				log.WithFields(log.Fields{"err": err}).Warn("")
+				break
+				errorChannel <- err
+			}
+
+			orderDetailReq.OrderDetailId = orderDetailSerial
+		}
+
+		contexErr := ctx.Err()
+		if contexErr != nil {
+			tx.Rollback()
+			log.WithFields(log.Fields{"err": contexErr}).Warn("")
+			errorChannel <- err
+		}
+
+		err = tx.Commit()
+		if err != nil {
+			log.WithFields(log.Fields{"err": err}).Warn("")
+			errorChannel <- err
+		}
+
+		log.WithFields(log.Fields{"orderDocument": orderDocument}).Info("")
+
+		outputChannel <- creatOrdReq
+	}
+}
+
 var db *sqlx.DB
 
 func main() {
@@ -1388,6 +1666,11 @@ func main() {
 
 	model.CreateProductIfNotExsists(db)
 	model.CreateTransactionIfNotExsists(db)
+
+	inputChannel = make(chan *OrdReq)
+	outputChannel = make(chan *pb.CreateOrderRequest)
+	errorChannel = make(chan error)
+	go dbwriter()
 
 	var err error
 	var lis net.Listener

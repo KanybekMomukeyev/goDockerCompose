@@ -25,6 +25,25 @@ func main() {
 	*p = *p / 10
 	fmt.Println(i)
 	fmt.Println(*p)
+
+	//pongs chan<- string   ==> pongs <- "hello world"
+	//pings <-chan string   ==> msg := <-pings
+
+	//func ping(pings chan<- string, msg string) { only accepts a channel for sending values
+	//pings <- msg
+	//}
+
+	//func pong(pings <-chan string, pongs chan<- string) { pong function accepts one channel for receives (pings) and a second for sends (pongs).
+	//msg := <-pings
+	//pongs <- msg
+	//}
+	pings := make(chan string)
+	pongs := make(chan string)
+
+	go ping(pings, "passed message")
+	go pong(pings, pongs)
+
+	fmt.Println(<-pongs)
 }
 
 func testRunConcurrent(bridgeReferenceFromMain chan int) {
@@ -42,4 +61,13 @@ func testRunConcurrent(bridgeReferenceFromMain chan int) {
 	//since the function called from your new goroutine ends execution here,
 	//the new goroutines also gracefully ends.
 
+}
+
+func ping(pings chan<- string, msg string) {
+	pings <- msg
+}
+
+func pong(pings <-chan string, pongs chan<- string) {
+	msg := <-pings
+	pongs <- msg
 }
