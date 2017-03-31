@@ -29,7 +29,7 @@ func doWork(id int, j *job) {
 
 	if j.duration < 4000000000 {
 		go func() {
-			jobsFinishedCahnnel <- j
+			jobsFinishedChannel <- j
 		}()
 	} else {
 		go func() {
@@ -50,7 +50,7 @@ func requestHandler(jobs chan *job, w http.ResponseWriter, r *http.Request) (*jo
 	w.WriteHeader(http.StatusCreated)
 
 	select {
-	case jobFinished := <-jobsFinishedCahnnel:
+	case jobFinished := <-jobsFinishedChannel:
 		return jobFinished, nil
 	case error := <-errorChannel:
 		return nil, error
@@ -58,7 +58,7 @@ func requestHandler(jobs chan *job, w http.ResponseWriter, r *http.Request) (*jo
 }
 
 var jobsChannel chan *job
-var jobsFinishedCahnnel chan *job
+var jobsFinishedChannel chan *job
 var errorChannel chan error
 
 func main() {
@@ -70,7 +70,7 @@ func main() {
 	flag.Parse()
 
 	jobsChannel = make(chan *job, *maxQueueSize)
-	jobsFinishedCahnnel = make(chan *job, *maxQueueSize)
+	jobsFinishedChannel = make(chan *job, *maxQueueSize)
 	errorChannel = make(chan error, *maxQueueSize)
 
 	go listenForJobReceive()
@@ -84,6 +84,6 @@ func main() {
 			fmt.Printf("worker: totallly completed %s!\n", res.name)
 		}
 	})
-	
+
 	log.Fatal(http.ListenAndServe(":"+*port, nil))
 }
