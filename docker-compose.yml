@@ -1,45 +1,23 @@
 store:
   # data-only container
   restart: always
-  image: postgres:latest # reuse postgres container
+  image: kano/rpi-postgres # reuse postgres container
   volumes:
       - /var/lib/postgresql/data
   command: "true"
 
-#s3minio:
-#    image: minio/minio
-#    ports:
-#      - "9000:9000"
-#    volumes:
-#      - "./kanoexport:/export"
-#    environment:
-#      - "MINIO_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE"
-#      - "MINIO_SECRET_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
-#    command: server /export
-
 postgres:
   restart: always
-  image: postgres:latest
+  image: kano/rpi-postgres
   ports:
       - "5432" # random available host port will be chosen, same as -P
   volumes_from:
       - store # connect postgres and the data-only container
   environment:
-      - POSTGRES_PASSWORD=nazgulum
-      - POSTGRES_USER=kanybek
-      - POSTGRES_DATABASENAME=databasename
+        - POSTGRES_PASSWORD=nazgulum
+        - POSTGRES_USER=kanybek
+        - POSTGRES_DATABASENAME=databasename
       # you can also set the postgres username and database name
-#go:
-#  restart: always
-#  build: ./api
-#  ports:
-#    - 8080:8080
-#  links:
-#    - postgres:db
-##  environment:
-##    - DB_NAME=project
-##  volumes:
-##        - ./api:/go/src/github.com/KanybekMomukeyev/goDockerCompose/api
 
 go:
   restart: always
@@ -48,5 +26,3 @@ go:
     - 50051:50051
   links:
     - postgres:db
-
-

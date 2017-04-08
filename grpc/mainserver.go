@@ -1340,29 +1340,20 @@ func (s *server) AllOrdersForRecent(ctx context.Context, orderFilter *pb.OrderFi
 
 var db *sqlx.DB
 
+//var orderCreateChannel chan *job
+//var orderCreateFinishedChannel chan *job
+//var errorChannel chan error
+
 func main() {
 
 	var databaseError error
 	db, databaseError = model.NewDB("datasource")
 	if databaseError != nil {
-		log.WithFields(log.Fields{
-			"omg":    databaseError,
-			"number": 100,
-		}).Fatal("failed to listen:")
+		log.WithFields(log.Fields{"omg": databaseError,}).Fatal("failed to listen:")
 	}
 
-	//db.SetMaxIdleConns()
-	//db.SetMaxOpenConns()
-
-	log.WithFields(log.Fields{
-		"animal": "walrus",
-		"size":   10,
-	}).Info("A group of walrus emerges from the ocean")
-
-	log.WithFields(log.Fields{
-		"omg":    true,
-		"number": 122,
-	}).Warn("The group's number increased tremendously!")
+	log.WithFields(log.Fields{"animal": "walrus", }).Info("emerges from the ocean")
+	log.WithFields(log.Fields{"omg": true,}).Warn("The group's number increased tremendously!")
 
 	// A common pattern is to re-use fields between logging statements by re-using
 	// the logrus.Entry returned from WithFields()
