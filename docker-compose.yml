@@ -1,14 +1,14 @@
 store:
   # data-only container
   restart: always
-  image: kano/rpi-postgres # reuse postgres container
+  image: tobi312/rpi-postgresql # reuse postgres container
   volumes:
       - /var/lib/postgresql/data
   command: "true"
 
 postgres:
   restart: always
-  image: kano/rpi-postgres
+  image: tobi312/rpi-postgresql
   ports:
       - "5432" # random available host port will be chosen, same as -P
   volumes_from:
