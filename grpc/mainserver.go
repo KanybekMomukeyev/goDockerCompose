@@ -922,9 +922,6 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 		return nil, authorizeError
 	}
 
-	//log.WithFields(log.Fields{"payment transaction begin": 1, }).Info("")
-	//time.Sleep(1 * time.Second)
-
 	// payment
 	tx := db.MustBegin()
 
@@ -938,9 +935,6 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 	creatOrdReq.Payment.PaymentId = paymentSerial
 	creatOrdReq.Order.PaymentId = paymentSerial
 
-
-	//log.WithFields(log.Fields{"order transaction begin": 1, }).Info("")
-	//time.Sleep(6 * time.Second)
 	// order
 	orderSerial, err := model.StoreOrder(tx, creatOrdReq.Order)
 	if err != nil {
@@ -954,9 +948,6 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 		creatOrdReq.Transaction.OrderId = orderSerial
 	}
 
-
-	//log.WithFields(log.Fields{"transaction transaction begin": 1, }).Info("")
-	//time.Sleep(6 * time.Second)
 	// transaction
 	if creatOrdReq.Transaction != nil {
 		transactionSerial, err := model.StoreTransaction(tx, creatOrdReq.Transaction)
@@ -967,10 +958,6 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 		}
 		creatOrdReq.Transaction.TransactionId = transactionSerial
 	}
-
-
-	//log.WithFields(log.Fields{"account transaction begin": 1, }).Info("")
-	//time.Sleep(6 * time.Second)
 
 	// order document, to update customer/supplier balance
 	// also update product amount in stock

@@ -149,7 +149,7 @@ func RecentTransactionForCustomer(db *sqlx.DB, custReq *pb.CustomerRequest) (*pb
 		return transactions[0], nil
 	}
 
-	return nil, errors.New("Not found")
+	return nil, errors.New("Not found RecentTransactionForCustomer")
 }
 
 func RecentTransactionForSupplier(db *sqlx.DB, supReq *pb.SupplierRequest) (*pb.TransactionRequest, error) {
@@ -190,7 +190,7 @@ func RecentTransactionForSupplier(db *sqlx.DB, supReq *pb.SupplierRequest) (*pb.
 		return transactions[0], nil
 	}
 
-	return nil, errors.New("Not found")
+	return nil, errors.New("Not found RecentTransactionForSupplier")
 }
 
 func AllTransactionsForFilter(db *sqlx.DB, transactFilter *pb.TransactionFilter) ([]*pb.TransactionRequest, error) {
@@ -283,5 +283,5 @@ func TransactionForOrder(db *sqlx.DB, orderReq *pb.OrderRequest) (*pb.Transactio
 		return transactions[0], nil
 	}
 
-	return nil, errors.New("Not found")
+	return nil, errors.New("Not found TransactionForOrder")
 }
