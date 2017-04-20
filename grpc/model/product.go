@@ -152,6 +152,10 @@ func IncreaseProductsInStock(db *sqlx.DB, tx *sqlx.Tx, orderDetailReqs []*pb.Ord
 
 func DecreaseProductsInStock(db *sqlx.DB, tx *sqlx.Tx, orderDetailReqs []*pb.OrderDetailRequest) (uint64, error) {
 
+	//if len(orderDetailReqs) == 0 {
+	//	return 0, nil
+	//}
+
 	productIds := make([]uint64, 0)
 	updateValues := make(map[uint64]float64)
 

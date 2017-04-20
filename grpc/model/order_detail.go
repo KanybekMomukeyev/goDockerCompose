@@ -209,7 +209,7 @@ func RecentOrderDetailForProduct(db *sqlx.DB, productReq *pb.ProductRequest) (*p
 		return orderDetails[0], nil
 	}
 
-	return nil, errors.New("Not found")
+	return nil, errors.New("Not found RecentOrderDetailForProduct")
 }
 
 func AllOrderDetailsForOrder(db *sqlx.DB, order *pb.OrderRequest) ([]*pb.OrderDetailRequest, error) {

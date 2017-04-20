@@ -1355,7 +1355,6 @@ func main() {
 	//db.SetMaxOpenConns()
 
 	log.WithFields(log.Fields{
-		"animal": "walrus",
 		"size":   10,
 	}).Info("A group of walrus emerges from the ocean")
 

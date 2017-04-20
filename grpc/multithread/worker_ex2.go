@@ -33,7 +33,7 @@ func doWork(id int, j *job) {
 		}()
 	} else {
 		go func() {
-			err := errors.New("Not found")
+			err := errors.New("Not found doWork")
 			errorChannel <- err
 		}()
 	}
