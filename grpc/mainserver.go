@@ -1235,6 +1235,7 @@ func (s *server) AllOrdersForInitial(ctx context.Context, orderFilter *pb.OrderF
 
 		payment, error := model.PaymentForOrder(db, order)
 		if error != nil {
+			log.WithFields(log.Fields{"error":err,}).Warn("ERROR")
 			break
 			return nil, err
 		}
@@ -1246,8 +1247,8 @@ func (s *server) AllOrdersForInitial(ctx context.Context, orderFilter *pb.OrderF
 
 				transaction, error := model.TransactionForOrder(db, order)
 				if error != nil {
-					break
 					log.WithFields(log.Fields{"error": error}).Warn("")
+					break
 					return nil, err
 				}
 				createOrderRequest.Transaction = transaction
@@ -1263,6 +1264,7 @@ func (s *server) AllOrdersForInitial(ctx context.Context, orderFilter *pb.OrderF
 
 		orderDetails, error := model.AllOrderDetailsForOrder(db, order)
 		if error != nil {
+			log.WithFields(log.Fields{"error": error}).Warn("")
 			break
 			return nil, err
 		}
