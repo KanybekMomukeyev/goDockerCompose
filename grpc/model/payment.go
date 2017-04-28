@@ -123,5 +123,6 @@ func PaymentForOrder(db *sqlx.DB, order *pb.OrderRequest) (*pb.PaymentRequest, e
 		return payments[0], nil
 	}
 
+	log.WithFields(log.Fields{"order.OrderId": order.OrderId}).Warn("")
 	return nil, errors.New("Not found PaymentForOrder")
 }

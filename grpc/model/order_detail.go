@@ -209,6 +209,7 @@ func RecentOrderDetailForProduct(db *sqlx.DB, productReq *pb.ProductRequest) (*p
 		return orderDetails[0], nil
 	}
 
+	log.WithFields(log.Fields{"productReq.ProductId": productReq.ProductId}).Warn("")
 	return nil, errors.New("Not found RecentOrderDetailForProduct")
 }
 

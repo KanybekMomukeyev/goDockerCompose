@@ -149,7 +149,8 @@ func RecentTransactionForCustomer(db *sqlx.DB, custReq *pb.CustomerRequest) (*pb
 		return transactions[0], nil
 	}
 
-	return nil, errors.New("Not found RecentTransactionForCustomer")
+	log.WithFields(log.Fields{"custReq.CustomerId": custReq.CustomerId}).Warn("")
+	return nil, errors.New("Not found RecentTransactionForCustomer ")
 }
 
 func RecentTransactionForSupplier(db *sqlx.DB, supReq *pb.SupplierRequest) (*pb.TransactionRequest, error) {
@@ -190,6 +191,7 @@ func RecentTransactionForSupplier(db *sqlx.DB, supReq *pb.SupplierRequest) (*pb.
 		return transactions[0], nil
 	}
 
+	log.WithFields(log.Fields{"supReq.SupplierId": supReq.SupplierId}).Warn("")
 	return nil, errors.New("Not found RecentTransactionForSupplier")
 }
 
@@ -283,5 +285,6 @@ func TransactionForOrder(db *sqlx.DB, orderReq *pb.OrderRequest) (*pb.Transactio
 		return transactions[0], nil
 	}
 
+	log.WithFields(log.Fields{"orderReq.OrderId": orderReq.OrderId}).Warn("")
 	return nil, errors.New("Not found TransactionForOrder")
 }

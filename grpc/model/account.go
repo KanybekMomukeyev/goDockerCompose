@@ -187,6 +187,7 @@ func AccountFor(db *sqlx.DB, order *pb.OrderRequest) (*pb.AccountRequest, error)
 		return accounts[0], nil
 	}
 
+	log.WithFields(log.Fields{"order.OrderId": order.OrderId}).Warn("")
 	return nil, errors.New("Not found AccountFor")
 }
 
@@ -226,6 +227,7 @@ func AccountForCustomer(db *sqlx.DB, customerId uint64) (*pb.AccountRequest, err
 		return accounts[0], nil
 	}
 
+	log.WithFields(log.Fields{"customerId": customerId}).Warn("")
 	return nil, errors.New("Not found AccountForCustomer")
 }
 
@@ -265,5 +267,6 @@ func AccountForSupplier(db *sqlx.DB, supplierId uint64) (*pb.AccountRequest, err
 		return accounts[0], nil
 	}
 
+	log.WithFields(log.Fields{"supplierId": supplierId}).Warn("")
 	return nil, errors.New("Not found AccountForSupplier")
 }
