@@ -213,6 +213,7 @@ func AllOrdersForFilter(db *sqlx.DB, orderFilter *pb.OrderFilter) ([]*pb.OrderRe
 	}
 
 	if err = rows.Err(); err != nil {
+		log.WithFields(log.Fields{"error":err,}).Warn("ERROR")
 		return nil, err
 	}
 

@@ -1213,7 +1213,7 @@ func (s *server) UpdateOrderWith(ctx context.Context, orderReq *pb.OrderRequest)
 
 func (s *server) AllOrdersForInitial(ctx context.Context, orderFilter *pb.OrderFilter) (*pb.AllOrderResponse, error) {
 
-	log.WithFields(log.Fields{"orderFilter": orderFilter, }).Info("AllOrdersForInitial")
+	log.WithFields(log.Fields{"OrderDate": orderFilter.OrderDate, }).Info("AllOrdersForInitial")
 
 	authorizeError := isAuthorized(ctx)
 	if authorizeError != nil {
@@ -1222,8 +1222,8 @@ func (s *server) AllOrdersForInitial(ctx context.Context, orderFilter *pb.OrderF
 
 	createOrderRequests := make([]*pb.CreateOrderRequest, 0)
 	orders, err := model.AllOrdersForFilter(db, orderFilter)
-	log.WithFields(log.Fields{"AllOrdersForFilter": len(orders),
-				  "orderFilter":orderFilter,}).Info("")
+	log.WithFields(log.Fields{"initial len(orders):": len(orders),}).Info("")
+
 	if err != nil {
 		log.WithFields(log.Fields{"error":err,}).Warn("ERROR")
 		return nil, err
