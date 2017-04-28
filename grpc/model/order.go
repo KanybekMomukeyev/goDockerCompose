@@ -193,7 +193,7 @@ func AllOrdersForFilter(db *sqlx.DB, orderFilter *pb.OrderFilter) ([]*pb.OrderRe
 		" is_editted FROM orders WHERE order_date<=$1 ORDER BY order_date DESC LIMIT $2", orderFilter.OrderDate, orderFilter.Limit)
 
 	if err != nil {
-		print("error")
+		log.WithFields(log.Fields{"error":err,}).Warn("ERROR")
 	}
 
 	orders := make([]*pb.OrderRequest, 0)
@@ -206,6 +206,7 @@ func AllOrdersForFilter(db *sqlx.DB, orderFilter *pb.OrderFilter) ([]*pb.OrderRe
 			&order.IsPaid, &order.IsEdited)
 
 		if err != nil {
+			log.WithFields(log.Fields{"error":err,}).Warn("ERROR")
 			return nil, err
 		}
 		orders = append(orders, order)
@@ -233,7 +234,7 @@ func AllOrdersForRecentFilter(db *sqlx.DB, orderFilter *pb.OrderFilter) ([]*pb.O
 		" is_editted FROM orders WHERE order_updated_at >= $1 ORDER BY order_date DESC LIMIT $2", orderFilter.OrderDate, orderFilter.Limit)
 
 	if err != nil {
-		print("error")
+		log.WithFields(log.Fields{"error":err,}).Warn("ERROR")
 	}
 
 	orders := make([]*pb.OrderRequest, 0)

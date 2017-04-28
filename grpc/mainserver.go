@@ -1222,7 +1222,10 @@ func (s *server) AllOrdersForInitial(ctx context.Context, orderFilter *pb.OrderF
 
 	createOrderRequests := make([]*pb.CreateOrderRequest, 0)
 	orders, err := model.AllOrdersForFilter(db, orderFilter)
+	log.WithFields(log.Fields{"AllOrdersForFilter": len(orders),
+				  "orderFilter":orderFilter,}).Info("")
 	if err != nil {
+		log.WithFields(log.Fields{"error":err,}).Warn("ERROR")
 		return nil, err
 	}
 
