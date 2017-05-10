@@ -26,6 +26,9 @@ func main() {
 	fmt.Println(i)
 	fmt.Println(*p)
 
+	//ic_send_only := make (<-chan int) //a channel that can only send data - arrow going out is sending
+	//ic_recv_only := make (chan<- int) //a channel that can only receive a data - arrow going in is receiving
+
 	//pongs chan<- string   ==> pongs <- "hello world" //channel reads from
 	//pings <-chan string   ==> msg := <-pings         //channel gives to
 

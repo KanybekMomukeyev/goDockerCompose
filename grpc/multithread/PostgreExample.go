@@ -17,15 +17,15 @@ func main() {
 	fmt.Printf("StartTime: %v\n", time.Now())
 	var (
 		sStmt string = "insert into test (gopher_id, created) values ($1, $2)"
-		gophers int = 10
-		entries int = 10000
+		gophers int = 1
+		entries int = 10
 	)
 
 	finishChan := make(chan int)
 
 	for i := 0; i < gophers; i++ {
 		go func(c chan int) {
-			db, err := sql.Open("postgres", "host=localhost dbname=testdb sslmode=disable")
+			db, err := sql.Open("postgres", "host=localhost dbname=template1 sslmode=disable")
 			if err != nil {
 				log.Fatal(err)
 			}
