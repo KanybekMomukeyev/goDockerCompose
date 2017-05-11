@@ -211,7 +211,7 @@ func AllUpdatedTransactions(db *sqlx.DB, transactFilter *pb.TransactionFilter) (
 	var err error
 	rows, err = db.Queryx("SELECT transaction_id, transaction_date, is_last_transaction, transaction_type, " +
 		"money_amount, order_id, customer_id, supplier_id, staff_id, comment FROM transactions " +
-		"WHERE transaction_updated_at >=$1 ORDER BY transaction_date DESC LIMIT $2",
+		"WHERE transaction_updated_at >=$1 AND order_id=0  ORDER BY transaction_date DESC LIMIT $2",
 		transactFilter.TransactionDate, transactFilter.Limit)
 
 	if err != nil {
