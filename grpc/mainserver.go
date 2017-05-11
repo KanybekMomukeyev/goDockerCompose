@@ -348,6 +348,65 @@ func (s *server) CheckProductsForUpdate(ctx context.Context, prFilter *pb.Produc
 	return allProdResponse,nil
 }
 
+func (s *server) CheckOrderDetailsForUpdate(ctx context.Context, oDetFilter *pb.OrderDetailFilter) (*pb.AllOrderDetailResponse, error) {
+	return nil, nil
+}
+
+func (s *server) CheckTransactionsForUpdate(ctx context.Context, transFilter *pb.TransactionFilter) (*pb.AllTransactionResponse, error) {
+
+	log.WithFields(log.Fields{"rpc CheckTransactionsForUpdate": transFilter, }).Info("")
+
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
+
+	transactions, err := model.AllUpdatedTransactions(db, transFilter)
+	if err != nil {
+		return nil, err
+	}
+
+	allTransReq := new(pb.AllTransactionResponse)
+	allTransReq.TransactionRequest = transactions
+
+	log.WithFields(log.Fields{"transactions count":  len(transactions), }).Info("")
+
+	return allTransReq, nil
+}
+
+func (s *server) UpdateTransactionWith(ctx context.Context, transReq *pb.TransactionRequest) (*pb.TransactionRequest, error) {
+
+	log.WithFields(log.Fields{"transReq": transReq, }).Info("UpdateTransaction RPC")
+
+	authorizeError := isAuthorized(ctx)
+	if authorizeError != nil {
+		return nil, authorizeError
+	}
+
+	tx := db.MustBegin()
+	_, err := model.UpdateTransaction(tx, transReq)
+	if err != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
+	}
+
+	contexErr := ctx.Err()
+	if contexErr != nil {
+		tx.Rollback()
+		log.WithFields(log.Fields{"err": contexErr}).Warn("")
+		return nil, contexErr
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		log.WithFields(log.Fields{"err": err}).Warn("")
+		return nil, err
+	}
+
+	return transReq, nil
+}
+
 func (s *server) AllOrderDetails(ctx context.Context, oDetFilter *pb.OrderDetailFilter) (*pb.AllOrderDetailResponse, error) {
 	authorizeError := isAuthorized(ctx)
 	if authorizeError != nil {
@@ -1281,7 +1340,7 @@ func (s *server) AllOrdersForInitial(ctx context.Context, orderFilter *pb.OrderF
 	return allOrderResponse, nil
 }
 
-func (s *server) AllOrdersForRecent(ctx context.Context, orderFilter *pb.OrderFilter) (*pb.AllOrderResponse, error) {
+func (s *server) CheckOrdersForUpdate(ctx context.Context, orderFilter *pb.OrderFilter) (*pb.AllOrderResponse, error) {
 
 	log.WithFields(log.Fields{"rpc allOrdersForRecent order filter": orderFilter, }).Info("")
 

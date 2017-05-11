@@ -17,6 +17,7 @@ service RentautomationService {
     rpc AllProductsForInitial (ProductFilter) returns (AllProductsResponse) {}
     rpc CheckProductsForUpdate (ProductFilter) returns (AllProductsResponse) {}
 
+    rpc CheckOrderDetailsForUpdate (OrderDetailFilter) returns (AllOrderDetailResponse) {}
     rpc AllOrderDetails(OrderDetailFilter) returns (AllOrderDetailResponse) {}
 
     rpc CreateCustomerWith (CreateCustomerRequest) returns (CreateCustomerRequest) {}
@@ -31,6 +32,8 @@ service RentautomationService {
     rpc AllSuppliersForInitial (SupplierFilter) returns (AllSuppliersResponse) {}
     rpc CheckSuppliersForUpdate (SupplierFilter) returns (AllSuppliersResponse) {}
 
+    rpc CheckTransactionsForUpdate (TransactionFilter) returns (AllTransactionResponse) {}
+    rpc UpdateTransactionWith (TransactionRequest) returns (TransactionRequest) {}
     rpc AllTransactionsForInitial (TransactionFilter) returns (AllTransactionResponse) {}
 
     rpc CreateStaffWith (StaffRequest) returns (StaffRequest) {}
@@ -43,7 +46,7 @@ service RentautomationService {
     rpc CreateOrderWith (CreateOrderRequest) returns (CreateOrderRequest) {}
     rpc UpdateOrderWith (OrderRequest) returns (OrderRequest) {}
     rpc AllOrdersForInitial (OrderFilter) returns (AllOrderResponse) {}
-    rpc AllOrdersForRecent (OrderFilter) returns (AllOrderResponse) {}
+    rpc CheckOrdersForUpdate (OrderFilter) returns (AllOrderResponse) {}
 
     rpc UpdateStream(stream StickyNoteRequest) returns (stream StickyNoteResponse) {}
 }
@@ -296,6 +299,7 @@ message TransactionRequest {
     uint64 customerId = 7;
     uint64 supplierId = 8;
     uint64 staffId = 9;
+    string comment = 10;
 }
 
 message TransactionFilter {

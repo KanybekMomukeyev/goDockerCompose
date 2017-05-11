@@ -187,6 +187,23 @@ func AccountFor(db *sqlx.DB, order *pb.OrderRequest) (*pb.AccountRequest, error)
 	return nil, errors.New("Not found AccountFor")
 }
 
+func scanAccountRows(rows *sqlx.Rows) ([]*pb.AccountRequest, error) {
+	accounts := make([]*pb.AccountRequest, 0)
+	for rows.Next() {
+		account := new(pb.AccountRequest)
+		err := rows.Scan(&account.AccountId,
+				&account.CustomerId,
+				&account.SupplierId,
+				&account.Balance)
+		if err != nil {
+			log.WithFields(log.Fields{"scanAccountRows":err,}).Warn("ERROR")
+			return nil, err
+		}
+		accounts = append(accounts, account)
+	}
+	return accounts, nil
+}
+
 func AccountForCustomer(db *sqlx.DB, customerId uint64) (*pb.AccountRequest, error) {
 
 	pingError := db.Ping()
