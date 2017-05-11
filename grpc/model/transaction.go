@@ -5,6 +5,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	pb "github.com/KanybekMomukeyev/goDockerCompose/grpc/proto"
 	"errors"
+	"time"
 )
 
 var schemaRemoveTransaction = `
@@ -22,7 +23,8 @@ CREATE TABLE IF NOT EXISTS transactions (
     	customer_id BIGINT,
     	supplier_id BIGINT,
   	staff_id BIGINT,
-  	comment varchar (500)
+  	comment varchar (500),
+  	transaction_updated_at BIGINT
 );
 `
 
@@ -41,6 +43,7 @@ type Transaction struct {
 	supplierId uint64 `db:"supplier_id"`
 	staffId uint64 `db:"staff_id"`
 	comment string `db:"comment"`
+	transactionUpdatedAt uint64 `db:"transaction_updated_at"`
 }
 
 func CreateTransactionIfNotExsists(db *sqlx.DB) {
@@ -51,13 +54,16 @@ func CreateTransactionIfNotExsists(db *sqlx.DB) {
 	db.MustExec(schemaCreateIndexForTransaction3)
 	db.MustExec(schemaCreateIndexForTransaction4)
 	db.MustExec("ALTER TABLE transactions ADD COLUMN IF NOT EXISTS comment varchar(500) DEFAULT '' ")
+	db.MustExec("ALTER TABLE transactions ADD COLUMN IF NOT EXISTS transaction_updated_at BIGINT DEFAULT 0")
 }
 
 func StoreTransaction(tx *sqlx.Tx, transaction *pb.TransactionRequest) (uint64, error)  {
 
+	dateUpdatedAt := (time.Now().UnixNano() / 1000000)
+
 	var lastInsertId uint64
-	err := tx.QueryRow("INSERT INTO transactions (transaction_date, is_last_transaction, transaction_type, money_amount, order_id, customer_id, supplier_id, staff_id, comment) " +
-		"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) returning transaction_id;",
+	err := tx.QueryRow("INSERT INTO transactions (transaction_date, is_last_transaction, transaction_type, money_amount, order_id, customer_id, supplier_id, staff_id, comment, transaction_updated_at) " +
+		"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning transaction_id;",
 		transaction.TransactionDate,
 		transaction.IsLastTransaction,
 		transaction.TransactionType,
@@ -66,7 +72,8 @@ func StoreTransaction(tx *sqlx.Tx, transaction *pb.TransactionRequest) (uint64, 
 		transaction.CustomerId,
 		transaction.SupplierId,
 		transaction.StaffId,
-		transaction.Comment).Scan(&lastInsertId)
+		transaction.Comment,
+		dateUpdatedAt).Scan(&lastInsertId)
 
 	if err != nil {
 		return ErrorFunc(err)
@@ -78,9 +85,11 @@ func StoreTransaction(tx *sqlx.Tx, transaction *pb.TransactionRequest) (uint64, 
 
 func UpdateTransaction(tx *sqlx.Tx, transaction *pb.TransactionRequest) (uint64, error)  {
 
+	dateUpdatedAt := (time.Now().UnixNano() / 1000000)
+
 	stmt, err := tx.Prepare("UPDATE transactions SET transaction_date=$1, is_last_transaction=$2, transaction_type=$3, " +
 				"money_amount=$4, order_id=$5, customer_id=$6, supplier_id=$7, staff_id=$8, " +
-				"comment=$9 WHERE transaction_id=$10")
+				"comment=$9, transaction_updated_at=$10 WHERE transaction_id=$11")
 	if err != nil {
 		return ErrorFunc(err)
 	}
@@ -94,6 +103,7 @@ func UpdateTransaction(tx *sqlx.Tx, transaction *pb.TransactionRequest) (uint64,
 		transaction.SupplierId,
 		transaction.StaffId,
 		transaction.Comment,
+		dateUpdatedAt,
 		transaction.TransactionId)
 
 	if err != nil {
@@ -130,32 +140,6 @@ func scanTransactionRow(rows *sqlx.Rows) ([]*pb.TransactionRequest, error) {
 		}
 		transactions = append(transactions, transaction)
 	}
-	return transactions, nil
-}
-
-func AllTransactions(db *sqlx.DB) ([]*pb.TransactionRequest, error) {
-
-	pingError := db.Ping()
-
-	if pingError != nil {
-		log.Fatalln(pingError)
-		return nil, pingError
-	}
-
-	rows, err := db.Queryx("SELECT transaction_id, transaction_date, is_last_transaction, transaction_type, money_amount, " +
-		"order_id, customer_id, supplier_id, staff_id, comment " +
-		"FROM transactions ORDER BY transaction_id DESC")
-
-	if err != nil {
-		print("error")
-	}
-
-	transactions, err := scanTransactionRow(rows)
-
-	if err = rows.Err(); err != nil {
-		return nil, err
-	}
-
 	return transactions, nil
 }
 
@@ -219,6 +203,28 @@ func RecentTransactionForSupplier(db *sqlx.DB, supReq *pb.SupplierRequest) (*pb.
 
 	log.WithFields(log.Fields{"supReq.SupplierId": supReq.SupplierId}).Warn("")
 	return nil, errors.New("Not found RecentTransactionForSupplier")
+}
+
+func AllUpdatedTransactions(db *sqlx.DB, transactFilter *pb.TransactionFilter) ([]*pb.TransactionRequest, error) {
+
+	var rows *sqlx.Rows
+	var err error
+	rows, err = db.Queryx("SELECT transaction_id, transaction_date, is_last_transaction, transaction_type, " +
+		"money_amount, order_id, customer_id, supplier_id, staff_id, comment FROM transactions " +
+		"WHERE transaction_updated_at >=$1 ORDER BY transaction_date DESC LIMIT $2",
+		transactFilter.TransactionDate, transactFilter.Limit)
+
+	if err != nil {
+		print("error")
+	}
+
+	transactions, err := scanTransactionRow(rows)
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return transactions, nil
 }
 
 func AllTransactionsForFilter(db *sqlx.DB, transactFilter *pb.TransactionFilter) ([]*pb.TransactionRequest, error) {
