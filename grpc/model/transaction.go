@@ -76,22 +76,56 @@ func StoreTransaction(tx *sqlx.Tx, transaction *pb.TransactionRequest) (uint64, 
 	return lastInsertId, nil
 }
 
+func UpdateTransaction(tx *sqlx.Tx, transaction *pb.TransactionRequest) (uint64, error)  {
+
+	stmt, err := tx.Prepare("UPDATE transactions SET transaction_date=$1, is_last_transaction=$2, transaction_type=$3, " +
+				"money_amount=$4, order_id=$5, customer_id=$6, supplier_id=$7, staff_id=$8, " +
+				"comment=$9 WHERE transaction_id=$10")
+	if err != nil {
+		return ErrorFunc(err)
+	}
+
+	res, err := stmt.Exec(transaction.TransactionDate,
+		transaction.IsLastTransaction,
+		transaction.TransactionType,
+		transaction.MoneyAmount,
+		transaction.OrderId,
+		transaction.CustomerId,
+		transaction.SupplierId,
+		transaction.StaffId,
+		transaction.Comment,
+		transaction.TransactionId)
+
+	if err != nil {
+		return ErrorFunc(err)
+	}
+
+	affect, err := res.RowsAffected()
+	if err != nil {
+		return ErrorFunc(err)
+	}
+
+	log.WithFields(log.Fields{"update transaction rows changed": affect,}).Info("")
+	return uint64(affect), nil
+}
+
 func scanTransactionRow(rows *sqlx.Rows) ([]*pb.TransactionRequest, error) {
 	transactions := make([]*pb.TransactionRequest, 0)
 	for rows.Next() {
 		transaction := new(pb.TransactionRequest)
 		err := rows.Scan(&transaction.TransactionId,
-			&transaction.TransactionDate,
-			&transaction.IsLastTransaction,
-			&transaction.TransactionType,
-			&transaction.MoneyAmount,
-			&transaction.OrderId,
-			&transaction.CustomerId,
-			&transaction.SupplierId,
-			&transaction.StaffId,
-			&transaction.Comment)
+				&transaction.TransactionDate,
+				&transaction.IsLastTransaction,
+				&transaction.TransactionType,
+				&transaction.MoneyAmount,
+				&transaction.OrderId,
+				&transaction.CustomerId,
+				&transaction.SupplierId,
+				&transaction.StaffId,
+				&transaction.Comment)
 
 		if err != nil {
+			log.WithFields(log.Fields{"scanTransactionRow":err,}).Warn("ERROR")
 			return nil, err
 		}
 		transactions = append(transactions, transaction)
