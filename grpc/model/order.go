@@ -4,6 +4,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	log "github.com/Sirupsen/logrus"
 	pb "github.com/KanybekMomukeyev/goDockerCompose/grpc/proto"
+	"time"
 )
 
 var schemaRemoveOrder = `
@@ -70,6 +71,9 @@ func CreateOrderIfNotExsists(db *sqlx.DB) {
 
 func StoreOrder(tx *sqlx.Tx, order *pb.OrderRequest) (uint64, error)  {
 
+	log.WithFields(log.Fields{"order_updated_at": order.OrderUpdatedAt}).Info("")
+	log.WithFields(log.Fields{"time.Now().UnixNano()": (time.Now().UnixNano() / 1000000)}).Info("")
+
 	var lastInsertId uint64
 	err := tx.QueryRow("INSERT INTO orders " +
 		"(order_document, money_movement, billing_no, staff_id, customer_id," +
@@ -94,9 +98,7 @@ func StoreOrder(tx *sqlx.Tx, order *pb.OrderRequest) (uint64, error)  {
 		return ErrorFunc(err)
 	}
 
-	log.WithFields(log.Fields{
-		"last inserted order_id": lastInsertId,
-	}).Info("")
+	log.WithFields(log.Fields{"last inserted order_id": lastInsertId}).Info("")
 	return lastInsertId, nil
 }
 
