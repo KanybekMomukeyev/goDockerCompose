@@ -38,9 +38,7 @@ func CreateAccountIfNotExsists(db *sqlx.DB) {
 }
 
 func ErrorFunc(err error) (uint64, error) {
-	log.WithFields(log.Fields{
-		"error":    err,
-	}).Fatal("QueryRow breaks")
+	log.WithFields(log.Fields{ "error": err}).Fatal("QueryRow breaks")
 	panic(err)
 	return 0, err
 }
@@ -60,9 +58,7 @@ func StoreAccount(tx *sqlx.Tx, accountRequest *pb.AccountRequest) (uint64, error
 		return ErrorFunc(err)
 	}
 
-	log.WithFields(log.Fields{
-		"last inserted account_id":  lastInsertId,
-	}).Info("")
+	log.WithFields(log.Fields{"last inserted account_id":  lastInsertId}).Info("")
 	return lastInsertId, nil
 }
 

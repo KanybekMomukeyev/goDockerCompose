@@ -21,7 +21,8 @@ CREATE TABLE IF NOT EXISTS transactions (
     	order_id BIGINT,
     	customer_id BIGINT,
     	supplier_id BIGINT,
-  	staff_id BIGINT
+  	staff_id BIGINT,
+  	comment varchar (500)
 );
 `
 
@@ -39,6 +40,7 @@ type Transaction struct {
 	customerId uint64 `db:"customer_id"`
 	supplierId uint64 `db:"supplier_id"`
 	staffId uint64 `db:"staff_id"`
+	comment string `db:"comment"`
 }
 
 func CreateTransactionIfNotExsists(db *sqlx.DB) {
@@ -48,13 +50,14 @@ func CreateTransactionIfNotExsists(db *sqlx.DB) {
 	db.MustExec(schemaCreateIndexForTransaction2)
 	db.MustExec(schemaCreateIndexForTransaction3)
 	db.MustExec(schemaCreateIndexForTransaction4)
+	db.MustExec("ALTER TABLE transactions ADD COLUMN IF NOT EXISTS comment varchar(500) DEFAULT '' ")
 }
 
 func StoreTransaction(tx *sqlx.Tx, transaction *pb.TransactionRequest) (uint64, error)  {
 
 	var lastInsertId uint64
-	err := tx.QueryRow("INSERT INTO transactions (transaction_date, is_last_transaction, transaction_type, money_amount, order_id, customer_id, supplier_id, staff_id) " +
-		"VALUES($1, $2, $3, $4, $5, $6, $7, $8) returning transaction_id;",
+	err := tx.QueryRow("INSERT INTO transactions (transaction_date, is_last_transaction, transaction_type, money_amount, order_id, customer_id, supplier_id, staff_id, comment) " +
+		"VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) returning transaction_id;",
 		transaction.TransactionDate,
 		transaction.IsLastTransaction,
 		transaction.TransactionType,
@@ -62,16 +65,38 @@ func StoreTransaction(tx *sqlx.Tx, transaction *pb.TransactionRequest) (uint64, 
 		transaction.OrderId,
 		transaction.CustomerId,
 		transaction.SupplierId,
-		transaction.StaffId).Scan(&lastInsertId)
+		transaction.StaffId,
+		transaction.Comment).Scan(&lastInsertId)
 
 	if err != nil {
 		return ErrorFunc(err)
 	}
 
-	log.WithFields(log.Fields{
-		"last inserted transaction_id":  lastInsertId,
-	}).Info("")
+	log.WithFields(log.Fields{"last inserted transaction_id":  lastInsertId}).Info("")
 	return lastInsertId, nil
+}
+
+func scanTransactionRow(rows *sqlx.Rows) ([]*pb.TransactionRequest, error) {
+	transactions := make([]*pb.TransactionRequest, 0)
+	for rows.Next() {
+		transaction := new(pb.TransactionRequest)
+		err := rows.Scan(&transaction.TransactionId,
+			&transaction.TransactionDate,
+			&transaction.IsLastTransaction,
+			&transaction.TransactionType,
+			&transaction.MoneyAmount,
+			&transaction.OrderId,
+			&transaction.CustomerId,
+			&transaction.SupplierId,
+			&transaction.StaffId,
+			&transaction.Comment)
+
+		if err != nil {
+			return nil, err
+		}
+		transactions = append(transactions, transaction)
+	}
+	return transactions, nil
 }
 
 func AllTransactions(db *sqlx.DB) ([]*pb.TransactionRequest, error) {
@@ -84,25 +109,14 @@ func AllTransactions(db *sqlx.DB) ([]*pb.TransactionRequest, error) {
 	}
 
 	rows, err := db.Queryx("SELECT transaction_id, transaction_date, is_last_transaction, transaction_type, money_amount, " +
-		"order_id, customer_id, supplier_id, staff_id " +
+		"order_id, customer_id, supplier_id, staff_id, comment " +
 		"FROM transactions ORDER BY transaction_id DESC")
 
 	if err != nil {
 		print("error")
 	}
 
-	transactions := make([]*pb.TransactionRequest, 0)
-	for rows.Next() {
-		transaction := new(pb.TransactionRequest)
-		err := rows.Scan(&transaction.TransactionId, &transaction.TransactionDate, &transaction.IsLastTransaction, &transaction.TransactionType,
-			&transaction.MoneyAmount, &transaction.OrderId, &transaction.CustomerId, &transaction.SupplierId,
-			&transaction.StaffId)
-
-		if err != nil {
-			return nil, err
-		}
-		transactions = append(transactions, transaction)
-	}
+	transactions, err := scanTransactionRow(rows)
 
 	if err = rows.Err(); err != nil {
 		return nil, err
@@ -121,25 +135,14 @@ func RecentTransactionForCustomer(db *sqlx.DB, custReq *pb.CustomerRequest) (*pb
 	}
 
 	rows, err := db.Queryx("SELECT transaction_id, transaction_date, is_last_transaction, transaction_type, money_amount, " +
-		"order_id, customer_id, supplier_id, staff_id " +
+		"order_id, customer_id, supplier_id, staff_id, comment " +
 		"FROM transactions WHERE customer_id=$1 ORDER BY transaction_date DESC LIMIT $2", custReq.CustomerId, 1)
 
 	if err != nil {
 		print("error")
 	}
 
-	transactions := make([]*pb.TransactionRequest, 0)
-	for rows.Next() {
-		transaction := new(pb.TransactionRequest)
-		err := rows.Scan(&transaction.TransactionId, &transaction.TransactionDate, &transaction.IsLastTransaction, &transaction.TransactionType,
-			&transaction.MoneyAmount, &transaction.OrderId, &transaction.CustomerId, &transaction.SupplierId,
-			&transaction.StaffId)
-
-		if err != nil {
-			return nil, err
-		}
-		transactions = append(transactions, transaction)
-	}
+	transactions, err := scanTransactionRow(rows)
 
 	if err = rows.Err(); err != nil {
 		return nil, err
@@ -163,25 +166,14 @@ func RecentTransactionForSupplier(db *sqlx.DB, supReq *pb.SupplierRequest) (*pb.
 	}
 
 	rows, err := db.Queryx("SELECT transaction_id, transaction_date, is_last_transaction, transaction_type, money_amount, " +
-		"order_id, customer_id, supplier_id, staff_id " +
+		"order_id, customer_id, supplier_id, staff_id, comment " +
 		"FROM transactions WHERE supplier_id=$1 ORDER BY transaction_date DESC LIMIT $2", supReq.SupplierId, 1)
 
 	if err != nil {
 		print("error")
 	}
 
-	transactions := make([]*pb.TransactionRequest, 0)
-	for rows.Next() {
-		transaction := new(pb.TransactionRequest)
-		err := rows.Scan(&transaction.TransactionId, &transaction.TransactionDate, &transaction.IsLastTransaction, &transaction.TransactionType,
-			&transaction.MoneyAmount, &transaction.OrderId, &transaction.CustomerId, &transaction.SupplierId,
-			&transaction.StaffId)
-
-		if err != nil {
-			return nil, err
-		}
-		transactions = append(transactions, transaction)
-	}
+	transactions, err := scanTransactionRow(rows)
 
 	if err = rows.Err(); err != nil {
 		return nil, err
@@ -208,17 +200,17 @@ func AllTransactionsForFilter(db *sqlx.DB, transactFilter *pb.TransactionFilter)
 	var err error
 	if transactFilter.CustomerId > 0 {
 		rows, err = db.Queryx("SELECT transaction_id, transaction_date, is_last_transaction, transaction_type, " +
-			"money_amount, order_id, customer_id, supplier_id, staff_id FROM transactions " +
+			"money_amount, order_id, customer_id, supplier_id, staff_id, comment FROM transactions " +
 			"WHERE transaction_date<=$1 AND customer_id=$2 ORDER BY transaction_date DESC LIMIT $3",
 			transactFilter.TransactionDate, transactFilter.CustomerId, transactFilter.Limit)
 	} else if transactFilter.SupplierId > 0 {
 		rows, err = db.Queryx("SELECT transaction_id, transaction_date, is_last_transaction, transaction_type, " +
-			"money_amount, order_id, customer_id, supplier_id, staff_id FROM transactions " +
+			"money_amount, order_id, customer_id, supplier_id, staff_id, comment FROM transactions " +
 			"WHERE transaction_date<=$1 AND supplier_id=$2 ORDER BY transaction_date DESC LIMIT $3",
 			transactFilter.TransactionDate, transactFilter.SupplierId, transactFilter.Limit)
 	} else {
 		rows, err = db.Queryx("SELECT transaction_id, transaction_date, is_last_transaction, transaction_type, " +
-			"money_amount, order_id, customer_id, supplier_id, staff_id FROM transactions " +
+			"money_amount, order_id, customer_id, supplier_id, staff_id, comment FROM transactions " +
 			"WHERE transaction_date<=$1 ORDER BY transaction_date DESC LIMIT $2",
 			transactFilter.TransactionDate, transactFilter.Limit)
 	}
@@ -227,18 +219,7 @@ func AllTransactionsForFilter(db *sqlx.DB, transactFilter *pb.TransactionFilter)
 		print("error")
 	}
 
-	transactions := make([]*pb.TransactionRequest, 0)
-	for rows.Next() {
-		transaction := new(pb.TransactionRequest)
-		err := rows.Scan(&transaction.TransactionId, &transaction.TransactionDate, &transaction.IsLastTransaction, &transaction.TransactionType,
-			&transaction.MoneyAmount, &transaction.OrderId, &transaction.CustomerId, &transaction.SupplierId,
-			&transaction.StaffId)
-
-		if err != nil {
-			return nil, err
-		}
-		transactions = append(transactions, transaction)
-	}
+	transactions, err := scanTransactionRow(rows)
 
 	if err = rows.Err(); err != nil {
 		return nil, err
@@ -257,25 +238,14 @@ func TransactionForOrder(db *sqlx.DB, orderReq *pb.OrderRequest) (*pb.Transactio
 	}
 
 	rows, err := db.Queryx("SELECT transaction_id, transaction_date, is_last_transaction, transaction_type, money_amount, " +
-		"order_id, customer_id, supplier_id, staff_id " +
+		"order_id, customer_id, supplier_id, staff_id, comment " +
 		"FROM transactions WHERE order_id=$1 ORDER BY transaction_date DESC LIMIT $2", orderReq.OrderId, 1)
 
 	if err != nil {
 		print("error")
 	}
 
-	transactions := make([]*pb.TransactionRequest, 0)
-	for rows.Next() {
-		transaction := new(pb.TransactionRequest)
-		err := rows.Scan(&transaction.TransactionId, &transaction.TransactionDate, &transaction.IsLastTransaction, &transaction.TransactionType,
-			&transaction.MoneyAmount, &transaction.OrderId, &transaction.CustomerId, &transaction.SupplierId,
-			&transaction.StaffId)
-
-		if err != nil {
-			return nil, err
-		}
-		transactions = append(transactions, transaction)
-	}
+	transactions, err := scanTransactionRow(rows)
 
 	if err = rows.Err(); err != nil {
 		return nil, err
