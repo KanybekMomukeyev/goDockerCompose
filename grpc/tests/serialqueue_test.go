@@ -12,8 +12,7 @@ func New() chan func() {
 
 	//spawn go routine to read and run functions in the channel
 	go func() {
-		for true {
-			nextFunction := <-queue
+		for nextFunction := range queue {
 			nextFunction()
 		}
 	}()
@@ -32,20 +31,25 @@ func TestQueue(t *testing.T) {
 	var queueOutput string
 
 	//WaitGroup for determining when queue output is finished
-	var wg sync.WaitGroup
+	var waitGroup sync.WaitGroup
 
 	//Create function to place in queue
 	var printTest = func(i int) {
 		queueOutput = fmt.Sprintf("%v%v",queueOutput, i)
-		wg.Done()
+		waitGroup.Done()
 	}
 
 	//Add functions to queue
 	var i int;
 	for i=0; i<loops; i++ {
-		wg.Add(1)
+		waitGroup.Add(1)
+
 		t:=i
-		queue <- func() {printTest(t)}
+		f := func() {
+			printTest(t)
+		}
+
+		queue <- f
 	}
 
 	//Generate correct output
@@ -55,7 +59,7 @@ func TestQueue(t *testing.T) {
 	}
 
 	//Wait until all functions in queue are done
-	wg.Wait()
+	waitGroup.Wait()
 
 	//Compare queue output with correct output
 	if queueOutput != correctOutput {

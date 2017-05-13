@@ -30,6 +30,10 @@ type Account struct {
 	balance float32 `db:"balance"`
 }
 
+func DeleteAccountIfNotExsists(db *sqlx.DB) {
+	db.MustExec(schemaRemoveAccount)
+}
+
 func CreateAccountIfNotExsists(db *sqlx.DB) {
 	//db.MustExec(schemaRemoveAccount)
 	db.MustExec(schemaCreateAccount)
