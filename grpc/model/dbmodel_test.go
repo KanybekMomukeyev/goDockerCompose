@@ -131,7 +131,37 @@ func TestCategoryStore(t *testing.T) {
 }
 
 func TestCustomerStore(t *testing.T) {
-	//customer := new(pb.CustomerRequest)
-	//err := rows.Scan(&customer.CustomerId, &customer.CustomerImagePath, &customer.FirstName, &customer.SecondName, &customer.PhoneNumber, &customer.Address, &customer.StaffId, &customer.CustomerUpdatedAt)
+	customerReq := new(pb.CustomerRequest)
+	customerReq.CustomerId = 1000
+	customerReq.CustomerImagePath = "CustomerImagePath__"
+	customerReq.FirstName = "FirstName__"
+	customerReq.SecondName = "SecondName__"
+	customerReq.PhoneNumber = "234234423424234"
+	customerReq.Address = "234234423424234"
+	customerReq.StaffId = 1000
+	customerReq.CustomerUpdatedAt = 100000
 
+	tx := db.MustBegin()
+	countId, err := StoreRealCustomer(tx, customerReq)
+	assert.Equal(t, countId, uint64(1), "")
+
+	assert.Nil(t, err)
+
+	err = tx.Commit()
+	assert.Nil(t, err)
+
+
+	savedCustReqs, err := AllRealCustomers(db)
+	assert.Nil(t, err)
+	assert.NotNil(t, savedCustReqs)
+	for _, custReq:= range savedCustReqs {
+		assert.Equal(t, custReq.CustomerId, uint64(1), "")
+		assert.Equal(t, custReq.CustomerImagePath, "CustomerImagePath__", "")
+		assert.Equal(t, custReq.FirstName, "FirstName__", "")
+		assert.Equal(t, custReq.SecondName, "SecondName__", "")
+		assert.Equal(t, custReq.PhoneNumber, "234234423424234", "")
+		assert.Equal(t, custReq.Address, "234234423424234", "")
+		assert.Equal(t, custReq.StaffId, uint64(1000), "")
+		assert.Equal(t, custReq.CustomerUpdatedAt, uint64(100000), "")
+	}
 }
