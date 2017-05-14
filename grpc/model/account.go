@@ -35,7 +35,6 @@ func DeleteAccountIfNotExsists(db *sqlx.DB) {
 }
 
 func CreateAccountIfNotExsists(db *sqlx.DB) {
-	//db.MustExec(schemaRemoveAccount)
 	db.MustExec(schemaCreateAccount)
 	db.MustExec(schemaCreateIndexForAccount1)
 	db.MustExec(schemaCreateIndexForAccount2)

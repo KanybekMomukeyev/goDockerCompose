@@ -23,8 +23,11 @@ type Category struct {
 	categoryName string `db:"category_name"`
 }
 
+func DeleteCategoryIfNotExsists(db *sqlx.DB) {
+	db.MustExec(schemaRemoveCategory)
+}
+
 func CreateCategoryIfNotExsists(db *sqlx.DB) {
-	//db.MustExec(schemaRemoveCategory)
 	db.MustExec(schemaCreateCategory)
 	db.MustExec("ALTER TABLE categories ADD COLUMN IF NOT EXISTS category_updated_at BIGINT DEFAULT 0")
 }

@@ -33,8 +33,11 @@ type Customer struct {
 	address float32 `db:"address"`
 }
 
+func DeleteCustomerIfNotExsists(db *sqlx.DB)  {
+	db.MustExec(schemaRemoveCustomer)
+}
+
 func CreateCustomerIfNotExsists(db *sqlx.DB) {
-	//db.MustExec(schemaCustomerDelete)
 	db.MustExec(schemaCreateCustomer)
 	//db.MustExec("ALTER TABLE customers DROP COLUMN IF EXISTS staff_id")
 	db.MustExec("ALTER TABLE customers ADD COLUMN IF NOT EXISTS staff_id BIGINT DEFAULT 0")
