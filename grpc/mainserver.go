@@ -1168,10 +1168,29 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 			acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
 			model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
 		}
-
-
 	} else if creatOrdReq.Order.OrderDocument == 8000 {
 		orderDocument = ".moneyReceiveEdited"
+
+		if creatOrdReq.Order.CustomerId > 0 {
+
+			// customer balance
+			acountReq, err := model.AccountForCustomer(db, creatOrdReq.Order.CustomerId)
+			if err != nil {
+				return nil, err
+			}
+			acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
+			model.UpdateCustomerBalance(tx, creatOrdReq.Order.CustomerId, acountReq.Balance)
+
+		} else if creatOrdReq.Order.SupplierId > 0 {
+
+			// supplier balance
+			acountReq, err := model.AccountForSupplier(db, creatOrdReq.Order.SupplierId)
+			if err != nil {
+				return nil, err
+			}
+			acountReq.Balance = acountReq.Balance + creatOrdReq.Payment.TotalPriceWithDiscount
+			model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
+		}
 
 
 	} else if creatOrdReq.Order.OrderDocument == 10000 {
@@ -1199,6 +1218,26 @@ func (s *server) CreateOrderWith(ctx context.Context, creatOrdReq *pb.CreateOrde
 
 	} else if creatOrdReq.Order.OrderDocument == 11000 {
 		orderDocument = ".moneyGoneEdited"
+
+		if creatOrdReq.Order.CustomerId > 0 {
+			// customer balance
+			acountReq, err := model.AccountForCustomer(db, creatOrdReq.Order.CustomerId)
+			if err != nil {
+				return nil, err
+			}
+			acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
+			model.UpdateCustomerBalance(tx, creatOrdReq.Order.CustomerId, acountReq.Balance)
+
+		} else if creatOrdReq.Order.SupplierId > 0 {
+			// supplier balance
+			acountReq, err := model.AccountForSupplier(db, creatOrdReq.Order.SupplierId)
+			if err != nil {
+				return nil, err
+			}
+			acountReq.Balance = acountReq.Balance - creatOrdReq.Payment.TotalPriceWithDiscount
+			model.UpdateSupplierBalance(tx, creatOrdReq.Order.SupplierId, acountReq.Balance)
+		}
+
 	} else if creatOrdReq.Order.OrderDocument == 12000 {
 		orderDocument = "customerMadePreOrder"
 	} else if creatOrdReq.Order.OrderDocument == 13000 {
