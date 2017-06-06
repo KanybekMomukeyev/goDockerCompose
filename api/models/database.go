@@ -2,51 +2,37 @@ package models
 
 import (
 	_ "github.com/lib/pq"
-	"database/sql"
 	"github.com/jmoiron/sqlx"
-	"log"
+	log "github.com/Sirupsen/logrus"
 	"fmt"
 	"os"
 )
 
-var schema = `
-CREATE TABLE IF NOT EXISTS person (
-    first_name text,
-    last_name text,
-    email text
-);
-
-CREATE TABLE IF NOT EXISTS place (
-    country text,
-    city text NULL,
-    telcode integer
-)`
-
-type Person struct {
-	FirstName string `db:"first_name"`
-	LastName  string `db:"last_name"`
-	Email     string
+type OrderFilter struct {
+	OrderKeyword string
+	OrderDate    uint64
+	Limit        uint32
 }
 
-type Place struct {
-	Country string
-	City    sql.NullString
-	TelCode int
+type OrderRequest struct {
+	OrderId           uint64
+	OrderDocument     uint32
+	MoneyMovementType uint32
+	BillingNo         string
+	StaffId           uint64
+	CustomerId        uint64
+	SupplierId        uint64
+	OrderDate         uint64
+	PaymentId         uint64
+	ErrorMsg          string
+	Comment           string
+	IsDeleted         uint32
+	IsPaid            uint32
+	IsEdited          uint32
+	OrderUpdatedAt    uint64
 }
 
-func SomeDatabaseFunction() {
-	// this Pings the database trying to connect, panics on error
-	// use sqlx.Open() for sql.Open() semantics
-
-	//if true {
-	//	db, err := sqlx.Connect("postgres", "dbname=dat_test user=kanybek password=nazgulum host=localhost sslmode=disable")
-	//} else {
-	//
-	//}
-	//TODO: dsfdsf
-
-	//db, err := sqlx.Connect("postgres", "dbname=blog_test user=kanybek password=nazgulum host=localhost sslmode=disable")
-	//fmt.Println(os.Getenv("DB_ENV_POSTGRES_USER"))
+func NewDBToConnect(dataSourceName string) (*sqlx.DB, error) {
 
 	connInfo := fmt.Sprintf(
 		"user=%s dbname=%s password=%s host=%s port=%s sslmode=disable",
@@ -58,84 +44,82 @@ func SomeDatabaseFunction() {
 	)
 
 	fmt.Println(connInfo)
-	db, err := sqlx.Connect("postgres", connInfo)
+	db, err := sqlx.Connect("postgres", connInfo) // for compose
 
+	//db, err := sqlx.Connect("postgres", "user=kanybek dbname=databasename password=nazgulum host=172.17.0.4 port=5432 sslmode=disable") // for single docker app
+	//db, err := sqlx.Connect("postgres", "user=kanybek dbname=databasename password=nazgulum host=localhost port=5432 sslmode=disable")
 	if err != nil {
-		log.Fatalln(err)
+		log.WithFields(log.Fields{
+			"connection info": connInfo,
+			"error": err,
+		}).Fatal("Can not connected to database")
+		return nil, err
 	}
 
-	// exec the schema or fail; multi-statement Exec behavior varies between
-	// database drivers;  pq will exec them all, sqlite3 won't, ymmv
-	db.MustExec(schema)
+	pingError := db.Ping()
 
-	tx := db.MustBegin()
-	tx.MustExec("INSERT INTO person (first_name, last_name, email) VALUES ($1, $2, $3)", "Jason", "Moiron", "jmoiron@jmoiron.net")
-	tx.MustExec("INSERT INTO person (first_name, last_name, email) VALUES ($1, $2, $3)", "John", "Doe", "johndoeDNE@gmail.net")
-	tx.MustExec("INSERT INTO place (country, city, telcode) VALUES ($1, $2, $3)", "United States", "New York", "1")
-	tx.MustExec("INSERT INTO place (country, telcode) VALUES ($1, $2)", "Hong Kong", "852")
-	tx.MustExec("INSERT INTO place (country, telcode) VALUES ($1, $2)", "Singapore", "65")
-	// Named queries can use structs, so if you have an existing struct (i.e. person := &Person{}) that you have populated, you can pass it in as &person
-	tx.NamedExec("INSERT INTO person (first_name, last_name, email) VALUES (:first_name, :last_name, :email)", &Person{"Jane", "Citizen", "jane.citzen@example.com"})
-	tx.Commit()
-
-	// Query the database, storing results in a []Person (wrapped in []interface{})
-	people := []Person{}
-	db.Select(&people, "SELECT * FROM person ORDER BY first_name ASC")
-	jason, john := people[0], people[1]
-
-	fmt.Printf("%#v\n%#v", jason, john)
-	// Person{FirstName:"Jason", LastName:"Moiron", Email:"jmoiron@jmoiron.net"}
-	// Person{FirstName:"John", LastName:"Doe", Email:"johndoeDNE@gmail.net"}
-
-	// You can also get a single result, a la QueryRow
-	jason = Person{}
-	err = db.Get(&jason, "SELECT * FROM person WHERE first_name=$1", "Jason")
-	fmt.Printf("%#v\n", jason)
-	// Person{FirstName:"Jason", LastName:"Moiron", Email:"jmoiron@jmoiron.net"}
-
-	// if you have null fields and use SELECT *, you must use sql.Null* in your struct
-	places := []Place{}
-	err = db.Select(&places, "SELECT * FROM place ORDER BY telcode ASC")
-	if err != nil {
-		fmt.Println(err)
-		return
+	if pingError != nil {
+		log.WithFields(log.Fields{
+			"info": connInfo,
+			"ping": pingError,
+		}).Fatal("Can not connected Ping to database")
+		return nil, pingError
 	}
-	usa, singsing, honkers := places[0], places[1], places[2]
 
-	fmt.Printf("%#v\n%#v\n%#v\n", usa, singsing, honkers)
-	// Place{Country:"United States", City:sql.NullString{String:"New York", Valid:true}, TelCode:1}
-	// Place{Country:"Singapore", City:sql.NullString{String:"", Valid:false}, TelCode:65}
-	// Place{Country:"Hong Kong", City:sql.NullString{String:"", Valid:false}, TelCode:852}
-
-	// Loop through rows using only one struct
-	place := Place{}
-	rows, err := db.Queryx("SELECT * FROM place")
-	for rows.Next() {
-		err := rows.StructScan(&place)
-		if err != nil {
-			log.Fatalln(err)
-		}
-		fmt.Printf("%#v\n", place)
-	}
-	// Place{Country:"United States", City:sql.NullString{String:"New York", Valid:true}, TelCode:1}
-	// Place{Country:"Hong Kong", City:sql.NullString{String:"", Valid:false}, TelCode:852}
-	// Place{Country:"Singapore", City:sql.NullString{String:"", Valid:false}, TelCode:65}
-
-	// Named queries, using `:name` as the bindvar.  Automatic bindvar support
-	// which takes into account the dbtype based on the driverName on sqlx.Open/Connect
-	_, err = db.NamedExec(`INSERT INTO person (first_name,last_name,email) VALUES (:first,:last,:email)`,
-		map[string]interface{}{
-			"first": "Bin",
-			"last": "Smuth",
-			"email": "bensmith@allblacks.nz",
-		})
-
-	// Selects Mr. Smith from the database
-	rows, err = db.NamedQuery(`SELECT * FROM person WHERE first_name=:fn`, map[string]interface{}{"fn": "Bin"})
-
-	// Named queries can also use structs.  Their bind names follow the same rules
-	// as the name -> db mapping, so struct fields are lowercased and the `db` tag
-	// is taken into consideration.
-	rows, err = db.NamedQuery(`SELECT * FROM person WHERE first_name=:first_name`, jason)
+	return db, nil
 }
 
+func AllOrdersForFilter(db *sqlx.DB, orderFilter *OrderFilter) ([]*OrderRequest, error) {
+
+	pingError := db.Ping()
+
+	if pingError != nil {
+		log.Fatalln(pingError)
+		return nil, pingError
+	}
+
+	rows, err := db.Queryx("SELECT order_id, order_document, money_movement, billing_no, " +
+		"staff_id, customer_id, supplier_id, order_date, " +
+		"payment_id, error_msg, comment, is_deleted, is_paid," +
+		" is_editted FROM orders WHERE order_date<=$1 ORDER BY order_date DESC LIMIT $2", orderFilter.OrderDate, orderFilter.Limit)
+
+	if err != nil {
+		log.WithFields(log.Fields{"error":err,}).Warn("ERROR")
+	}
+
+	orders, err := scanOrderRowsWWW(rows)
+
+	if err = rows.Err(); err != nil {
+		log.WithFields(log.Fields{"error":err,}).Warn("ERROR")
+		return nil, err
+	}
+
+	return orders, nil
+}
+
+func scanOrderRowsWWW(rows *sqlx.Rows) ([]*OrderRequest, error) {
+	orders := make([]*OrderRequest, 0)
+	for rows.Next() {
+		order := new(OrderRequest)
+		err := rows.Scan(&order.OrderId,
+			&order.OrderDocument,
+			&order.MoneyMovementType,
+			&order.BillingNo,
+			&order.StaffId,
+			&order.CustomerId,
+			&order.SupplierId,
+			&order.OrderDate,
+			&order.PaymentId,
+			&order.ErrorMsg,
+			&order.Comment,
+			&order.IsDeleted,
+			&order.IsPaid,
+			&order.IsEdited)
+		if err != nil {
+			log.WithFields(log.Fields{"scanOrderRows":err,}).Warn("ERROR")
+			return nil, err
+		}
+		orders = append(orders, order)
+	}
+	return orders, nil
+}

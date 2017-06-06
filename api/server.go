@@ -1,64 +1,58 @@
 package main
 
 import (
-	"fmt"
-	"github.com/astaxie/beego"
-	"github.com/KanybekMomukeyev/goDockerCompose/api/models"
-	"strconv"
+	"github.com/kataras/iris"
+	"github.com/kataras/iris/context"
+	model "github.com/KanybekMomukeyev/goDockerCompose/api/models"
+	log "github.com/Sirupsen/logrus"
+	"github.com/jmoiron/sqlx"
+	"time"
 )
 
+type User struct {
+	Username  string `json:"username"`
+	Firstname string `json:"firstname"`
+	Lastname  string `json:"lastname"`
+	City      string `json:"city"`
+	Age       int    `json:"age"`
+}
+
+var db *sqlx.DB
+
 func main() {
-	fmt.Print("Hello world!\n")
-	beego.Router("/:operation/:num1:int/:num2:int", &mainController{})
-	beego.Run()
-}
-
-// This is the controller that this application uses
-type mainController struct {
-	beego.Controller
-}
-
-// Get() handles all requests to the route defined above
-func (c *mainController) Get() {
-	//Obtain the values of the route parameters defined in the route above
-	operation := c.Ctx.Input.Param(":operation")
-	num1, _ := strconv.Atoi(c.Ctx.Input.Param(":num1"))
-	num2, _ := strconv.Atoi(c.Ctx.Input.Param(":num2"))
-
-	//Set the values for use in the template
-	c.Data["operation"] = operation
-	c.Data["num1"] = num1
-	c.Data["num2"] = num2
-	c.TplName = "result.html"
-
-	// Perform the calculation depending on the 'operation' route parameter
-	switch operation {
-	case "sum":
-		c.Data["result"] = add(num1, num2)
-	case "product":
-		c.Data["result"] = multiply(num1, num2)
-	default:
-		c.TplName = "invalid-route.html"
+	var databaseError error
+	db, databaseError = model.NewDBToConnect("dataSourceName")
+	if databaseError != nil {
+		log.WithFields(log.Fields{"omg":databaseError,}).Fatal("failed to listen:")
 	}
-}
 
-func add(n1, n2 int) int {
-	//fmt.Print(SomeMethod1())
-	fmt.Println("add function called")
-	models.SomeDatabaseFunction()
-	return n1 + n2
-}
+	app := iris.New()
+	app.Handle("GET", "/", func(ctx context.Context) {
+		ctx.HTML("<b> Hello world! </b>")
+	})
 
-func multiply(n1, n2 int) int {
-	//fmt.Print(SomeMethod2())
-	fmt.Print("multiply function called")
-	models.SomeDatabaseFunction()
-	return n1 * n2
-}
+	app.Get("/user", func(ctx context.Context) {
+		doe := User{
+			Username:  "Johndoe",
+			Firstname: "John",
+			Lastname:  "Doe",
+			City:      "Neither FBI knows!!!",
+			Age:       25,
+		}
 
-//http://localhost:8080/sum/1/4
-//http://192.241.159.66:8080/sum/1/4
-//http://138.68.84.55:3000/sum/1/4
-//http://138.68.84.55:8080/sum/1/4
-//http://192.168.1.204:8080/sum/1/4
-//http://138.197.44.189:8080/sum/1/4
+		ctx.JSON(doe)
+	})
+
+	app.Get("/encode", func(ctx context.Context) {
+		orderFilter := new(model.OrderFilter)
+		orderFilter.OrderDate = uint64(time.Now().UnixNano() / 1000000)
+		orderFilter.Limit = 100
+		orders, err := model.AllOrdersForFilter(db, orderFilter)
+		log.WithFields(log.Fields{"initial len(orders):": len(orders),}).Info("")
+		if err != nil {
+			log.WithFields(log.Fields{"error":err,}).Warn("ERROR")
+		}
+		ctx.JSON(orders)
+	})
+	app.Run(iris.Addr(":8080"), iris.WithCharset("UTF-8"))
+}

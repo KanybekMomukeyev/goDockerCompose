@@ -46,3 +46,19 @@ func NewDB(dataSourceName string) (*sqlx.DB, error) {
 	return db, nil
 }
 
+func NewTestDB(dataSourceName string) (*sqlx.DB, error) {
+
+	db, err := sqlx.Connect("postgres", "dbname=fortest host=localhost sslmode=disable")
+	if err != nil {
+		log.WithFields(log.Fields{"error": err}).Fatal("Can not connected to database")
+		return nil, err
+	}
+
+	pingError := db.Ping()
+
+	if pingError != nil {
+		log.WithFields(log.Fields{"ping": pingError}).Fatal("Can not connected Ping to database")
+		return nil, pingError
+	}
+	return db, nil
+}

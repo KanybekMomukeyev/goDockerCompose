@@ -29,13 +29,13 @@ postgres:
       - POSTGRES_USER=kanybek
       - POSTGRES_DATABASENAME=databasename
       # you can also set the postgres username and database name
-#go:
-#  restart: always
-#  build: ./api
-#  ports:
-#    - 8080:8080
-#  links:
-#    - postgres:db
+go:
+  restart: always
+  build: ./api
+  ports:
+    - 8080:8080
+  links:
+    - postgres:db
 ##  environment:
 ##    - DB_NAME=project
 ##  volumes:
