@@ -29,7 +29,7 @@ postgres:
       - POSTGRES_USER=kanybek
       - POSTGRES_DATABASENAME=databasename
       # you can also set the postgres username and database name
-go:
+goapi:
   restart: always
   build: ./api
   ports:
