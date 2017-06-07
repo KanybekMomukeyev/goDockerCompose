@@ -7,6 +7,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/jmoiron/sqlx"
 	"time"
+	"fmt"
 )
 
 type User struct {
@@ -44,15 +45,47 @@ func main() {
 	})
 
 	app.Get("/encode", func(ctx context.Context) {
+
 		orderFilter := new(model.OrderFilter)
 		orderFilter.OrderDate = uint64(time.Now().UnixNano() / 1000000)
 		orderFilter.Limit = 100
+
+		createOrderRequests := make([]*model.CreateOrderRequest, 0)
+
 		orders, err := model.AllOrdersForFilter(db, orderFilter)
+		for _, order := range orders {
+			createOrderRequest := new(model.CreateOrderRequest)
+
+			customer, error := model.CustomerFor(db, order.CustomerId)
+			if error != nil {
+			}
+			if customer != nil {
+				order.BillingNo = customer.FirstName + " " + customer.SecondName + " " + customer.PhoneNumber + " " + customer.Address
+			}
+
+			createOrderRequest.Order = order
+
+			payment, error := model.PaymentForOrder(db, order)
+			if error != nil {
+				break
+			}
+			createOrderRequest.Payment = payment
+			orderDetails, error := model.AllOrderDetailsForOrder(db, order)
+			if error != nil {
+				break
+			}
+			createOrderRequest.OrderDetails = orderDetails
+			createOrderRequests = append(createOrderRequests, createOrderRequest)
+		}
+
+
 		log.WithFields(log.Fields{"initial len(orders):": len(orders),}).Info("")
 		if err != nil {
 			log.WithFields(log.Fields{"error":err,}).Warn("ERROR")
 		}
-		ctx.JSON(orders)
+		ctx.JSON(createOrderRequests)
 	})
 	app.Run(iris.Addr(":8080"), iris.WithCharset("UTF-8"))
+	log.Info("I'll be logged with common and other field")
+	fmt.Println("started server")
 }
