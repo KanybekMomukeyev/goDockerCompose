@@ -33,7 +33,9 @@ goapi:
   restart: always
   build: ./api
   ports:
-    - 8080:8080
+          - "8080" # this is port i'm exposing in the container
+#  ports:
+#    - 8080:8080
   links:
     - postgres:db
 ##  environment:
@@ -49,4 +51,18 @@ go:
   links:
     - postgres:db
 
+proxy:
+    image: nginx:latest
+    ports:
+        - "80:80" # host:container
+        - "443:443"
+    volumes:
+        - ./nginx.conf:/etc/nginx/nginx.conf:ro
+        # connect host's ./nginx.conf with container's nginx.conf
+        # :ro == read only perms in container
+    links:
+        - go:app # [other container]:[alias in this container]
+          # creates environment variables in proxy container
+          # with ip and port info for go container
+          # also creates entries in /etc/hosts with ip info
 
