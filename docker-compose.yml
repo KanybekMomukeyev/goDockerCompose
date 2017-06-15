@@ -32,10 +32,10 @@ postgres:
 goapi:
   restart: always
   build: ./api
-  ports:
-          - "8080" # this is port i'm exposing in the container
 #  ports:
-#    - 8080:8080
+#          - "8080" # this is port i'm exposing in the container
+  ports:
+    - 8080:8080
   links:
     - postgres:db
 ##  environment:
@@ -55,7 +55,7 @@ printserver:
   restart: always
   build: ./printserver
   ports:
-          - "8100" # this is port i'm exposing in the container
+      - 8100:8100
 
 #proxy:
 #    image: nginx:latest
