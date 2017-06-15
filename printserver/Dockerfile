@@ -9,7 +9,7 @@ ADD server.go /go/src/github.com/KanybekMomukeyev/goDockerCompose/printserver/se
 
 RUN go install github.com/KanybekMomukeyev/goDockerCompose/printserver
 
-EXPOSE 90091
+EXPOSE 8080
 
 ENTRYPOINT /go/bin/printserver
 
