@@ -47,6 +47,9 @@ func main() {
 		ctx.ServeFile("./views/index.html", true)
 	})
 
+	//directory := flag.String("d", ".", "build/index.html")
+	//app.StaticWeb("/static", "build/index.html")
+
 	v1 := app.Party("/api/v1")
 	v1.Use(crs)
 	{

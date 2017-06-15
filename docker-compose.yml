@@ -45,7 +45,7 @@ printserver:
   restart: always
   build: ./printserver
   ports:
-            - "8080" # this is port i'm exposing in the container
+            - "6060" # this is port i'm exposing in the container
 #  ports:
 #      - 30051:30051
 
@@ -54,6 +54,7 @@ proxy:
     ports:
         - "80:80" # host:container
         - "443:443"
+        - "60:60"
     volumes:
         - ./nginx.conf:/etc/nginx/nginx.conf:ro
         # connect host's ./nginx.conf with container's nginx.conf
