@@ -15,11 +15,11 @@ import (
 )
 
 func main() {
-	port := flag.String("p", "8080", "port to serve on")
+	port := flag.String("p", "8100", "port to serve on")
 	directory := flag.String("d", ".", "build/index.html")
 	flag.Parse()
 
-	http.Handle("/print", http.FileServer(http.Dir(*directory)))
+	http.Handle("/", http.FileServer(http.Dir(*directory)))
 
 	log.Printf("Serving %s on HTTP port: %s\n", *directory, *port)
 	log.Fatal(http.ListenAndServe(":"+*port, nil))
