@@ -55,7 +55,7 @@ printserver:
   restart: always
   build: ./printserver
   ports:
-      - 8100:8100
+      - 90091:90091
 
 #proxy:
 #    image: nginx:latest
