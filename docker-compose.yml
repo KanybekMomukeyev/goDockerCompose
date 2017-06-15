@@ -6,17 +6,6 @@ store:
       - /var/lib/postgresql/data
   command: "true"
 
-#s3minio:
-#    image: minio/minio
-#    ports:
-#      - "9000:9000"
-#    volumes:
-#      - "./kanoexport:/export"
-#    environment:
-#      - "MINIO_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE"
-#      - "MINIO_SECRET_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
-#    command: server /export
-
 postgres:
   restart: always
   image: postgres:latest
@@ -29,13 +18,14 @@ postgres:
       - POSTGRES_USER=kanybek
       - POSTGRES_DATABASENAME=databasename
       # you can also set the postgres username and database name
+
 goapi:
   restart: always
   build: ./api
-#  ports:
-#          - "8080" # this is port i'm exposing in the container
   ports:
-    - 8080:8080
+          - "8080" # this is port i'm exposing in the container
+#  ports:
+#    - 8080:8080
   links:
     - postgres:db
 ##  environment:
@@ -57,18 +47,19 @@ printserver:
   ports:
       - 30051:30051
 
-#proxy:
-#    image: nginx:latest
-#    ports:
-#        - "80:80" # host:container
-#        - "443:443"
-#    volumes:
-#        - ./nginx.conf:/etc/nginx/nginx.conf:ro
-#        # connect host's ./nginx.conf with container's nginx.conf
-#        # :ro == read only perms in container
-#    links:
-#        - goapi:app # [other container]:[alias in this container]
-#          # creates environment variables in proxy container
-#          # with ip and port info for go container
-#          # also creates entries in /etc/hosts with ip info
-#
+proxy:
+    image: nginx:latest
+    ports:
+        - "80:80" # host:container
+        - "443:443"
+        - "30051:30051"
+    volumes:
+        - ./nginx.conf:/etc/nginx/nginx.conf:ro
+        # connect host's ./nginx.conf with container's nginx.conf
+        # :ro == read only perms in container
+    links:
+        - goapi:app # [other container]:[alias in this container]
+          # creates environment variables in proxy container
+          # with ip and port info for go container
+          # also creates entries in /etc/hosts with ip info
+
