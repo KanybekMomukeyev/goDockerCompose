@@ -47,8 +47,8 @@ func main() {
 		ctx.ServeFile("./views/index.html", true)
 	})
 
-	//app.StaticWeb("/public", "./build")
-	//app.StaticServe("./build","/webpage")
+	//app.StaticWeb("/public", "build")
+	//app.StaticServe("build","/webpage")
 	// Serves all files inside this directory to the GET&HEAD route: 0.0.0.0:8080/public
 	// use iris.StaticHandler for more options like gzip.
 
