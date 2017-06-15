@@ -43,7 +43,7 @@ printserver:
 #  ports:
 #            - "6060" # this is port i'm exposing in the container
   ports:
-      - 6060:6060
+      - 8100:8100
 
 proxy:
     image: nginx:latest
