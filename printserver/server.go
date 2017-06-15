@@ -19,7 +19,7 @@ func main() {
 	directory := flag.String("d", ".", "build/index.html")
 	flag.Parse()
 
-	http.Handle("/", http.FileServer(http.Dir(*directory)))
+	http.Handle("/print", http.FileServer(http.Dir(*directory)))
 
 	log.Printf("Serving %s on HTTP port: %s\n", *directory, *port)
 	log.Fatal(http.ListenAndServe(":"+*port, nil))
