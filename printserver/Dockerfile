@@ -12,5 +12,3 @@ RUN go install github.com/KanybekMomukeyev/goDockerCompose/printserver
 EXPOSE 8080
 
 ENTRYPOINT /go/bin/printserver
-
-#CMD ["go", "run", "/go/src/github.com/KanybekMomukeyev/goDockerCompose/api/server.go"]
