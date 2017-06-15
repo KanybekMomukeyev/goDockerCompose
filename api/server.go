@@ -9,6 +9,7 @@ import (
 	"time"
 	"fmt"
 	"github.com/iris-contrib/middleware/cors"
+	"github.com/kataras/iris/view"
 )
 
 type User struct {
@@ -32,6 +33,18 @@ func main() {
 	crs := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"}, // allows everything, use that to change the hosts.
 		AllowCredentials: true,
+	})
+
+	app.AttachView(view.HTML("./views", ".html"))
+	app.Get("/template", func(ctx context.Context) {
+
+		//ctx.ViewData("Name", "Iris") // the .Name inside the ./templates/hi.html
+		ctx.Gzip(true)               // enable gzip for big files
+		ctx.View("index.html")          // render the template with the file name relative to the './templates'
+	})
+
+	app.Get("/txt", func(ctx context.Context) {
+		ctx.ServeFile("./views/index.html", true)
 	})
 
 	v1 := app.Party("/api/v1")
@@ -106,7 +119,9 @@ func main() {
 		ctx.JSON(doe)
 	})
 
-	app.Run(iris.Addr(":8080"), iris.WithCharset("UTF-8"))
 	log.Info("I'll be logged with common and other field")
 	fmt.Println("started server")
+
+	app.Run(iris.Addr(":8080"), iris.WithCharset("UTF-8"))
+
 }

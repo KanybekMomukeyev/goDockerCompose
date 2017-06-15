@@ -51,6 +51,12 @@ go:
   links:
     - postgres:db
 
+printserver:
+  restart: always
+  build: ./printserver
+  ports:
+          - "8100" # this is port i'm exposing in the container
+
 proxy:
     image: nginx:latest
     ports:
