@@ -8,7 +8,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"time"
 	"fmt"
-	"github.com/iris-contrib/middleware/cors"
+	"github.com/KanybekMomukeyev/goDockerCompose/api/cors"
 	"github.com/kataras/iris/view"
 )
 
@@ -56,8 +56,6 @@ func main() {
 	//app.StaticServe("build","/webpage")
 	// Serves all files inside this directory to the GET&HEAD route: 0.0.0.0:8080/public
 	// use iris.StaticHandler for more options like gzip.
-
-
 
 	v1 := app.Party("/api/v1")
 	v1.Use(crs)

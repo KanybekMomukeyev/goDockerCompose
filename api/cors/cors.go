@@ -1,4 +1,5 @@
 package cors
+
 import (
 	"net/http"
 

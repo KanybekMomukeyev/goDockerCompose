@@ -16,7 +16,6 @@ RUN go get github.com/Sirupsen/logrus
 RUN go get github.com/lib/pq
 RUN go get github.com/jmoiron/sqlx
 RUN go get github.com/rs/cors
-RUN go get github.com/iris-contrib/middleware
 
 RUN go install github.com/KanybekMomukeyev/goDockerCompose/api
 
