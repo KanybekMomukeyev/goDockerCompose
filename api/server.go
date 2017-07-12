@@ -9,7 +9,6 @@ import (
 	"time"
 	"fmt"
 	"github.com/KanybekMomukeyev/goDockerCompose/api/cors"
-	"github.com/kataras/iris/view"
 )
 
 type User struct {
