@@ -123,8 +123,13 @@ func IncreaseProductsInStock(db *sqlx.DB, tx *sqlx.Tx, orderDetailReqs []*pb.Ord
 	updateValues := make(map[uint64]float64)
 
 	for _, orderDetailReq := range orderDetailReqs {
-		productIds = append(productIds, orderDetailReq.ProductId)
-		updateValues[orderDetailReq.ProductId] = orderDetailReq.OrderQuantity
+		value, ok := updateValues[orderDetailReq.ProductId]
+		if ok {
+			updateValues[orderDetailReq.ProductId] = orderDetailReq.OrderQuantity + value
+		} else {
+			productIds = append(productIds, orderDetailReq.ProductId)
+			updateValues[orderDetailReq.ProductId] = orderDetailReq.OrderQuantity
+		}
 	}
 
 	products_, err := getProductsForProductIds(db, productIds)
@@ -160,8 +165,13 @@ func DecreaseProductsInStock(db *sqlx.DB, tx *sqlx.Tx, orderDetailReqs []*pb.Ord
 	updateValues := make(map[uint64]float64)
 
 	for _, orderDetailReq := range orderDetailReqs {
-		productIds = append(productIds, orderDetailReq.ProductId)
-		updateValues[orderDetailReq.ProductId] = orderDetailReq.OrderQuantity
+		value, ok := updateValues[orderDetailReq.ProductId]
+		if ok {
+			updateValues[orderDetailReq.ProductId] = orderDetailReq.OrderQuantity + value
+		} else {
+			productIds = append(productIds, orderDetailReq.ProductId)
+			updateValues[orderDetailReq.ProductId] = orderDetailReq.OrderQuantity
+		}
 	}
 
 	products_, err := getProductsForProductIds(db, productIds)
