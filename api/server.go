@@ -35,17 +35,17 @@ func main() {
 		AllowCredentials: true,
 	})
 
-	app.AttachView(view.HTML("./views", ".html"))
-	app.Get("/template", func(ctx context.Context) {
-
-		//ctx.ViewData("Name", "Iris") // the .Name inside the ./templates/hi.html
-		ctx.Gzip(true)               // enable gzip for big files
-		ctx.View("index.html")          // render the template with the file name relative to the './templates'
-	})
-
-	app.Get("/txt", func(ctx context.Context) {
-		ctx.ServeFile("./views/index.html", true)
-	})
+	//app.AttachView(view.HTML("./views", ".html"))
+	//app.Get("/template", func(ctx context.Context) {
+	//
+	//	//ctx.ViewData("Name", "Iris") // the .Name inside the ./templates/hi.html
+	//	ctx.Gzip(true)               // enable gzip for big files
+	//	ctx.View("index.html")          // render the template with the file name relative to the './templates'
+	//})
+	//
+	//app.Get("/txt", func(ctx context.Context) {
+	//	ctx.ServeFile("./views/index.html", true)
+	//})
 
 	// or just serve index.html as it is:
 	// app.Get("/show", func(ctx context.Context) {
