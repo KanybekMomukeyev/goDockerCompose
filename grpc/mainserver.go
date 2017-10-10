@@ -49,7 +49,8 @@ type server struct {
 }
 
 func isAuthorized(ctx context.Context) error{
-	md, ok := metadata.FromContext(ctx)
+
+	md, ok := metadata.FromIncomingContext(ctx)
 
 	if !ok {
 		return grpc.Errorf(codes.Unauthenticated, "Token unsetted")
